@@ -1,5 +1,6 @@
 import { get } from './api';
 import type { ApiResponse, PaginationInfo } from '@/types';
+import { getProfileImageUrl } from '@/lib/utils';
 
 export interface PublicBroker {
     id: number;
@@ -37,14 +38,18 @@ export const getPublicBrokers = async (
 
     try {
         const response = await get<ApiResponse<PublicBroker[]>>(`/public/brokers?${params}`);
+        const normalizedData = (response.data || []).map((broker) => ({
+            ...broker,
+            profile_image: getProfileImageUrl(broker.profile_image)
+        }));
 
         return {
-            data: response.data,
+            data: normalizedData,
             pagination: response.pagination ?? {
                 currentPage: filters?.page ?? 1,
                 totalPages: 1,
-                totalItems: response.data.length,
-                itemsPerPage: filters?.limit ?? response.data.length,
+                totalItems: normalizedData.length,
+                itemsPerPage: filters?.limit ?? normalizedData.length,
                 hasNextPage: false,
                 hasPrevPage: false
             }
@@ -61,7 +66,10 @@ export const getPublicBrokers = async (
         legacyParams.append('limit', String(Math.max(filters?.limit ?? 100, 100)));
 
         const legacyResponse = await get<ApiResponse<PublicBroker[]>>(`/public/brokers/top?${legacyParams}`);
-        let legacyData = legacyResponse.data || [];
+        let legacyData = (legacyResponse.data || []).map((broker) => ({
+            ...broker,
+            profile_image: getProfileImageUrl(broker.profile_image)
+        }));
 
         if (filters?.search) {
             const keyword = filters.search.toLowerCase().trim();
@@ -117,5 +125,8 @@ export const getPublicBrokers = async (
 
 export const getBrokerById = async (brokerId: number | string): Promise<PublicBroker> => {
     const response = await get<ApiResponse<PublicBroker>>(`/public/brokers/${brokerId}`);
-    return response.data;
+    return {
+        ...response.data,
+        profile_image: getProfileImageUrl(response.data.profile_image)
+    };
 };

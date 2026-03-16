@@ -20,9 +20,7 @@ import { getBrokerById, type PublicBroker } from '@/services/brokerService';
 import { getRooms } from '@/services/roomService';
 import type { Room } from '@/types';
 import RoomCard from '@/components/rooms/RoomCard';
-import { buildBrokerPath } from '@/lib/utils';
-
-const getDigitsPhone = (value?: string) => String(value || '').replace(/\D/g, '');
+import { buildBrokerPath, buildWhatsAppUrl, getProfileImageUrl, normalizePhoneForWhatsApp } from '@/lib/utils';
 
 const BrokerProfilePage: React.FC = () => {
     const { brokerId } = useParams<{ brokerId: string }>();
@@ -146,8 +144,9 @@ const BrokerProfilePage: React.FC = () => {
         );
     }
 
-    const phone = getDigitsPhone(broker.contact);
+    const phone = normalizePhoneForWhatsApp(broker.contact);
     const hasPhone = phone.length >= 10;
+    const whatsappUrl = buildWhatsAppUrl(broker.contact);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-green-bg pt-[30px] pb-10 md:pt-[30px] md:pb-14">
@@ -168,7 +167,7 @@ const BrokerProfilePage: React.FC = () => {
                         <div className="flex flex-col md:flex-row items-center md:items-start gap-5 md:gap-8">
                             {/* Avatar */}
                             <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-green-50 shrink-0">
-                                <AvatarImage src={broker.profile_image} alt={broker.name} />
+                                <AvatarImage src={getProfileImageUrl(broker.profile_image)} alt={broker.name} />
                                 <AvatarFallback className="bg-green-primary text-white text-2xl font-bold">
                                     {broker.name?.slice(0, 2).toUpperCase() || 'BR'}
                                 </AvatarFallback>
@@ -241,7 +240,7 @@ const BrokerProfilePage: React.FC = () => {
                                     )}
                                     {hasPhone ? (
                                         <Button asChild size="lg" className="bg-green-600 hover:bg-green-700 w-full">
-                                            <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer">
+                                            <a href={whatsappUrl || '#'} target="_blank" rel="noopener noreferrer">
                                                 <MessageCircle className="w-4 h-4 mr-2" />
                                                 WhatsApp
                                             </a>

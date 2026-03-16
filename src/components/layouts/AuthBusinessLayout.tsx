@@ -2,6 +2,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Building2, CheckCircle2, Shield, Sparkles, Users } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { Button } from '@/components/ui/button';
+import { getMediaAssetUrl } from '@/lib/utils';
 
 const AuthBusinessLayout: React.FC = () => {
     const { settings } = useSiteSettings();
@@ -9,6 +10,7 @@ const AuthBusinessLayout: React.FC = () => {
 
     const businessName = settings.businessName || 'RoomRental';
     const tagline = settings.businessTagline || 'Find your perfect room and trusted roommate';
+    const logoUrl = getMediaAssetUrl(settings.logoUrl);
     const isAuthRoute = ['/login', '/register', '/verify-otp', '/forgot-password', '/reset-password'].includes(location.pathname);
 
     const navItems = [
@@ -42,9 +44,9 @@ const AuthBusinessLayout: React.FC = () => {
             <header className="sticky top-0 z-40 border-b border-emerald-100 bg-white/95 backdrop-blur-xl shadow-sm">
                 <div className="mx-auto flex h-16 w-full max-w-[1500px] items-center justify-between px-4 sm:px-6">
                     <Link to="/" className="inline-flex items-center gap-2.5">
-                        {settings.logoUrl ? (
+                        {logoUrl ? (
                             <img
-                                src={settings.logoUrl}
+                                src={logoUrl}
                                 alt={businessName}
                                 className="h-9 w-9 rounded-lg object-cover"
                             />
@@ -86,9 +88,9 @@ const AuthBusinessLayout: React.FC = () => {
                 <section className="hidden lg:flex flex-col justify-between border-r border-emerald-100/80 bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 p-10 text-white">
                     <div className="space-y-8">
                         <Link to="/" className="inline-flex items-center gap-3">
-                            {settings.logoUrl ? (
+                            {logoUrl ? (
                                 <img
-                                    src={settings.logoUrl}
+                                    src={logoUrl}
                                     alt={businessName}
                                     className="h-12 w-12 rounded-xl object-cover ring-2 ring-white/30"
                                 />
@@ -132,9 +134,9 @@ const AuthBusinessLayout: React.FC = () => {
                     <div className="w-full max-w-2xl rounded-3xl border border-emerald-100 bg-white/95 p-4 sm:p-6 shadow-[0_20px_50px_rgba(15,23,42,0.12)] backdrop-blur">
                         <div className="mb-5 border-b border-emerald-100 pb-4 lg:hidden">
                             <Link to="/" className="inline-flex items-center gap-3">
-                                {settings.logoUrl ? (
+                                {logoUrl ? (
                                     <img
-                                        src={settings.logoUrl}
+                                        src={logoUrl}
                                         alt={businessName}
                                         className="h-10 w-10 rounded-lg object-cover"
                                     />

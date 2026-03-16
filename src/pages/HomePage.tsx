@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -92,6 +92,7 @@ const HomePage: React.FC = () => {
     const [furnishingType, setFurnishingType] = useState('all');
     const [gender, setGender] = useState('all');
     const deferredSearchDetails = useDeferredValue(searchDetails);
+    const searchCardRef = useRef<HTMLDivElement | null>(null);
 
     const searchControlHeightClass = 'h-14 min-h-[56px] max-h-[56px]';
 
@@ -160,6 +161,14 @@ const HomePage: React.FC = () => {
         };
 
         void fetchData();
+    }, []);
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => {
+            searchCardRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
+        }, 0);
+
+        return () => window.clearTimeout(timer);
     }, []);
 
     const handleSearch = () => {
@@ -613,7 +622,7 @@ const HomePage: React.FC = () => {
                     </div>
 
                     {/* Integrated Search Card with Ad Background */}
-                    <Card className="shadow-2xl border border-white/10 overflow-hidden rounded-3xl relative group -mt-6 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950">
+                    <Card ref={searchCardRef} className="shadow-2xl border border-white/10 overflow-hidden rounded-3xl relative group -mt-6 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950">
                         {/* Always-on themed fallback background */}
                         <div className="absolute inset-0 w-full h-full pointer-events-none">
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.18),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(16,185,129,0.16),transparent_40%),linear-gradient(125deg,rgba(2,6,23,0.95),rgba(30,41,59,0.9),rgba(15,23,42,0.95))]" />

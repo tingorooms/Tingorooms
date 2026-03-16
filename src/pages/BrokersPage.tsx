@@ -10,9 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Building2, MapPin, Search, Phone, Mail, Filter, BriefcaseBusiness, MessageCircle } from 'lucide-react';
 import { getPublicBrokers, type PublicBroker } from '@/services/brokerService';
 import { getCities } from '@/services/roomService';
-import { buildBrokerPath } from '@/lib/utils';
-
-const getDigitsPhone = (value?: string) => String(value || '').replace(/\D/g, '');
+import { buildBrokerPath, buildWhatsAppUrl, getProfileImageUrl, normalizePhoneForWhatsApp } from '@/lib/utils';
 
 const BrokersPage: React.FC = () => {
     const navigate = useNavigate();
@@ -222,7 +220,7 @@ const BrokersPage: React.FC = () => {
                                 <CardContent className="p-5 flex flex-col h-full">
                                     <div className="flex items-start gap-3">
                                         <Avatar className="h-12 w-12 border border-slate-200">
-                                            <AvatarImage src={broker.profile_image} alt={broker.name} />
+                                            <AvatarImage src={getProfileImageUrl(broker.profile_image)} alt={broker.name} />
                                             <AvatarFallback className="bg-green-50 text-green-primary font-semibold">
                                                 {broker.name?.slice(0, 2).toUpperCase() || 'BR'}
                                             </AvatarFallback>
@@ -265,8 +263,9 @@ const BrokersPage: React.FC = () => {
                                     </div>
 
                                     {(() => {
-                                        const phone = getDigitsPhone(broker.contact);
+                                        const phone = normalizePhoneForWhatsApp(broker.contact);
                                         const hasPhone = phone.length >= 10;
+                                        const whatsappUrl = buildWhatsAppUrl(broker.contact);
 
                                         return (
                                             <div className="mt-auto pt-4 space-y-2">
@@ -297,7 +296,7 @@ const BrokersPage: React.FC = () => {
                                                     )}
                                                     {hasPhone ? (
                                                         <Button asChild size="sm" className="bg-green-600 hover:bg-green-700">
-                                                            <a href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()}>
+                                                            <a href={whatsappUrl || '#'} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()}>
                                                                 <MessageCircle className="w-4 h-4 mr-1" />
                                                                 WhatsApp
                                                             </a>

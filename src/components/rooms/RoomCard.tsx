@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { parseImages, buildRoomPath } from '@/lib/utils';
+import { parseImages, buildRoomPath, buildWhatsAppUrl } from '@/lib/utils';
 import {
     MapPin,
     MessageSquare,
@@ -282,7 +282,10 @@ const RoomCard: React.FC<RoomCardProps> = ({
                             <Button
                                 size="sm"
                                 onClick={() => {
-                                    window.open(`https://wa.me/${room.contact}`, '_blank');
+                                    const whatsappUrl = buildWhatsAppUrl(room.contact);
+                                    if (whatsappUrl) {
+                                        window.open(whatsappUrl, '_blank');
+                                    }
                                 }}
                                 title="WhatsApp owner"
                                 className={`rounded-md text-xs h-7 bg-green-600 hover:bg-green-700 text-white ${viewMode === 'list' ? 'flex-1 md:w-full md:flex-none' : 'flex-1'}`}

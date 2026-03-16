@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import type { Room } from '@/types';
 import { getRoomDetails, updateRoomStatus } from '@/services/adminService';
-import { parseImages } from '@/lib/utils';
+import { getMediaAssetUrl, getProfileImageUrl, parseImages } from '@/lib/utils';
 import { toast } from 'sonner';
 
 const AdminRoomDetailPage: React.FC = () => {
@@ -40,21 +40,6 @@ const AdminRoomDetailPage: React.FC = () => {
     const [processing, setProcessing] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState<string>('');
     const [remark, setRemark] = useState('');
-
-    // Helper function to get full image URL
-    const getImageUrl = (imagePath: string): string => {
-        if (!imagePath) return '';
-        
-        // If it's already a full URL, return as-is
-        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-            return imagePath;
-        }
-        
-        // Prepend the API base URL (without /api)
-        const apiBaseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
-        const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-        return `${apiBaseUrl}${cleanPath}`;
-    };
 
     useEffect(() => {
         if (roomId) {
@@ -80,7 +65,7 @@ const AdminRoomDetailPage: React.FC = () => {
                         ? (data.facilities as string).split(',').map((f: string) => f.trim()) 
                         : []),
                 // Use parseImages utility to properly parse JSON array from database
-                images: parseImages(data.images).map(img => getImageUrl(img)),
+                images: parseImages(data.images).map((img) => getMediaAssetUrl(img)),
                 existing_roommates: Array.isArray(data.existing_roommates) 
                     ? data.existing_roommates 
                     : []
@@ -391,7 +376,7 @@ const AdminRoomDetailPage: React.FC = () => {
                             <div className="flex items-center gap-3">
                                 {room.owner_profile_image ? (
                                     <img
-                                        src={room.owner_profile_image}
+                                        src={getProfileImageUrl(room.owner_profile_image)}
                                         alt={room.owner_name}
                                         className="w-12 h-12 rounded-full object-cover"
                                     />

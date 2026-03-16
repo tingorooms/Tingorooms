@@ -17,10 +17,10 @@
 4. Run SQL from [backend/database/local.sql](backend/database/local.sql)
 5. Copy DB values:
 
-DB_HOST=YOUR_DB_HOST
-DB_PORT=YOUR_DB_PORT
-DB_USER=YOUR_DB_USER
-DB_PASSWORD=YOUR_DB_PASSWORD
+DB_HOST=gateway01.ap-southeast-1.prod.aws.tidbcloud.com
+DB_PORT=4000
+DB_USER=3kNF6kVq6PbdGsL.root
+DB_PASSWORD=3kNF6kVq6PbdGsL.root
 DB_NAME=room_rental_db
 DB_SSL=
 DB_SSL_REJECT_UNAUTHORIZED=
@@ -31,13 +31,13 @@ DB_SSL_REJECT_UNAUTHORIZED=
 2. Run SQL from [backend/database/supabase.sql](backend/database/supabase.sql)
 3. Copy values:
 
-VITE_SUPABASE_URL=YOUR_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
-SUPABASE_SERVICE_KEY=YOUR_SUPABASE_SERVICE_KEY
+VITE_SUPABASE_URL=https://trljehnepspxbauotxpk.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybGplaG5lcHNweGJhdW90eHBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwODg0MjksImV4cCI6MjA4NzY2NDQyOX0.cjrx3mz5SDd6StN-gUU4soTzNhPsVEEA6yrkmZYffRM
+SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRybGplaG5lcHNweGJhdW90eHBrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjA4ODQyOSwiZXhwIjoyMDg3NjY0NDI5fQ.LJ9gtEg2XUereBf7F22bA0Acu_dAlnRAiMLbY_ne2B8
 
 ## 4) ImgBB Setup
 
-IMAGE_STORAGE_API_KEY=YOUR_IMGBB_KEY
+IMAGE_STORAGE_API_KEY=934df5fecfe60ef44e5704ff895f87c6
 IMAGE_STORAGE_URL=https://api.imgbb.com/1/upload
 
 ## 5) Render Backend Create

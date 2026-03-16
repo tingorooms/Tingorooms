@@ -26,7 +26,7 @@ import {
     User,
     Settings
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, getMediaAssetUrl } from '@/lib/utils';
 import NotificationBell from '@/components/layouts/NotificationBell';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 
@@ -37,6 +37,7 @@ const AdminLayout: React.FC = () => {
     const location = useLocation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const businessName = settings.businessName || 'RoomRental';
+    const logoUrl = getMediaAssetUrl(settings.logoUrl);
 
     const handleLogout = () => {
         logout();
@@ -67,9 +68,9 @@ const AdminLayout: React.FC = () => {
             <aside className="hidden lg:flex w-64 flex-col border-r bg-slate-900 text-white">
                 <div className="h-20 flex items-center px-6 border-b border-slate-800 bg-gradient-to-r from-green-600 to-green-500">
                     <Link to="/admin" className="flex items-center gap-3">
-                        {settings.logoUrl ? (
+                        {logoUrl ? (
                             <img
-                                src={settings.logoUrl}
+                                src={logoUrl}
                                 alt={businessName}
                                 className="w-10 h-10 object-cover rounded-xl ring-2 ring-white/30"
                             />
@@ -118,23 +119,23 @@ const AdminLayout: React.FC = () => {
             </aside>
 
             <div className="flex-1 flex flex-col min-w-0 bg-gradient-to-br from-slate-50 to-green-50/20">
-                <header className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur border-b border-green-100 flex items-center justify-between px-3 sm:px-4 lg:px-8 shadow-sm">
+                <header className="sticky top-0 z-30 h-[68px] sm:h-16 bg-white/95 backdrop-blur border-b border-green-100 flex items-center justify-between px-3 sm:px-4 lg:px-8 shadow-sm">
                     <div className="flex items-center gap-4">
                         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                             <SheetTrigger className="lg:hidden rounded-lg border border-slate-200 p-2 hover:bg-slate-50">
                                     <Menu className="h-5 w-5" />
                                 </SheetTrigger>
                             <SheetContent side="left" className="w-72 p-0 bg-slate-900 flex flex-col">
-                                <div className="h-20 flex items-center px-6 border-b border-slate-800 bg-gradient-to-r from-green-600 to-green-500 shadow-lg">
+                                <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-gradient-to-r from-green-600 to-green-500 shadow-lg">
                                     <Link to="/admin" className="flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
-                                        {settings.logoUrl ? (
+                                        {logoUrl ? (
                                             <img
-                                                src={settings.logoUrl}
+                                                src={logoUrl}
                                                 alt={businessName}
-                                                className="w-12 h-12 object-cover rounded-xl ring-2 ring-white/30 transition-transform hover:scale-110"
+                                                className="w-11 h-11 object-cover rounded-xl ring-2 ring-white/30 transition-transform hover:scale-110"
                                             />
                                         ) : (
-                                            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center ring-2 ring-white/30 transition-transform hover:scale-110">
+                                            <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center ring-2 ring-white/30 transition-transform hover:scale-110">
                                                 <Shield className="w-6 h-6 text-white" />
                                             </div>
                                         )}

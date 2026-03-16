@@ -25,7 +25,7 @@ import {
     Map,
     X
 } from 'lucide-react';
-import { parseImages, getProfileImageUrl } from '@/lib/utils';
+import { parseImages, getProfileImageUrl, buildWhatsAppUrl } from '@/lib/utils';
 import type { Room } from '@/types';
 import { getRoomByIdWithOwnerAccess, incrementViewCount } from '@/services/roomService';
 import { useChat } from '@/context/ChatContext';
@@ -520,7 +520,10 @@ const RoomDetailPage: React.FC = () => {
                                             <Button 
                                                 className="w-full bg-green-600 hover:bg-green-700 text-white" 
                                                 onClick={() => {
-                                                    window.open(`https://wa.me/${room.contact}`, '_blank');
+                                                    const whatsappUrl = buildWhatsAppUrl(room.contact);
+                                                    if (whatsappUrl) {
+                                                        window.open(whatsappUrl, '_blank');
+                                                    }
                                                 }}
                                             >
                                                 <MessageCircle className="w-4 h-4 mr-2" />

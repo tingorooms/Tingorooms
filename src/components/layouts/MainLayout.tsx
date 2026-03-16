@@ -33,6 +33,7 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/s
 import { useState, useEffect } from 'react';
 import NotificationBell from '@/components/layouts/NotificationBell';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getMediaAssetUrl } from '@/lib/utils';
 
 const MainLayout: React.FC = () => {
     const { isAuthenticated, user, logout } = useAuth();
@@ -43,6 +44,7 @@ const MainLayout: React.FC = () => {
 
     const businessName = settings.businessName || 'RoomRental';
     const businessTagline = settings.businessTagline || 'Find Your Perfect Roommate';
+    const logoUrl = getMediaAssetUrl(settings.logoUrl);
     const supportEmail = settings.supportEmail || 'customer@support.com';
     const supportPhone = settings.supportPhone || '+91 99999 99999';
     const supportAddress = settings.supportAddress || 'Pune, Maharashtra';
@@ -97,17 +99,17 @@ const MainLayout: React.FC = () => {
                         : 'bg-gradient-to-r from-green-primary via-green-secondary to-green-primary border-b border-white/20'
                 }`}
             >
-                <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+                <div className="container mx-auto px-4 h-[68px] sm:h-20 flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-3 group">
-                        {settings.logoUrl ? (
+                        {logoUrl ? (
                             <img
-                                src={settings.logoUrl}
+                                src={logoUrl}
                                 alt={businessName}
-                                className="w-12 h-12 object-cover rounded-2xl transition-all duration-300 group-hover:scale-105"
+                                className="w-[52px] h-[52px] sm:w-12 sm:h-12 object-cover rounded-2xl transition-all duration-300 group-hover:scale-105"
                             />
                         ) : (
                             <div
-                                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                                className={`w-[52px] h-[52px] sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
                                     scrolled
                                         ? 'bg-gradient-to-br from-green-primary to-green-secondary shadow-lg'
                                         : 'bg-white/20 backdrop-blur border border-white/30'
@@ -118,7 +120,7 @@ const MainLayout: React.FC = () => {
                         )}
                         <div className="flex min-w-0 flex-col">
                             <span
-                                className={`text-lg sm:text-2xl font-extrabold tracking-tight ${
+                                className={`text-base sm:text-2xl font-extrabold tracking-tight leading-tight ${
                                     scrolled
                                         ? 'bg-gradient-to-r from-green-primary to-green-secondary bg-clip-text text-transparent'
                                         : 'text-white'
@@ -126,7 +128,7 @@ const MainLayout: React.FC = () => {
                             >
                                 {businessName}
                             </span>
-                            <span className={`hidden sm:block text-[10px] font-medium -mt-1 truncate ${scrolled ? 'text-emerald-700/80' : 'text-white/80'}`}>
+                            <span className={`text-[9px] sm:text-[10px] font-medium -mt-0.5 max-w-[170px] sm:max-w-none truncate ${scrolled ? 'text-emerald-700/80' : 'text-white/80'}`}>
                                 {businessTagline}
                             </span>
                         </div>
@@ -262,17 +264,17 @@ const MainLayout: React.FC = () => {
                             </SheetTrigger>
 
                             <SheetContent side="right" className="w-80 p-0 flex flex-col">
-                                <div className="h-20 flex items-center px-6 border-b bg-gradient-to-r from-green-primary to-green-secondary">
+                                <div className="h-16 flex items-center px-6 border-b bg-gradient-to-r from-green-primary to-green-secondary">
                                     <SheetClose asChild>
                                         <Link to="/" className="flex items-center gap-3">
-                                            {settings.logoUrl ? (
+                                            {logoUrl ? (
                                                 <img
-                                                    src={settings.logoUrl}
+                                                    src={logoUrl}
                                                     alt={businessName}
-                                                    className="w-12 h-12 object-cover rounded-2xl ring-2 ring-white/30"
+                                                    className="w-11 h-11 object-cover rounded-2xl ring-2 ring-white/30"
                                                 />
                                             ) : (
-                                                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center ring-2 ring-white/30">
+                                                <div className="w-11 h-11 bg-white/20 rounded-2xl flex items-center justify-center ring-2 ring-white/30">
                                                     <Building2 className="w-6 h-6 text-white" />
                                                 </div>
                                             )}
@@ -397,9 +399,9 @@ const MainLayout: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3">
-                                {settings.logoUrl ? (
+                                {logoUrl ? (
                                     <img
-                                        src={settings.logoUrl}
+                                        src={logoUrl}
                                         alt={businessName}
                                         className="w-12 h-12 object-cover rounded-xl shadow-lg"
                                     />

@@ -43,20 +43,65 @@ export function getFirstImage(images: unknown): string {
  * Handles relative paths like /uploads/profiles/filename
  */
 export function getProfileImageUrl(profileImage: string | null | undefined): string {
-  if (!profileImage) return '';
-  
-  // If it's already a full URL (starts with http:// or https://), return as-is
-  if (profileImage.startsWith('http://') || profileImage.startsWith('https://')) {
-    return profileImage;
+  return getMediaAssetUrl(profileImage);
+}
+
+export function getMediaAssetUrl(assetUrl: string | null | undefined): string {
+  const raw = String(assetUrl || '').trim();
+  if (!raw) return '';
+
+  const decoded = raw
+    .replace(/&amp;/g, '&')
+    .replace(/&#x2F;/gi, '/')
+    .replace(/&#47;/g, '/')
+    .replace(/&#x3A;/gi, ':')
+    .replace(/&#58;/g, ':')
+    .replace(/&#x3F;/gi, '?')
+    .replace(/&#63;/g, '?')
+    .replace(/&#x3D;/gi, '=')
+    .replace(/&#61;/g, '=')
+    .trim();
+
+  if (!decoded) return '';
+  if (/^https?:\/\//i.test(decoded)) return decoded;
+
+  const apiOrigin = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
+  const cleanPath = decoded.startsWith('/') ? decoded : `/${decoded}`;
+  return `${apiOrigin}${cleanPath}`;
+}
+
+export function normalizePhoneForWhatsApp(value?: string | null): string {
+  const rawValue = String(value || '').trim();
+  if (!rawValue) return '';
+
+  let digits = rawValue.replace(/\D/g, '');
+  if (!digits) return '';
+
+  if (digits.length === 11 && digits.startsWith('0')) {
+    digits = digits.slice(1);
   }
-  
-  // If it's a relative path, prepend the API base URL (without /api)
-  const apiBaseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
-  
-  // Remove leading slash if present to avoid double slashes
-  const cleanPath = profileImage.startsWith('/') ? profileImage : `/${profileImage}`;
-  
-  return `${apiBaseUrl}${cleanPath}`;
+
+  // Default to India country code when only local 10-digit number is provided.
+  if (digits.length === 10) {
+    return `91${digits}`;
+  }
+
+  if (digits.length >= 11) {
+    return digits;
+  }
+
+  return '';
+}
+
+export function buildWhatsAppUrl(value?: string | null, message?: string): string {
+  const normalizedPhone = normalizePhoneForWhatsApp(value);
+  if (!normalizedPhone) return '';
+
+  if (!message) {
+    return `https://wa.me/${normalizedPhone}`;
+  }
+
+  return `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(message)}`;
 }
 
 export function toSlug(value: string): string {
