@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Bell, X, AlertCircle } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getNotificationPrefs, setNotificationPrefs } from '@/lib/notificationPreferences';
+import { subscribeBrowserPush } from '@/services/pushSubscriptionService';
 
 export default function NotificationBanner() {
   const { settings } = useSiteSettings();
@@ -69,6 +70,8 @@ export default function NotificationBanner() {
           ...currentPrefs,
           push: true
         });
+
+        await subscribeBrowserPush();
 
         const icon = settings.faviconUrl || '/favicon.png';
         new Notification('Notifications Enabled', {

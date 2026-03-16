@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getNotificationPrefs, setNotificationPrefs } from '@/lib/notificationPreferences';
+import { subscribeBrowserPush } from '@/services/pushSubscriptionService';
 
 const NOTIFICATION_PERMISSION_KEY = 'notification_permission_asked';
 
@@ -51,6 +52,8 @@ export default function NotificationPermissionModal() {
             ...currentPrefs,
             push: true
           });
+
+          await subscribeBrowserPush();
 
           // Show a test notification with dynamic icon
           const notificationIcon = settings.faviconUrl || '/favicon.png';

@@ -5,6 +5,7 @@ const router = express.Router();
 const { executeQuery } = require('../config/database');
 const { authenticate, requireMember } = require('../middleware/auth');
 const { rateLimitMiddleware } = require('../middleware/rateLimit');
+const { sendWebPushToUser } = require('../utils/webPush');
 const { 
     getOrCreateChatRoom,
     getSupabaseAdmin,
@@ -307,6 +308,20 @@ router.post('/room/:roomId/message',
              VALUES (?, 'Chat_Message', 'New Message', ?, ?, 'chat', NOW())`,
             [recipientId, `New message from ${req.user.name}`, req.params.roomId]
         );
+
+        // Send web push notification (works when app tab is closed) when recipient has subscribed.
+        await sendWebPushToUser(recipientId, {
+            title: `Message from ${req.user.name}`,
+            body: String(message || '').slice(0, 140) || 'Sent you a message',
+            icon: '/favicon.png',
+            badge: '/favicon.png',
+            tag: `chat_${req.params.roomId}`,
+            data: {
+                url: `/dashboard/chat?room=${encodeURIComponent(req.params.roomId)}`,
+                chatRoomId: req.params.roomId,
+                type: 'chat_message',
+            },
+        });
 
         res.json({
             success: true,

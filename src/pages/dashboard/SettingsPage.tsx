@@ -12,6 +12,7 @@ import {
     setNotificationPrefs,
     type NotificationPrefs
 } from '@/lib/notificationPreferences';
+import { subscribeBrowserPush, unsubscribeBrowserPush } from '@/services/pushSubscriptionService';
 
 const SettingsPage: React.FC = () => {
     const { settings } = useSiteSettings();
@@ -43,6 +44,7 @@ const SettingsPage: React.FC = () => {
                 push: false
             });
             messageNotificationService.clearAllNotifications();
+            await unsubscribeBrowserPush();
             toast.success('Push notifications turned off');
             return;
         }
@@ -70,6 +72,11 @@ const SettingsPage: React.FC = () => {
             ...currentPrefs,
             push: true
         });
+        const subscribed = await subscribeBrowserPush();
+        if (!subscribed) {
+            toast.error('Browser push service is not configured yet');
+            return;
+        }
         toast.success('Push notifications enabled');
     };
 

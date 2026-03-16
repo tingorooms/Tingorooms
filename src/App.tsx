@@ -6,7 +6,10 @@ import { AuthProvider } from '@/context/AuthContext';
 import { ChatProvider } from '@/context/ChatContext';
 import { SiteSettingsProvider } from '@/context/SiteSettingsContext';
 import MainLayout from '@/components/layouts/MainLayout';
+import ScrollToTop from '@/components/ScrollToTop';
 import HomePage from '@/pages/HomePage';
+import { getNotificationPrefs } from '@/lib/notificationPreferences';
+import { subscribeBrowserPush } from '@/services/pushSubscriptionService';
 
 const AuthBusinessLayout = lazy(() => import('@/components/layouts/AuthBusinessLayout'));
 const NotificationBanner = lazy(() => import('@/components/NotificationBanner'));
@@ -152,11 +155,33 @@ function App() {
         };
     }, []);
 
+    useEffect(() => {
+        const syncPushSubscription = async () => {
+            try {
+                if (!localStorage.getItem('token')) {
+                    return;
+                }
+
+                const prefs = getNotificationPrefs();
+                if (!prefs.push || Notification.permission !== 'granted') {
+                    return;
+                }
+
+                await subscribeBrowserPush();
+            } catch (error) {
+                // Push registration should never block app boot.
+            }
+        };
+
+        void syncPushSubscription();
+    }, []);
+
     return (
         <SiteSettingsProvider>
             <AuthProvider>
                 <ChatProvider>
                         <Router>
+                            <ScrollToTop />
                             {isNonCriticalUiReady ? (
                                 <Suspense fallback={null}>
                                     <NotificationBanner />
