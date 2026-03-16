@@ -32,6 +32,62 @@ const testConnection = async () => {
     }
 };
 
+const parseInsertTarget = (sql) => {
+    const normalizedSql = String(sql || '');
+    const match = normalizedSql.match(/insert\s+into\s+`?([a-zA-Z0-9_]+)`?\s*\(([^)]+)\)\s*values\s*\(/i);
+
+    if (!match) {
+        return null;
+    }
+
+    const tableName = match[1];
+    const rawColumns = match[2]
+        .split(',')
+        .map((part) => part.replace(/`/g, '').trim())
+        .filter(Boolean);
+
+    if (rawColumns.length === 0) {
+        return null;
+    }
+
+    return {
+        tableName,
+        columns: rawColumns,
+    };
+};
+
+const tryInsertWithExplicitIdFallback = async (sql, params, originalError) => {
+    const missingIdDefault =
+        originalError &&
+        originalError.code === 'ER_NO_DEFAULT_FOR_FIELD' &&
+        originalError.message &&
+        originalError.message.includes("Field 'id'");
+
+    if (!missingIdDefault) {
+        throw originalError;
+    }
+
+    const parsedInsert = parseInsertTarget(sql);
+    if (!parsedInsert) {
+        throw originalError;
+    }
+
+    const { tableName, columns } = parsedInsert;
+    if (columns.includes('id')) {
+        throw originalError;
+    }
+
+    const [maxRows] = await pool.execute(`SELECT COALESCE(MAX(id), 0) AS maxId FROM \`${tableName}\``);
+    const nextId = Number(maxRows?.[0]?.maxId || 0) + 1;
+
+    const updatedColumnsSegment = `(${['id', ...columns].map((column) => `\`${column}\``).join(', ')})`;
+    const rewrittenSql = String(sql).replace(/\(([^)]+)\)\s*values\s*\(/i, `${updatedColumnsSegment} VALUES (`);
+    const rewrittenParams = [nextId, ...(Array.isArray(params) ? params : [])];
+
+    const [results] = await pool.execute(rewrittenSql, rewrittenParams);
+    return results;
+};
+
 // Ensure all primary-key `id` columns use AUTO_INCREMENT.
 // This heals imports where dump files dropped AUTO_INCREMENT defaults.
 const ensureAutoIncrementOnPrimaryIds = async () => {
@@ -82,8 +138,13 @@ const executeQuery = async (sql, params = []) => {
         const [results] = await pool.execute(sql, params);
         return results;
     } catch (error) {
-        console.error('Query Error:', error.message);
-        throw error;
+        try {
+            const fallbackResults = await tryInsertWithExplicitIdFallback(sql, params, error);
+            return fallbackResults;
+        } catch (fallbackError) {
+            console.error('Query Error:', fallbackError.message);
+            throw fallbackError;
+        }
     }
 };
 
