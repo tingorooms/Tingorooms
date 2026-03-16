@@ -71,14 +71,54 @@ app.use(preventParameterPollution);
 app.use(detectAttackPatterns);
 
 // CORS configuration
+const normalizeOrigin = (origin) => {
+    if (!origin || typeof origin !== 'string') {
+        return '';
+    }
+
+    const trimmedOrigin = origin.trim();
+    if (!trimmedOrigin) {
+        return '';
+    }
+
+    const withProtocol = /^https?:\/\//i.test(trimmedOrigin)
+        ? trimmedOrigin
+        : `https://${trimmedOrigin}`;
+
+    try {
+        return new URL(withProtocol).origin;
+    } catch (error) {
+        return '';
+    }
+};
+
 const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
     .split(',')
-    .map((origin) => origin.trim())
+    .map((origin) => normalizeOrigin(origin))
     .filter(Boolean);
+
+const hasConfiguredVercelOrigin = allowedOrigins.some((origin) => origin.endsWith('.vercel.app'));
+
+const isAllowedOrigin = (origin) => {
+    const normalizedOrigin = normalizeOrigin(origin);
+    if (!normalizedOrigin) {
+        return false;
+    }
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
+        return true;
+    }
+
+    if (hasConfiguredVercelOrigin && normalizedOrigin.endsWith('.vercel.app')) {
+        return true;
+    }
+
+    return false;
+};
 
 const corsOptions = {
     origin(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || isAllowedOrigin(origin)) {
             callback(null, true);
             return;
         }
@@ -86,7 +126,8 @@ const corsOptions = {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
