@@ -32,6 +32,50 @@ const testConnection = async () => {
     }
 };
 
+// Ensure all primary-key `id` columns use AUTO_INCREMENT.
+// This heals imports where dump files dropped AUTO_INCREMENT defaults.
+const ensureAutoIncrementOnPrimaryIds = async () => {
+    const candidateColumns = await executeQuery(`
+        SELECT TABLE_NAME, COLUMN_TYPE
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND COLUMN_NAME = 'id'
+          AND COLUMN_KEY = 'PRI'
+          AND EXTRA NOT LIKE '%auto_increment%'
+    `);
+
+    if (!Array.isArray(candidateColumns) || candidateColumns.length === 0) {
+        return { updated: [], skipped: [] };
+    }
+
+    const updated = [];
+    const skipped = [];
+
+    for (const columnInfo of candidateColumns) {
+        const tableName = String(columnInfo.TABLE_NAME || '').trim();
+        const columnType = String(columnInfo.COLUMN_TYPE || '').trim();
+
+        if (!tableName || !columnType) {
+            continue;
+        }
+
+        try {
+            await executeQuery(
+                `ALTER TABLE \`${tableName}\` MODIFY COLUMN \`id\` ${columnType} NOT NULL AUTO_INCREMENT`
+            );
+            updated.push(tableName);
+        } catch (error) {
+            skipped.push({
+                tableName,
+                reason: error.message
+            });
+            console.warn(`⚠️  Skipped AUTO_INCREMENT fix for ${tableName}.id: ${error.message}`);
+        }
+    }
+
+    return { updated, skipped };
+};
+
 // Execute query helper
 const executeQuery = async (sql, params = []) => {
     try {
@@ -63,5 +107,6 @@ module.exports = {
     pool,
     testConnection,
     executeQuery,
-    withTransaction
+    withTransaction,
+    ensureAutoIncrementOnPrimaryIds
 };

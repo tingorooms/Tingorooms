@@ -6,7 +6,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const { testConnection } = require('./config/database');
+const { testConnection, ensureAutoIncrementOnPrimaryIds } = require('./config/database');
 const { initializeSupabase } = require('./config/supabase');
 
 // Import routes
@@ -281,6 +281,15 @@ const startServer = async () => {
         const dbConnected = await testConnection();
         if (!dbConnected) {
             console.warn('⚠️  Database not connected. Some features may not work.');
+        } else {
+            try {
+                const result = await ensureAutoIncrementOnPrimaryIds();
+                if (result.updated.length > 0) {
+                    console.log(`🛠️  AUTO_INCREMENT repaired for id columns: ${result.updated.join(', ')}`);
+                }
+            } catch (repairError) {
+                console.warn(`⚠️  AUTO_INCREMENT repair skipped: ${repairError.message}`);
+            }
         }
 
         // Initialize Supabase
