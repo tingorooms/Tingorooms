@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getNotificationPrefs, setNotificationPrefs } from '@/lib/notificationPreferences';
 
 const NOTIFICATION_PERMISSION_KEY = 'notification_permission_asked';
 
@@ -45,6 +46,12 @@ export default function NotificationPermissionModal() {
         localStorage.setItem(NOTIFICATION_PERMISSION_KEY, 'true');
         
         if (permission === 'granted') {
+          const currentPrefs = getNotificationPrefs();
+          setNotificationPrefs({
+            ...currentPrefs,
+            push: true
+          });
+
           // Show a test notification with dynamic icon
           const notificationIcon = settings.faviconUrl || '/favicon.png';
           new Notification('Notifications Enabled! 🎉', {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Bell, X, AlertCircle } from 'lucide-react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { getNotificationPrefs, setNotificationPrefs } from '@/lib/notificationPreferences';
 
 export default function NotificationBanner() {
   const { settings } = useSiteSettings();
@@ -63,6 +64,12 @@ export default function NotificationBanner() {
 
       const result = await Notification.requestPermission();
       if (result === 'granted') {
+        const currentPrefs = getNotificationPrefs();
+        setNotificationPrefs({
+          ...currentPrefs,
+          push: true
+        });
+
         const icon = settings.faviconUrl || '/favicon.png';
         new Notification('Notifications Enabled', {
           body: 'You will receive updates for messages and alerts.',

@@ -51,6 +51,19 @@ class MessageNotificationService {
   }
 
   /**
+   * Always derive the latest browser permission at runtime.
+   */
+  private getEffectivePermission(): NotificationPermission {
+    if (!('Notification' in window)) {
+      this.permission = 'denied';
+      return this.permission;
+    }
+
+    this.permission = Notification.permission;
+    return this.permission;
+  }
+
+  /**
    * Initialize Web Audio API context
    */
   private initAudioContext() {
@@ -71,7 +84,7 @@ class MessageNotificationService {
         return;
       }
 
-      if (this.permission !== 'granted') {
+      if (this.getEffectivePermission() !== 'granted') {
         resolve();
         return;
       }
@@ -302,10 +315,7 @@ class MessageNotificationService {
    * Get current permission status
    */
   getPermissionStatus(): NotificationPermission {
-    if ('Notification' in window) {
-      return Notification.permission;
-    }
-    return 'denied';
+    return this.getEffectivePermission();
   }
 
   /**
@@ -313,6 +323,7 @@ class MessageNotificationService {
    */
   async requestPermission(): Promise<NotificationPermission> {
     if (!('Notification' in window)) {
+      this.permission = 'denied';
       return 'denied';
     }
 
@@ -325,7 +336,7 @@ class MessageNotificationService {
    * Clear all notifications
    */
   clearAllNotifications() {
-    if ('ServiceWorkerContainer' in navigator) {
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         registrations.forEach(registration => {
           registration.getNotifications().then(notifications => {
