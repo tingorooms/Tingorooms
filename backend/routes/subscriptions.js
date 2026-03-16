@@ -187,13 +187,34 @@ router.post('/broker/renew', authenticate, async (req, res) => {
         expiresAt.setDate(expiresAt.getDate() + plan.duration_days);
 
         // Create subscription record
-        const [result] = await pool.query(`
-            INSERT INTO subscriptions (
-                user_id, plan_id, amount_paid, starts_at, expires_at, payment_status
-            ) VALUES (?, ?, ?, ?, ?, 'Pending')
-        `, [userId, plan_id, plan.price, startsAt, expiresAt]);
+        let subscriptionId = null;
+        try {
+            const [result] = await pool.query(`
+                INSERT INTO subscriptions (
+                    user_id, plan_id, amount_paid, starts_at, expires_at, payment_status
+                ) VALUES (?, ?, ?, ?, ?, 'Pending')
+            `, [userId, plan_id, plan.price, startsAt, expiresAt]);
+            subscriptionId = result.insertId;
+        } catch (insertError) {
+            const missingIdDefault =
+                insertError &&
+                insertError.code === 'ER_NO_DEFAULT_FOR_FIELD' &&
+                insertError.message &&
+                insertError.message.includes("Field 'id'");
 
-        const subscriptionId = result.insertId;
+            if (!missingIdDefault) {
+                throw insertError;
+            }
+
+            const [maxRows] = await pool.query('SELECT COALESCE(MAX(id), 0) AS maxId FROM subscriptions');
+            subscriptionId = Number(maxRows?.[0]?.maxId || 0) + 1;
+
+            await pool.query(`
+                INSERT INTO subscriptions (
+                    id, user_id, plan_id, amount_paid, starts_at, expires_at, payment_status
+                ) VALUES (?, ?, ?, ?, ?, ?, 'Pending')
+            `, [subscriptionId, userId, plan_id, plan.price, startsAt, expiresAt]);
+        }
 
         // Get the created subscription
         const [newSubscription] = await pool.query(`

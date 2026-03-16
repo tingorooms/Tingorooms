@@ -310,13 +310,42 @@ router.post('/', authenticate, requireMember, requireApprovedBroker, checkBroker
 
         // Create notification for admin
         if (roomStatus === 'Pending') {
-            await executeQuery(
-                `INSERT INTO notifications (user_id, type, title, message, reference_id, reference_type)
-                 SELECT id, 'System', 'New Room Pending Approval', 
-                        CONCAT('New room "${title}" posted by ${req.user.name}'),
-                        '${roomId}', 'room'
-                 FROM users WHERE role = 'Admin'`,
-            );
+            try {
+                await executeQuery(
+                    `INSERT INTO notifications (user_id, type, title, message, reference_id, reference_type)
+                     SELECT id, 'System', 'New Room Pending Approval', 
+                            CONCAT('New room "${title}" posted by ${req.user.name}'),
+                            '${roomId}', 'room'
+                     FROM users WHERE role = 'Admin'`,
+                );
+            } catch (notificationError) {
+                const missingIdDefault =
+                    notificationError &&
+                    notificationError.code === 'ER_NO_DEFAULT_FOR_FIELD' &&
+                    notificationError.message &&
+                    notificationError.message.includes("Field 'id'");
+
+                if (!missingIdDefault) {
+                    throw notificationError;
+                }
+
+                const adminUsers = await executeQuery('SELECT id FROM users WHERE role = ? ORDER BY id ASC', ['Admin']);
+                for (const admin of adminUsers) {
+                    const maxRows = await executeQuery('SELECT COALESCE(MAX(id), 0) AS maxId FROM notifications');
+                    const nextId = Number(maxRows[0]?.maxId || 0) + 1;
+
+                    await executeQuery(
+                        `INSERT INTO notifications (id, user_id, type, title, message, reference_id, reference_type)
+                         VALUES (?, ?, 'System', 'New Room Pending Approval', ?, ?, 'room')`,
+                        [
+                            nextId,
+                            admin.id,
+                            `New room "${title}" posted by ${req.user.name}`,
+                            roomId,
+                        ]
+                    );
+                }
+            }
         }
 
         const successMessage = roomStatus === 'Approved' 
