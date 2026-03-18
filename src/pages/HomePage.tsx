@@ -68,6 +68,39 @@ const MAHARASHTRA_DISTRICTS = [
     'Sindhudurg', 'Solapur', 'Thane', 'Wardha', 'Washim', 'Yavatmal'
 ];
 
+const useCountUp = (target: number, start: boolean, duration = 900): number => {
+    const [value, setValue] = useState(0);
+
+    useEffect(() => {
+        if (!start) return;
+        const finalValue = Math.max(0, Math.floor(target || 0));
+        if (finalValue === 0) {
+            setValue(0);
+            return;
+        }
+
+        let rafId = 0;
+        const startAt = performance.now();
+
+        const tick = (now: number) => {
+            const progress = Math.min((now - startAt) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setValue(Math.floor(finalValue * eased));
+
+            if (progress < 1) {
+                rafId = requestAnimationFrame(tick);
+            } else {
+                setValue(finalValue);
+            }
+        };
+
+        rafId = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(rafId);
+    }, [target, start, duration]);
+
+    return value;
+};
+
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const { openChat } = useChat();
@@ -93,8 +126,15 @@ const HomePage: React.FC = () => {
     const [gender, setGender] = useState('all');
     const deferredSearchDetails = useDeferredValue(searchDetails);
     const searchCardRef = useRef<HTMLDivElement | null>(null);
+    const statsRef = useRef<HTMLDivElement | null>(null);
+    const [statsVisible, setStatsVisible] = useState(false);
 
     const searchControlHeightClass = 'h-14 min-h-[56px] max-h-[56px]';
+
+    const animatedTotalRooms = useCountUp(stats.total_rooms || 0, statsVisible);
+    const animatedTotalMembers = useCountUp(stats.total_members || 0, statsVisible);
+    const animatedTotalChats = useCountUp(stats.total_roommates || 0, statsVisible);
+    const animatedCoveredCities = useCountUp(15, statsVisible);
 
     useEffect(() => {
         const readCachedHomeData = (): HomeCachePayload | null => {
@@ -169,6 +209,27 @@ const HomePage: React.FC = () => {
         }, 0);
 
         return () => window.clearTimeout(timer);
+    }, []);
+
+    useEffect(() => {
+        const element = statsRef.current;
+        if (!element || typeof IntersectionObserver === 'undefined') {
+            setStatsVisible(true);
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setStatsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.25 }
+        );
+
+        observer.observe(element);
+        return () => observer.disconnect();
     }, []);
 
     const handleSearch = () => {
@@ -1036,29 +1097,29 @@ const HomePage: React.FC = () => {
                     </Card>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                         <div className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-5 text-center shadow-xl hover:bg-white/20 transition-all duration-300 hover:-translate-y-1">
                             <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5" />
                             <Home className="w-8 h-8 mx-auto mb-3 text-yellow-300" />
-                            <div className="text-4xl font-extrabold mb-2">{stats.total_rooms || 0}+</div>
+                            <div className="text-4xl font-extrabold mb-2">{animatedTotalRooms.toLocaleString('en-IN')}+</div>
                             <div className="text-sm text-white/90 font-medium">Verified Rooms</div>
                         </div>
                         <div className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-5 text-center shadow-xl hover:bg-white/20 transition-all duration-300 hover:-translate-y-1">
                             <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5" />
                             <Users className="w-8 h-8 mx-auto mb-3 text-green-300" />
-                            <div className="text-4xl font-extrabold mb-2">{stats.total_members || 0}+</div>
+                            <div className="text-4xl font-extrabold mb-2">{animatedTotalMembers.toLocaleString('en-IN')}+</div>
                             <div className="text-sm text-white/90 font-medium">Happy Members</div>
                         </div>
                         <div className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-5 text-center shadow-xl hover:bg-white/20 transition-all duration-300 hover:-translate-y-1">
                             <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5" />
                             <MessageCircle className="w-8 h-8 mx-auto mb-3 text-green-300" />
-                            <div className="text-4xl font-extrabold mb-2">{stats.total_roommates || 0}+</div>
+                            <div className="text-4xl font-extrabold mb-2">{animatedTotalChats.toLocaleString('en-IN')}+</div>
                             <div className="text-sm text-white/90 font-medium">Active Chats</div>
                         </div>
                         <div className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-5 text-center shadow-xl hover:bg-white/20 transition-all duration-300 hover:-translate-y-1">
                             <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5" />
                             <MapPin className="w-8 h-8 mx-auto mb-3 text-pink-300" />
-                            <div className="text-4xl font-extrabold mb-2">15+</div>
+                            <div className="text-4xl font-extrabold mb-2">{animatedCoveredCities}+</div>
                             <div className="text-sm text-white/90 font-medium">Cities Covered</div>
                         </div>
                     </div>

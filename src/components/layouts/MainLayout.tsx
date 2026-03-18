@@ -1,4 +1,5 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -34,6 +35,7 @@ import { useState, useEffect } from 'react';
 import NotificationBell from '@/components/layouts/NotificationBell';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getMediaAssetUrl } from '@/lib/utils';
+import { useRef } from 'react';
 
 const MainLayout: React.FC = () => {
     const { isAuthenticated, user, logout } = useAuth();
@@ -41,7 +43,9 @@ const MainLayout: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [scrolled, setScrolled] = useState(false);
+    const [headerHidden, setHeaderHidden] = useState(false);
     const [logoLoadFailed, setLogoLoadFailed] = useState(false);
+    const lastScrollYRef = useRef(0);
 
     const businessName = settings.businessName || 'RoomRental';
     const businessTagline = settings.businessTagline || 'Find Your Perfect Roommate';
@@ -65,8 +69,14 @@ const MainLayout: React.FC = () => {
         let ticking = false;
 
         const updateScrolledState = () => {
-            const nextScrolled = window.scrollY > 20;
+            const nextScrollY = window.scrollY;
+            const nextScrolled = nextScrollY > 20;
+            const scrollingDown = nextScrollY > lastScrollYRef.current;
+            const shouldHideHeader = scrollingDown && nextScrollY > 120;
+
             setScrolled((prev) => (prev === nextScrolled ? prev : nextScrolled));
+            setHeaderHidden((prev) => (prev === shouldHideHeader ? prev : shouldHideHeader));
+            lastScrollYRef.current = nextScrollY;
             ticking = false;
         };
 
@@ -98,7 +108,10 @@ const MainLayout: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <header
+            <motion.header
+                initial={false}
+                animate={{ y: headerHidden ? -112 : 0 }}
+                transition={{ duration: 0.24, ease: 'easeOut' }}
                 className={`sticky top-0 z-50 w-full transition-all duration-300 ${
                     scrolled
                         ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-emerald-100'
@@ -396,7 +409,7 @@ const MainLayout: React.FC = () => {
                         </Sheet>
                     </div>
                 </div>
-            </header>
+            </motion.header>
 
             <main className="flex-1">
                 <Outlet />
@@ -423,7 +436,7 @@ const MainLayout: React.FC = () => {
                                     <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-green-200 bg-clip-text text-transparent">
                                         {businessName}
                                     </span>
-                                    <p className="text-xs text-green-300">Your Home Awaits</p>
+                                    <p className="text-xs text-green-300">{businessTagline}</p>
                                 </div>
                             </div>
                             <p className="text-sm text-slate-300 leading-relaxed">

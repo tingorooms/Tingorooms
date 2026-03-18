@@ -147,12 +147,12 @@ export const getRoomForEditing = async (roomId: string): Promise<Room> => {
 
 export const getRoomByIdWithOwnerAccess = async (roomId: string): Promise<Room> => {
     try {
-        // First try to fetch as owner (allows viewing Pending/Hold rooms)
-        const response = await get<ApiResponse<Room>>(`/rooms/my-room/${roomId}`);
+        // Try public endpoint first to avoid noisy owner-route 404s for normal visitors.
+        const response = await get<ApiResponse<Room>>(`/public/rooms/${roomId}`);
         return normalizeRoom(response.data);
     } catch {
-        // Fall back to public endpoint if not owner
-        const response = await get<ApiResponse<Room>>(`/public/rooms/${roomId}`);
+        // Fall back to owner endpoint for logged-in owner viewing non-public statuses.
+        const response = await get<ApiResponse<Room>>(`/rooms/my-room/${roomId}`);
         return normalizeRoom(response.data);
     }
 };

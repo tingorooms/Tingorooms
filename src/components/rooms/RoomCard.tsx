@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 // Removed default ad card image logic
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -159,6 +160,11 @@ const RoomCard: React.FC<RoomCardProps> = ({
     };
 
     return (
+        <motion.div
+            whileHover={{ y: -4 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            className="h-full"
+        >
         <Card className={`group w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md p-0 gap-0 ${viewMode === 'list' ? 'max-w-none flex flex-col md:flex-row' : 'sm:min-w-[312px] sm:max-w-[360px] flex flex-col'}`}>
             {/* Image Section */}
             <div
@@ -335,6 +341,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
                 )}
             </CardFooter>
         </Card>
+        </motion.div>
     );
 };
 
