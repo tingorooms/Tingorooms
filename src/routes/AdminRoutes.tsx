@@ -14,6 +14,7 @@ const AdminAdsPage = lazy(() => import('@/pages/admin/AdminAdsPage'));
 const AdminLeadsPage = lazy(() => import('@/pages/admin/AdminLeadsPage'));
 const AdminReportsPage = lazy(() => import('@/pages/admin/AdminReportsPage'));
 const AdminSiteSettingsPage = lazy(() => import('@/pages/admin/AdminSiteSettingsPage'));
+const AdminUserDetailPage = lazy(() => import('@/pages/admin/AdminUserDetailPage'));
 
 const AdminRoutes: React.FC = () => {
     return (
@@ -29,6 +30,7 @@ const AdminRoutes: React.FC = () => {
                 >
                     <Route index element={<AdminDashboardPage />} />
                     <Route path="users" element={<AdminUsersPage />} />
+                    <Route path="users/:id" element={<AdminUserDetailPage />} />
                     <Route path="rooms" element={<AdminRoomsPage />} />
                     <Route path="rooms/:roomId" element={<AdminRoomDetailPage />} />
                     <Route path="brokers" element={<AdminBrokersPage />} />

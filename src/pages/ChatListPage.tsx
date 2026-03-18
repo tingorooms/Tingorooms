@@ -5,10 +5,13 @@ import { MessageCircle, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getChatRooms } from '@/services/chatService';
+import { useAuth } from '@/context/AuthContext';
+import { getMediaAssetUrl } from '@/lib/utils';
 import type { ChatRoom } from '@/types';
 
 const ChatListPage: React.FC = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -134,6 +137,13 @@ const ChatListPage: React.FC = () => {
 
                             const lastMessageText = chat.last_message?.message || chat.last_message?.message_text || '...';
 
+                            // Resolve the "other" participant for avatar/name
+                            const p1 = typeof chat.participant_1 === 'object' ? chat.participant_1 : null;
+                            const p2 = typeof chat.participant_2 === 'object' ? chat.participant_2 : null;
+                            const other = (p1?.id === user?.id) ? p2 : p1;
+                            const otherName = other?.name || chat.receiver_name || chat.initiator_name || 'Unknown User';
+                            const otherImageUrl = getMediaAssetUrl(other?.profile_image);
+
                             return (
                                 <Card
                                     key={chat.id}
@@ -143,16 +153,31 @@ const ChatListPage: React.FC = () => {
                                     <CardContent className="p-4 flex items-center justify-between">
                                         <div className="flex items-center gap-4 flex-1">
                                             {/* Avatar */}
-                                            <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                                                {(chat.receiver_name || chat.initiator_name || 'U').charAt(0).toUpperCase()}
+                                            <div className="relative w-12 h-12 rounded-full flex-shrink-0 overflow-hidden">
+                                                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                                                    {otherName.charAt(0).toUpperCase()}
+                                                </div>
+                                                {otherImageUrl && (
+                                                    <img
+                                                        src={otherImageUrl}
+                                                        alt={otherName}
+                                                        className="absolute inset-0 w-full h-full object-cover"
+                                                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                    />
+                                                )}
                                             </div>
 
                                             {/* Chat Info */}
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2">
                                                     <h3 className="font-semibold truncate">
-                                                        {chat.receiver_name || chat.initiator_name || 'Unknown User'}
+                                                        {otherName}
                                                     </h3>
+                                                    {(chat.unread_count ?? 0) > 0 && (
+                                                        <span className="min-w-[20px] h-5 px-1.5 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                                            {chat.unread_count}
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <p className="text-sm truncate text-gray-600">
                                                     {chat.room_title || 'Room Chat'}

@@ -8,6 +8,14 @@ import type { ChatRoom, Room, Message } from '@/types';
 const ChatModal = lazy(() => import('@/components/chat/ChatModal'));
 const MessagePopup = lazy(() => import('@/components/chat/MessagePopup'));
 
+// Pre-warm these chunks when the user is authenticated so the first open is instant
+const prefetchChatChunks = () => {
+    void import('@/components/chat/ChatModal');
+    void import('@/components/chat/MessagePopup');
+    void import('@/services/realtimeChatService');
+    void import('@/services/messageNotificationService');
+};
+
 interface ChatContextType {
     openChat: (roomListingId: number, receiverId: number, room?: Room) => Promise<void>;
     openExistingChat: (chatRoom: ChatRoom) => void;
@@ -26,6 +34,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isLoading, setIsLoading] = useState(false);
     const isOpenRef = useRef(false);
     const activeChatRoomRef = useRef<string | null>(null);
+
+    // Pre-warm lazy chunks as soon as user is authenticated
+    useEffect(() => {
+        if (user) prefetchChatChunks();
+    }, [!!user]);
     const realtimeServiceRef = useRef<{
         setCurrentUserId: (userId: number) => void;
         subscribeToChatRoom: (chatRoomId: string, callbacks: {
