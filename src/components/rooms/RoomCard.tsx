@@ -221,7 +221,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onChat, viewMode = 'grid' }) 
                 </div>
 
                 {/* Content Section */}
-                <CardContent className={`${viewMode === 'list' ? 'p-4 flex-1' : 'p-4'}`}>
+                <CardContent className={`${viewMode === 'list' ? 'px-[2px] py-4 flex-1' : 'px-[2px] py-4'}`}>
                     <h3
                         className="text-base font-bold truncate mb-1 cursor-pointer text-[#111827] transition-colors hover:text-[#2563EB] leading-snug"
                         onClick={() => navigate(roomPath)}
@@ -288,8 +288,8 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onChat, viewMode = 'grid' }) 
                 <CardFooter
                     className={`border-t border-slate-100 ${
                         viewMode === 'list'
-                            ? 'p-3 flex gap-2 justify-start md:flex-col md:justify-center md:w-44 md:border-t-0 md:border-l'
-                            : 'p-3 flex gap-2'
+                            ? 'px-[2px] py-3 flex gap-2 justify-start md:flex-col md:justify-center md:w-44 md:border-t-0 md:border-l'
+                            : 'px-[2px] py-3 flex gap-2'
                     }`}
                 >
                     {!isOwner ? (

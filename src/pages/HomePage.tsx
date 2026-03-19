@@ -354,7 +354,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-white/5 blur-3xl" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-[20px] relative z-10 space-y-8">
+                <div className="max-w-screen-2xl mx-auto px-3 sm:px-4 relative z-10 space-y-8">
                     {/* Main Heading and Post Room Section - Two Column Layout */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                         {/* Left Column - Badges & Find Perfect Room */}
@@ -462,7 +462,7 @@ const HomePage: React.FC = () => {
 
                         {/* Right Column - Simple Search Card */}
                         <div className="lg:mt-0 group">
-                            <Card ref={searchCardRef} className="shadow-[0_24px_70px_rgba(14,116,144,0.45)] border border-cyan-300/35 overflow-hidden rounded-3xl relative group bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-blue-950/85">
+                            <Card ref={searchCardRef} className="shadow-[0_30px_80px_rgba(14,116,144,0.52)] border border-cyan-200/50 ring-1 ring-cyan-200/20 overflow-hidden rounded-3xl relative group bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-blue-950/85">
                                 <div className="absolute inset-0 w-full h-full pointer-events-none">
                                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.18),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(16,185,129,0.16),transparent_40%),linear-gradient(125deg,rgba(2,6,23,0.95),rgba(30,41,59,0.9),rgba(15,23,42,0.95))]" />
                                     <div className="absolute -top-28 -right-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
@@ -483,8 +483,8 @@ const HomePage: React.FC = () => {
                                     </div>
                                 )}
 
-                                <CardContent className="relative z-10 p-6 md:p-8 space-y-6">
-                                    <div className="space-y-3">
+                                <CardContent className="relative z-10 px-4 sm:px-5 py-4 md:py-5 space-y-5">
+                                    <div className="space-y-2.5">
                                         <Badge className="px-4 py-2 bg-gradient-to-r from-cyan-500/85 to-blue-500/85 backdrop-blur-sm border-white/30 text-white font-semibold shadow-lg">
                                             <Search className="w-4 h-4 mr-2" />
                                             Quick Room Search
@@ -533,13 +533,6 @@ const HomePage: React.FC = () => {
                                             placeholder={`Search ${placeholderTerms[searchPlaceholderIndex]}`}
                                             className={`pl-4 pr-4 ${searchControlHeightClass} text-base font-semibold border-2 border-cyan-200/70 hover:border-cyan-300 focus:ring-2 focus:ring-cyan-200 focus:border-cyan-300 bg-white/95 backdrop-blur rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 text-slate-900 placeholder:text-slate-500`}
                                         />
-                                        <div className="flex flex-wrap gap-2">
-                                            {['Area', 'City', 'Landmark'].map((term) => (
-                                                <span key={term} className="text-[11px] px-2.5 py-1 rounded-full bg-white/15 border border-white/25 text-white/85 font-medium">
-                                                    {term}
-                                                </span>
-                                            ))}
-                                        </div>
                                         {adSlides.length > 1 && (
                                             <div className="flex items-center gap-2 pt-1">
                                                 {adSlides.slice(0, 6).map((_, index) => (
@@ -579,7 +572,7 @@ const HomePage: React.FC = () => {
                             </div>
                         )}
 
-                        <CardContent className="relative z-10 p-6 md:p-8 space-y-4">
+                        <CardContent className="relative z-10 px-4 sm:px-5 py-4 md:py-5 space-y-3.5">
                             <Badge className="px-4 py-2 bg-emerald-500/85 backdrop-blur-sm border-white/25 text-white font-semibold">
                                 <Home className="w-4 h-4 mr-2" />
                                 For Property Owners
@@ -638,7 +631,7 @@ const HomePage: React.FC = () => {
                 {/* Decorative Background */}
                 <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-green-primary to-transparent opacity-5" />
                 
-                <div className="max-w-screen-2xl mx-auto px-[20px] relative z-10">
+                <div className="max-w-screen-2xl mx-auto px-3 sm:px-4 relative z-10">
                     <div className="flex flex-wrap items-end justify-between gap-4 mb-12">
                         <div className="space-y-3">
                             <Badge className="px-3 py-1.5 bg-green-50 text-green-primary border-green-200 font-semibold">
@@ -706,7 +699,7 @@ const HomePage: React.FC = () => {
                 <div className="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
                 <div className="absolute bottom-20 left-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
                 
-                <div className="max-w-screen-2xl mx-auto px-[20px] relative z-10">
+                <div className="max-w-screen-2xl mx-auto px-3 sm:px-4 relative z-10">
                     <div className="flex flex-wrap items-end justify-between gap-4 mb-12">
                         <div className="space-y-3">
                             <Badge className="px-3 py-1.5 bg-green-100 text-green-700 border-green-200 font-semibold">
@@ -776,7 +769,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-[20px] relative z-10">
+                <div className="max-w-screen-2xl mx-auto px-3 sm:px-4 relative z-10">
                     <div className="text-center mb-16 max-w-3xl mx-auto">
                         <Badge className="px-4 py-2 mb-6 bg-white/10 backdrop-blur-sm border-white/20 text-white font-semibold">
                             <Shield className="w-4 h-4 mr-2 inline" />
@@ -822,7 +815,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-[20px] text-center relative z-10">
+                <div className="max-w-screen-2xl mx-auto px-3 sm:px-4 text-center relative z-10">
                     <div className="max-w-4xl mx-auto space-y-8">
                         <Badge className="px-4 py-2 bg-white/20 backdrop-blur-sm border-white/30 text-white font-semibold text-base">
                             <Sparkles className="w-4 h-4 mr-2 inline" />

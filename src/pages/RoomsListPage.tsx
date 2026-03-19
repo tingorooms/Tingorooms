@@ -78,7 +78,7 @@ const RoomsListPage: React.FC = () => {
     });
     const [showMobileAdvancedFilters, setShowMobileAdvancedFilters] = useState(false);
     const [expandedSections, setExpandedSections] = useState({
-        location: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
+        location: true,
         price: true,
         property: true,
         preferences: true
@@ -522,7 +522,7 @@ const RoomsListPage: React.FC = () => {
                     <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
                 </div>
                 
-                <div className="relative w-full px-2 sm:px-3 lg:px-4 pt-10 sm:pt-12 pb-[20px]">
+                <div className="relative w-full px-[2px] pt-10 sm:pt-12 pb-[10px]">
                     <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
                         <div className="max-w-3xl">
                             <div className="flex items-center gap-3 mb-4">
@@ -534,7 +534,7 @@ const RoomsListPage: React.FC = () => {
                             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
                                 Find Your Perfect Room
                             </h1>
-                            <p className="text-base sm:text-lg text-white/90 mb-6 max-w-2xl">
+                            <p className="text-base sm:text-lg text-white/90 mb-[10px] max-w-2xl">
                                 Discover available listings from verified landlords with secure and transparent booking experience.
                             </p>
                             <div className="flex flex-wrap gap-3">
@@ -543,9 +543,9 @@ const RoomsListPage: React.FC = () => {
                                     <span>Trending Areas</span>
                                 </div>
                             </div>
-                            <div className="mt-[4px] bg-white/10 backdrop-blur border border-white/20 rounded-xl p-3 sm:p-4">
-                                <div className="flex flex-col sm:flex-row sm:items-center lg:flex-nowrap gap-2 sm:gap-3">
-                                    <div className="relative w-full lg:flex-[4.2] min-w-0" ref={searchInputContainerRef}>
+                            <div className="mt-[10px] bg-white/10 backdrop-blur border border-white/20 rounded-xl px-[2px] py-3 sm:px-[2px] sm:py-4">
+                                <div className="flex items-center gap-2 w-full overflow-x-auto pb-1">
+                                    <div className="relative flex-1 min-w-[220px] z-50" ref={searchInputContainerRef}>
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                                         <Input
                                             ref={roomsSearchInputRef}
@@ -607,7 +607,7 @@ const RoomsListPage: React.FC = () => {
                                     </div>
 
                                     <Select value={sortBy} onValueChange={setSortBy}>
-                                        <SelectTrigger className="w-full sm:w-52 lg:w-56 h-10 border-white/30 bg-white/90 text-slate-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm">
+                                        <SelectTrigger className="w-[170px] sm:w-52 lg:w-56 h-10 border-white/30 bg-white/90 text-slate-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm shrink-0">
                                             <div className="flex items-center gap-2">
                                                 <ArrowUpDown className="w-4 h-4 text-slate-500" />
                                                 <SelectValue placeholder="Sort by" />
@@ -621,7 +621,7 @@ const RoomsListPage: React.FC = () => {
                                         </SelectContent>
                                     </Select>
 
-                                    <div className="hidden sm:flex gap-2 border border-white/30 bg-white/90 rounded-lg p-1 w-full sm:w-auto justify-center sm:justify-start">
+                                    <div className="flex gap-2 border border-white/30 bg-white/90 rounded-lg p-1 w-auto shrink-0">
                                         <Button
                                             variant={viewType === 'grid' ? 'default' : 'ghost'}
                                             size="sm"
@@ -648,14 +648,14 @@ const RoomsListPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="w-full px-2 sm:px-3 lg:px-4 pt-0 sm:pt-6 pb-6 sm:pb-8">
+            <div className="w-full px-[2px] pt-[10px] pb-6 sm:pb-8">
 
                 {/* Faceted Search Filters */}
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-0 lg:gap-5">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
                 {/* Filter Sidebar */}
-                <div className="lg:col-span-1">
-                    <Card className="sticky top-4 shadow-lg border-0 rounded-xl overflow-hidden mb-0 lg:mb-0">
-                        <CardContent className="px-3 py-2 sm:px-4 sm:py-4">
+                <div className="lg:col-span-1 w-full">
+                    <Card className="w-full lg:sticky top-4 shadow-lg border-0 rounded-xl overflow-hidden mb-0 lg:mb-0">
+                        <CardContent className="px-[2px] py-2 sm:px-[2px] sm:py-4">
                             {/* Filter Header */}
                             <div className="flex items-center justify-between mb-3 sm:mb-6 pb-3 sm:pb-4 border-b border-slate-200">
                                 <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -928,13 +928,13 @@ const RoomsListPage: React.FC = () => {
                     ))}
                 </div>
             ) : displayedRooms.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 px-4">
-                    <div className="text-center max-w-4xl mx-auto w-full">
-                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-sm">
-                            <Building2 className="w-10 h-10 text-slate-400" />
+                <div className="flex flex-col items-center justify-center py-12 px-4">
+                    <div className="text-center max-w-2xl mx-auto w-full">
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-sm">
+                            <Building2 className="w-8 h-8 text-slate-400" />
                         </div>
-                        <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">No Exact Match Found</h3>
-                        <p className="text-slate-600 mb-6 text-base">
+                        <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">No Exact Match Found</h3>
+                        <p className="text-slate-600 mb-4 text-sm">
                             {filters.search
                                 ? `No listings match "${filters.search}".`
                                 : filters.city && filters.city !== 'all'
@@ -942,19 +942,61 @@ const RoomsListPage: React.FC = () => {
                                     : 'No listings found with your current filters.'}
                         </p>
                         {hasActiveFilters && (
-                            <Button onClick={clearAllFilters} className="bg-blue-600 hover:bg-blue-700 mb-8">
+                            <Button onClick={clearAllFilters} className="bg-blue-600 hover:bg-blue-700 mb-6 text-sm py-1 px-3">
                                 Clear All Filters
                             </Button>
                         )}
 
                         {/* Similar Listings Section */}
                         {similarRooms.length > 0 && (
-                            <div className="mt-12 w-full">
-                                <div className="mb-8 pb-4 border-b border-slate-200">
-                                    <h4 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">You Can See Similar Listings</h4>
-                                    <p className="text-slate-600">Here are available rooms in <span className="font-semibold text-blue-600">{filters.city}</span> district</p>
+                            <div className="mt-8 w-full">
+                                <div className="mb-4 pb-2 border-b border-slate-200">
+                                    <h4 className="text-sm sm:text-base font-bold text-slate-900 mb-1">You Can See Similar Listings</h4>
+                                    <p className="text-slate-600 text-xs">Available rooms in <span className="font-semibold text-blue-600">{filters.city}</span> district</p>
                                 </div>
-                                <div className="grid gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                                    {similarRooms.map((room) => (
+                                        <RoomCard
+                                            key={room.room_id}
+                                            room={room}
+                                            onChat={handleChatClick}
+                                            showViews={false}
+                                            viewMode="grid"
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ) : displayedRooms.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 px-4">
+                    <div className="text-center max-w-2xl mx-auto w-full">
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-sm">
+                            <Building2 className="w-8 h-8 text-slate-400" />
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">No Exact Match Found</h3>
+                        <p className="text-slate-600 mb-4 text-sm">
+                            {filters.search
+                                ? `No listings match "${filters.search}".`
+                                : filters.city && filters.city !== 'all'
+                                    ? `No listings found with your current filters in ${filters.city} district.`
+                                    : 'No listings found with your current filters.'}
+                        </p>
+                        {hasActiveFilters && (
+                            <Button onClick={clearAllFilters} className="bg-blue-600 hover:bg-blue-700 mb-6 text-sm py-1 px-3">
+                                Clear All Filters
+                            </Button>
+                        )}
+
+                        {/* Similar Listings Section */}
+                        {similarRooms.length > 0 && (
+                            <div className="mt-8 w-full">
+                                <div className="mb-4 pb-2 border-b border-slate-200">
+                                    <h4 className="text-sm sm:text-base font-bold text-slate-900 mb-1">You Can See Similar Listings</h4>
+                                    <p className="text-slate-600 text-xs">Available rooms in <span className="font-semibold text-blue-600">{filters.city}</span> district</p>
+                                </div>
+                                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                                     {similarRooms.map((room) => (
                                         <RoomCard
                                             key={room.room_id}
