@@ -462,9 +462,11 @@ const HomePage: React.FC = () => {
 
                         {/* Right Column - Simple Search Card */}
                         <div className="lg:mt-0 group">
-                            <Card ref={searchCardRef} className="shadow-2xl border border-white/10 overflow-hidden rounded-3xl relative group bg-gradient-to-br from-slate-900 via-slate-800 to-blue-950">
+                            <Card ref={searchCardRef} className="shadow-[0_24px_70px_rgba(14,116,144,0.45)] border border-cyan-300/35 overflow-hidden rounded-3xl relative group bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-blue-950/85">
                                 <div className="absolute inset-0 w-full h-full pointer-events-none">
                                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.18),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(16,185,129,0.16),transparent_40%),linear-gradient(125deg,rgba(2,6,23,0.95),rgba(30,41,59,0.9),rgba(15,23,42,0.95))]" />
+                                    <div className="absolute -top-28 -right-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
+                                    <div className="absolute -bottom-20 -left-16 h-64 w-64 rounded-full bg-emerald-400/15 blur-3xl" />
                                 </div>
 
                                 {currentSlide && currentSlide.imageUrl && (
@@ -483,11 +485,11 @@ const HomePage: React.FC = () => {
 
                                 <CardContent className="relative z-10 p-6 md:p-8 space-y-6">
                                     <div className="space-y-3">
-                                        <Badge className="px-4 py-2 bg-white/20 backdrop-blur-sm border-white/30 text-white font-semibold">
+                                        <Badge className="px-4 py-2 bg-gradient-to-r from-cyan-500/85 to-blue-500/85 backdrop-blur-sm border-white/30 text-white font-semibold shadow-lg">
                                             <Search className="w-4 h-4 mr-2" />
                                             Quick Room Search
                                         </Badge>
-                                        <h3 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+                                        <h3 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-cyan-200 via-sky-100 to-emerald-200 bg-clip-text text-transparent leading-tight">
                                             Start with a keyword
                                         </h3>
                                         <p className="text-white/85 text-base md:text-lg leading-relaxed">
@@ -529,8 +531,15 @@ const HomePage: React.FC = () => {
                                                 navigate(query ? `/rooms?search=${encodeURIComponent(query)}&focusSearch=1` : '/rooms?focusSearch=1');
                                             }}
                                             placeholder={`Search ${placeholderTerms[searchPlaceholderIndex]}`}
-                                            className={`pl-4 pr-4 ${searchControlHeightClass} text-base font-semibold border-2 border-white/30 hover:border-white/60 focus:ring-2 focus:ring-white/30 focus:border-white/60 bg-white/95 backdrop-blur rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-slate-900 placeholder:text-slate-500`}
+                                            className={`pl-4 pr-4 ${searchControlHeightClass} text-base font-semibold border-2 border-cyan-200/70 hover:border-cyan-300 focus:ring-2 focus:ring-cyan-200 focus:border-cyan-300 bg-white/95 backdrop-blur rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 text-slate-900 placeholder:text-slate-500`}
                                         />
+                                        <div className="flex flex-wrap gap-2">
+                                            {['Area', 'City', 'Landmark'].map((term) => (
+                                                <span key={term} className="text-[11px] px-2.5 py-1 rounded-full bg-white/15 border border-white/25 text-white/85 font-medium">
+                                                    {term}
+                                                </span>
+                                            ))}
+                                        </div>
                                         {adSlides.length > 1 && (
                                             <div className="flex items-center gap-2 pt-1">
                                                 {adSlides.slice(0, 6).map((_, index) => (

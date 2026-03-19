@@ -544,8 +544,8 @@ const RoomsListPage: React.FC = () => {
                                 </div>
                             </div>
                             <div className="mt-[4px] bg-white/10 backdrop-blur border border-white/20 rounded-xl p-3 sm:p-4">
-                                <div className="flex flex-col sm:flex-row sm:items-center lg:flex-nowrap gap-3">
-                                    <div className="relative w-full lg:flex-[1.4]" ref={searchInputContainerRef}>
+                                <div className="flex flex-col sm:flex-row sm:items-center lg:flex-nowrap gap-2 sm:gap-3">
+                                    <div className="relative w-full lg:flex-[4.2] min-w-0" ref={searchInputContainerRef}>
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                                         <Input
                                             ref={roomsSearchInputRef}
@@ -607,7 +607,7 @@ const RoomsListPage: React.FC = () => {
                                     </div>
 
                                     <Select value={sortBy} onValueChange={setSortBy}>
-                                        <SelectTrigger className="w-full sm:w-52 lg:w-72 h-10 border-white/30 bg-white/90 text-slate-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm">
+                                        <SelectTrigger className="w-full sm:w-52 lg:w-56 h-10 border-white/30 bg-white/90 text-slate-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm">
                                             <div className="flex items-center gap-2">
                                                 <ArrowUpDown className="w-4 h-4 text-slate-500" />
                                                 <SelectValue placeholder="Sort by" />
@@ -750,8 +750,8 @@ const RoomsListPage: React.FC = () => {
 
                             {/* Filter Sections */}
                             <div className="space-y-6">
-                                {/* Search Section */}
-                                <div>
+                                {/* District Section (mobile: shown after tapping More Filters) */}
+                                <div className={showMobileAdvancedFilters ? 'block' : 'hidden lg:block'}>
                                     <div className="flex items-center justify-between mb-3 cursor-pointer hover:opacity-75 transition-opacity" onClick={() => toggleSection('location')}>
                                         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                             <MapPin className="w-4 h-4 text-blue-600" />
