@@ -129,6 +129,7 @@ router.get('/rooms', async (req, res, next) => {
                    r.availability_from, r.furnishing_type, r.facilities, 
                    r.preferred_gender, r.images, r.views_count, r.post_date,
                    r.contact, r.contact_visibility, r.user_id,
+                   r.latitude, r.longitude,
                    u.name as owner_name, u.unique_id as owner_unique_id,
                    ${searchScoreExpression} as search_score
             FROM rooms r

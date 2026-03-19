@@ -129,12 +129,31 @@ const MapSection: React.FC = () => {
         injectMapStyles();
     }, []);
 
-    // Create custom pin icon
-    const createPinIcon = useCallback((listingType: string): L.DivIcon => {
+    // Create custom pin icon with title tooltip
+    const createPinIcon = useCallback((listingType: string, title?: string): L.DivIcon => {
         const config = PIN_CONFIGS[listingType] ?? PIN_CONFIGS['For Rent'];
         const svg = createPinSvg(config.color);
+        const shortTitle = title ? (title.length > 22 ? title.substring(0, 20) + '…' : title) : '';
+        const labelHtml = shortTitle
+            ? `<div style="
+                position:absolute;
+                bottom:50px;
+                left:50%;
+                transform:translateX(-50%);
+                background:rgba(15,23,42,0.88);
+                color:#fff;
+                font-size:10px;
+                font-weight:600;
+                padding:2px 7px;
+                border-radius:20px;
+                white-space:nowrap;
+                pointer-events:none;
+                line-height:1.5;
+                backdrop-filter:blur(4px);
+              ">${shortTitle}</div>`
+            : '';
         return L.divIcon({
-            html: `<div style="width:32px;height:46px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.25));transition:transform 0.2s ease;">${svg}</div>`,
+            html: `<div style="position:relative;width:32px;height:46px;">${labelHtml}<div style="width:32px;height:46px;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.25));transition:transform 0.2s ease;">${svg}</div></div>`,
             className: 'map-custom-pin',
             iconSize: [32, 46],
             iconAnchor: [16, 46],
@@ -236,7 +255,7 @@ const MapSection: React.FC = () => {
         const fetchRooms = async () => {
             try {
                 setIsLoading(true);
-                const data = await getRooms({ limit: 100, page: 1 });
+                const data = await getRooms({ limit: 200, page: 1 });
                 const valid = (data.data ?? []).filter(
                     (r) =>
                         typeof r.latitude === 'number' &&
@@ -272,7 +291,7 @@ const MapSection: React.FC = () => {
             // Only render markers visible in (padded) current viewport
             if (paddedBounds && !paddedBounds.contains([room.latitude, room.longitude])) return;
 
-            const icon = createPinIcon(room.listing_type);
+            const icon = createPinIcon(room.listing_type, room.title);
             const roomPath = buildRoomPath(room.room_id, room.title, room.area, room.city);
             const images = parseImages(room.images);
             const config = PIN_CONFIGS[room.listing_type] ?? PIN_CONFIGS['For Rent'];

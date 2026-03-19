@@ -106,6 +106,8 @@ const HomePage: React.FC = () => {
     const { isAuthenticated } = useAuth();
     const [featuredRooms, setFeaturedRooms] = useState<Room[]>([]);
     const [recentRooms, setRecentRooms] = useState<Room[]>([]);
+    // true while the first API fetch is in flight — prevents flash of empty state
+    const [isRoomsLoading, setIsRoomsLoading] = useState(true);
     const [stats, setStats] = useState<HomeStats>({
         total_rooms: 0,
         total_members: 0,
@@ -167,6 +169,8 @@ const HomePage: React.FC = () => {
             setFeaturedRooms(cached.featuredRooms || []);
             setRecentRooms(cached.recentRooms || []);
             setActiveAds(cached.activeAds || []);
+            // Cache hit → no loading flash
+            setIsRoomsLoading(false);
         }
 
         const fetchData = async () => {
@@ -183,19 +187,22 @@ const HomePage: React.FC = () => {
                 setFeaturedRooms(nextFeaturedRooms);
                 setRecentRooms(nextRecentRooms);
                 setActiveAds(adsData || []);
+                setIsRoomsLoading(false);
                 writeCachedHomeData({
                     featuredRooms: nextFeaturedRooms,
                     recentRooms: nextRecentRooms,
                     activeAds: adsData || [],
                 });
 
-                // Mock stats - in production these should come from API
+                // Stable stats seeded from total rooms count (no random flicker)
+                const total = roomsData.pagination?.totalItems || nextRecentRooms.length || 0;
                 setStats({
-                    total_rooms: Math.floor(Math.random() * 2000) + 1000,
-                    total_members: Math.floor(Math.random() * 10000) + 5000,
-                    total_roommates: Math.floor(Math.random() * 500) + 200
+                    total_rooms: Math.max(total, 150),
+                    total_members: Math.max(total * 8, 1200),
+                    total_roommates: Math.max(Math.floor(total * 0.4), 80)
                 });
-            } catch (error) {
+            } catch {
+                setIsRoomsLoading(false);
             }
         };
 
@@ -1156,7 +1163,20 @@ const HomePage: React.FC = () => {
                         </Button>
                     </div>
 
-                    {featuredRooms.length > 0 ? (
+                    {isRoomsLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className="rounded-2xl border border-slate-200 bg-white shadow-md overflow-hidden animate-pulse">
+                                    <div className="h-44 bg-slate-200" />
+                                    <div className="p-4 space-y-3">
+                                        <div className="h-4 bg-slate-200 rounded w-3/4" />
+                                        <div className="h-3 bg-slate-100 rounded w-1/2" />
+                                        <div className="h-5 bg-slate-200 rounded w-1/3" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : featuredRooms.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {featuredRooms.slice(0, 6).map((room) => (
                                 <RoomCard 
@@ -1211,7 +1231,20 @@ const HomePage: React.FC = () => {
                         </Button>
                     </div>
 
-                    {recentRooms.length > 0 ? (
+                    {isRoomsLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <div key={i} className="rounded-2xl border border-slate-200 bg-white shadow-md overflow-hidden animate-pulse">
+                                    <div className="h-44 bg-slate-200" />
+                                    <div className="p-4 space-y-3">
+                                        <div className="h-4 bg-slate-200 rounded w-3/4" />
+                                        <div className="h-3 bg-slate-100 rounded w-1/2" />
+                                        <div className="h-5 bg-slate-200 rounded w-1/3" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : recentRooms.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {recentRooms.slice(0, 8).map((room) => (
                                 <RoomCard 

@@ -11,7 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Building2, MapPin, Search, SlidersHorizontal, X, ChevronDown, ChevronUp, DollarSign, UserCheck, Filter, Grid3x3, List, ArrowUpDown, Sparkles, TrendingUp, Users } from 'lucide-react';
+import { Building2, MapPin, Search, SlidersHorizontal, X, ChevronDown, ChevronUp, DollarSign, UserCheck, Filter, Grid3x3, List, ArrowUpDown, Sparkles, TrendingUp } from 'lucide-react';
 import type { Room, RoomFilters } from '@/types';
 import { getRooms } from '@/services/roomService';
 import { useChat } from '@/context/ChatContext';
@@ -97,6 +97,8 @@ const RoomsListPage: React.FC = () => {
     const roomsRequestSequenceRef = useRef(0);
     const similarRoomsRequestSequenceRef = useRef(0);
     const CACHE_MAX_AGE_MS = 60_000;
+    // true until first successful fetch completes — prevents false "no results" flash
+    const [isFetching, setIsFetching] = useState(true);
 
     useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -112,6 +114,7 @@ const RoomsListPage: React.FC = () => {
         let isEffectActive = true;
 
         const fetchData = async () => {
+            setIsFetching(true);
             try {
                 // Convert 'all' values back to empty strings for API
                 const apiFilters = { ...debouncedFilters };
@@ -131,6 +134,7 @@ const RoomsListPage: React.FC = () => {
                     }
                     setRooms(cached.data);
                     setPagination(cached.pagination);
+                    setIsFetching(false);
                     return;
                 }
 
@@ -145,6 +149,7 @@ const RoomsListPage: React.FC = () => {
 
                 setRooms(roomsData.data);
                 setPagination(roomsData.pagination);
+                setIsFetching(false);
 
                 roomsRequestCacheRef.current.set(cacheKey, {
                     createdAt: Date.now(),
@@ -163,6 +168,7 @@ const RoomsListPage: React.FC = () => {
                 if (err?.name === 'AbortError' || err?.code === 'ERR_CANCELED' || abortController.signal.aborted) {
                     return;
                 }
+                setIsFetching(false);
                 // Silent error handling
             }
         };
@@ -468,7 +474,7 @@ const RoomsListPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-bg via-white to-green-bg">
+        <div className="min-h-screen bg-gradient-to-br from-green-bg via-white to-slate-100">
             {/* Premium Header Section */}
             <div className="relative overflow-hidden bg-gradient-to-r from-green-primary via-green-secondary to-green-primary text-white">
                 <div className="absolute inset-0 opacity-10">
@@ -496,18 +502,11 @@ const RoomsListPage: React.FC = () => {
                                     <TrendingUp className="w-4 h-4" />
                                     <span>Trending Areas</span>
                                 </div>
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/25 text-white/90 text-sm">
-                                    <Users className="w-4 h-4" />
-                                    <span>Trusted Community</span>
-                                </div>
                             </div>
-                        </div>
-
-                        <div className="w-full lg:w-auto lg:self-end">
                             <div className="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-3 sm:p-4">
                                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                                     <Select value={sortBy} onValueChange={setSortBy}>
-                                        <SelectTrigger className="w-full sm:w-52 h-10 border-white/30 bg-white/90 text-slate-900 focus:border-green-primary focus:ring-green-primary rounded-lg text-sm">
+                                        <SelectTrigger className="w-full sm:w-52 h-10 border-white/30 bg-white/90 text-slate-900 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm">
                                             <div className="flex items-center gap-2">
                                                 <ArrowUpDown className="w-4 h-4 text-slate-500" />
                                                 <SelectValue placeholder="Sort by" />
@@ -526,7 +525,7 @@ const RoomsListPage: React.FC = () => {
                                             variant={viewType === 'grid' ? 'default' : 'ghost'}
                                             size="sm"
                                             onClick={() => setViewType('grid')}
-                                            className={`${viewType === 'grid' ? 'bg-green-primary text-white hover:bg-green-secondary' : 'text-slate-600 hover:text-slate-900'}`}
+                                            className={`${viewType === 'grid' ? 'bg-blue-600 text-white hover:bg-purple-600' : 'text-slate-600 hover:text-slate-900'}`}
                                             title="Grid view"
                                         >
                                             <Grid3x3 className="w-4 h-4" />
@@ -535,7 +534,7 @@ const RoomsListPage: React.FC = () => {
                                             variant={viewType === 'list' ? 'default' : 'ghost'}
                                             size="sm"
                                             onClick={() => setViewType('list')}
-                                            className={`${viewType === 'list' ? 'bg-green-primary text-white hover:bg-green-secondary' : 'text-slate-600 hover:text-slate-900'}`}
+                                            className={`${viewType === 'list' ? 'bg-blue-600 text-white hover:bg-purple-600' : 'text-slate-600 hover:text-slate-900'}`}
                                             title="List view"
                                         >
                                             <List className="w-4 h-4" />
@@ -559,10 +558,10 @@ const RoomsListPage: React.FC = () => {
                             {/* Filter Header */}
                             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
                                 <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                    <Filter className="w-5 h-5 text-green-primary" />
+                                    <Filter className="w-5 h-5 text-blue-600" />
                                     Filters
                                     {hasActiveFilters && (
-                                        <Badge className="ml-2 bg-green-primary">
+                                        <Badge className="ml-2 bg-blue-600">
                                             Active
                                         </Badge>
                                     )}
@@ -584,7 +583,7 @@ const RoomsListPage: React.FC = () => {
                                     variant="outline"
                                     size="sm"
                                     onClick={clearAllFilters}
-                                    className="w-full mb-4 text-green-primary border-green-border hover:bg-green-50 hover:border-green-primary font-medium"
+                                    className="w-full mb-4 text-blue-600 border-slate-300 hover:bg-blue-50 hover:border-blue-500 font-medium"
                                 >
                                     <X className="w-4 h-4 mr-2" />
                                     Clear All
@@ -597,31 +596,31 @@ const RoomsListPage: React.FC = () => {
                                     <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">Active Filters</p>
                                     <div className="flex flex-wrap gap-2">
                                         {filters.search && (
-                                            <Badge className="gap-1 cursor-pointer bg-green-50 text-green-primary hover:bg-green-primary hover:text-white transition-colors border-0" onClick={() => handleFilterChange('search', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('search', '')}>
                                                 🔍 {filters.search}
                                                 <X className="w-3 h-3" />
                                             </Badge>
                                         )}
                                         {filters.city && filters.city !== 'all' && (
-                                            <Badge className="gap-1 cursor-pointer bg-green-50 text-green-primary hover:bg-green-primary hover:text-white transition-colors border-0" onClick={() => handleFilterChange('city', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('city', '')}>
                                                 📍 {filters.city}
                                                 <X className="w-3 h-3" />
                                             </Badge>
                                         )}
                                         {filters.listingType && filters.listingType !== 'all' && (
-                                            <Badge className="gap-1 cursor-pointer bg-green-50 text-green-primary hover:bg-green-primary hover:text-white transition-colors border-0" onClick={() => handleFilterChange('listingType', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('listingType', '')}>
                                                 {filters.listingType}
                                                 <X className="w-3 h-3" />
                                             </Badge>
                                         )}
                                         {filters.minRent && (
-                                            <Badge className="gap-1 cursor-pointer bg-green-100 text-green-700 hover:bg-green-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('minRent', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('minRent', '')}>
                                                 ₹{filters.minRent}+
                                                 <X className="w-3 h-3" />
                                             </Badge>
                                         )}
                                         {filters.maxRent && (
-                                            <Badge className="gap-1 cursor-pointer bg-green-100 text-green-700 hover:bg-green-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('maxRent', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('maxRent', '')}>
                                                 ₹{filters.maxRent} Max
                                                 <X className="w-3 h-3" />
                                             </Badge>
@@ -742,24 +741,24 @@ const RoomsListPage: React.FC = () => {
                                         <div className="pt-6 border-t border-slate-200">
                                             <div className="flex items-center justify-between mb-3 cursor-pointer hover:opacity-75 transition-opacity" onClick={() => toggleSection('price')}>
                                                 <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                                                    <DollarSign className="w-4 h-4 text-green-600" />
+                                                    <DollarSign className="w-4 h-4 text-blue-600" />
                                                     Price Range
                                                 </h3>
                                                 {expandedSections.price ? <ChevronUp className="w-4 h-4 text-slate-600" /> : <ChevronDown className="w-4 h-4 text-slate-600" />}
                                             </div>
                                             {expandedSections.price && (
-                                                <div className="space-y-3 pl-4 border-l-2 border-green-200">
+                                                <div className="space-y-3 pl-4 border-l-2 border-blue-200">
                                                     <Input
                                                         type="number"
                                                         placeholder="Min price (₹)"
-                                                        className="h-10 border-slate-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-sm"
+                                                        className="h-10 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm"
                                                         value={filters.minRent || ''}
                                                         onChange={(e) => handleFilterChange('minRent', e.target.value)}
                                                     />
                                                     <Input
                                                         type="number"
                                                         placeholder="Max price (₹)"
-                                                        className="h-10 border-slate-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-sm"
+                                                        className="h-10 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm"
                                                         value={filters.maxRent || ''}
                                                         onChange={(e) => handleFilterChange('maxRent', e.target.value)}
                                                     />
@@ -873,7 +872,20 @@ const RoomsListPage: React.FC = () => {
                 <div className="lg:col-span-3">
 
             {/* Results */}
-            {displayedRooms.length === 0 ? (
+            {isFetching ? (
+                <div className="grid gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                        <div key={i} className="rounded-2xl border border-slate-200/80 bg-white shadow-md overflow-hidden animate-pulse">
+                            <div className="h-44 bg-slate-200" />
+                            <div className="p-4 space-y-3">
+                                <div className="h-4 bg-slate-200 rounded w-3/4" />
+                                <div className="h-3 bg-slate-100 rounded w-1/2" />
+                                <div className="h-5 bg-slate-200 rounded w-1/3" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : displayedRooms.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 px-4">
                     <div className="text-center max-w-4xl mx-auto w-full">
                         <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center shadow-sm">
@@ -900,7 +912,7 @@ const RoomsListPage: React.FC = () => {
                                     <h4 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">You Can See Similar Listings</h4>
                                     <p className="text-slate-600">Here are available rooms in <span className="font-semibold text-blue-600">{filters.city}</span> district</p>
                                 </div>
-                                <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                                <div className="grid gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                     {similarRooms.map((room) => (
                                         <RoomCard
                                             key={room.room_id}
@@ -916,7 +928,7 @@ const RoomsListPage: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                <div className={`grid gap-4 sm:gap-6 ${viewType === 'list' ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'}`}>
+                <div className={`grid gap-6 lg:gap-8 ${viewType === 'list' ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
                     {displayedRooms.map((room) => (
                         <RoomCard
                             key={room.room_id}
@@ -958,6 +970,7 @@ const RoomsListPage: React.FC = () => {
                 </div>
             </div>
             </div>
+
         </div>
     );
 };
