@@ -503,7 +503,7 @@ const RoomsListPage: React.FC = () => {
                     <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
                 </div>
                 
-                <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-12 pb-[20px]">
+                <div className="relative w-full px-2 sm:px-3 lg:px-4 pt-10 sm:pt-12 pb-[20px]">
                     <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
                         <div className="max-w-3xl">
                             <div className="flex items-center gap-3 mb-4">
@@ -568,14 +568,14 @@ const RoomsListPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="container mx-auto px-2 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <div className="w-full px-2 sm:px-3 lg:px-4 py-6 sm:py-8">
 
                 {/* Faceted Search Filters */}
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-5">
                 {/* Filter Sidebar */}
                 <div className="lg:col-span-1">
                     <Card className="sticky top-4 shadow-lg border-0 rounded-xl overflow-hidden">
-                        <CardContent className="px-4 py-[5px] sm:p-6">
+                        <CardContent className="px-3 py-2 sm:px-4 sm:py-4">
                             {/* Filter Header */}
                             <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-200">
                                 <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
