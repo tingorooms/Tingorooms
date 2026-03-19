@@ -122,7 +122,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onChat, viewMode = 'grid' }) 
     const handleChatButtonClick = async () => {
         if (isChatStarting) return;
         if (!isAuthenticated) {
-            navigate('/login');
+            navigate('/login', { state: { from: { pathname: window.location.pathname, search: window.location.search } } });
             return;
         }
         if (!onChat) return;
@@ -165,7 +165,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onChat, viewMode = 'grid' }) 
                     className={`relative overflow-hidden bg-slate-100 cursor-pointer ${
                         viewMode === 'list'
                             ? 'w-full h-52 md:w-72 md:h-auto md:min-h-[240px] flex-shrink-0 rounded-t-2xl md:rounded-t-none md:rounded-l-2xl'
-                            : 'w-full h-52 rounded-t-2xl'
+                            : 'w-full aspect-video rounded-t-2xl'
                     }`}
                     onClick={() => navigate(roomPath)}
                 >
@@ -176,7 +176,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onChat, viewMode = 'grid' }) 
                             loading="lazy"
                             decoding="async"
                             className={`w-full object-cover transition-transform duration-700 group-hover:scale-110 ${
-                                viewMode === 'list' ? 'h-full min-h-[240px]' : 'h-52'
+                                viewMode === 'list' ? 'h-full min-h-[240px]' : 'h-full'
                             }`}
                             onError={(e) => {
                                 (e.target as HTMLImageElement).style.display = 'none';

@@ -94,17 +94,19 @@ function injectMapStyles() {
     document.head.appendChild(style);
 }
 
+let _pinSvgSeq = 0;
 const createPinSvg = (color: string): string => {
-    const encodedColor = encodeURIComponent(color);
+    // Each SVG gets a unique filter ID to prevent DOM ID conflicts across many pins
+    const uid = `psf${++_pinSvgSeq}`;
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 46" width="32" height="46">
         <defs>
-            <filter id="pin-drop-shadow" x="-30%" y="-10%" width="160%" height="140%">
+            <filter id="${uid}" x="-30%" y="-10%" width="160%" height="140%">
                 <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.30)"/>
             </filter>
         </defs>
-        <path filter="url(#pin-drop-shadow)" d="M16 0C7.163 0 0 7.163 0 16c0 5.202 2.505 9.825 6.391 12.763L16 46l9.609-17.237C29.495 25.825 32 21.202 32 16 32 7.163 24.837 0 16 0z" fill="${encodedColor}"/>
+        <path filter="url(#${uid})" d="M16 0C7.163 0 0 7.163 0 16c0 5.202 2.505 9.825 6.391 12.763L16 46l9.609-17.237C29.495 25.825 32 21.202 32 16 32 7.163 24.837 0 16 0z" fill="${color}"/>
         <circle cx="16" cy="16" r="8.5" fill="white"/>
-        <circle cx="16" cy="16" r="5" fill="${encodedColor}"/>
+        <circle cx="16" cy="16" r="5" fill="${color}"/>
     </svg>`;
 };
 

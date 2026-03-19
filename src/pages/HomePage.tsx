@@ -446,7 +446,7 @@ const HomePage: React.FC = () => {
     const handleChatClick = async (roomId: string) => {
         try {
             if (!isAuthenticated) {
-                navigate('/login');
+                navigate('/login', { state: { from: { pathname: window.location.pathname, search: window.location.search } } });
                 return;
             }
 
@@ -1164,7 +1164,7 @@ const HomePage: React.FC = () => {
                     </div>
 
                     {isRoomsLoading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                             {Array.from({ length: 6 }).map((_, i) => (
                                 <div key={i} className="rounded-2xl border border-slate-200 bg-white shadow-md overflow-hidden animate-pulse">
                                     <div className="h-44 bg-slate-200" />
@@ -1177,7 +1177,7 @@ const HomePage: React.FC = () => {
                             ))}
                         </div>
                     ) : featuredRooms.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                             {featuredRooms.slice(0, 6).map((room) => (
                                 <RoomCard 
                                     key={room.room_id} 
@@ -1232,7 +1232,7 @@ const HomePage: React.FC = () => {
                     </div>
 
                     {isRoomsLoading ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                             {Array.from({ length: 8 }).map((_, i) => (
                                 <div key={i} className="rounded-2xl border border-slate-200 bg-white shadow-md overflow-hidden animate-pulse">
                                     <div className="h-44 bg-slate-200" />
@@ -1245,7 +1245,7 @@ const HomePage: React.FC = () => {
                             ))}
                         </div>
                     ) : recentRooms.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                             {recentRooms.slice(0, 8).map((room) => (
                                 <RoomCard 
                                     key={room.room_id} 

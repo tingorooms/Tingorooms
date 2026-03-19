@@ -84,10 +84,10 @@ const BrokersPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-green-bg py-10 md:py-14">
+        <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-slate-100 py-10 md:py-14">
             <div className="max-w-screen-2xl mx-auto px-[20px] space-y-8">
                 <div className="text-center space-y-3">
-                    <Badge className="px-3 py-1.5 bg-green-50 text-green-primary border-green-200 font-semibold">
+                    <Badge className="px-3 py-1.5 bg-blue-50 text-blue-700 border-blue-200 font-semibold">
                         <BriefcaseBusiness className="w-3.5 h-3.5 mr-1.5 inline" />
                         Verified Professionals
                     </Badge>
@@ -99,7 +99,7 @@ const BrokersPage: React.FC = () => {
 
                 <Card className="border-slate-200 shadow-sm">
                     <CardContent className="p-4 md:p-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                             <div className="lg:col-span-2">
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -181,7 +181,7 @@ const BrokersPage: React.FC = () => {
                 ) : null}
 
                 {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                         {Array.from({ length: 6 }).map((_, index) => (
                             <Card key={index}>
                                 <CardContent className="p-5 space-y-4">
@@ -200,13 +200,13 @@ const BrokersPage: React.FC = () => {
                         ))}
                     </div>
                 ) : displayedBrokers.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                         {displayedBrokers.map((broker) => {
                             const brokerPath = buildBrokerPath(broker.unique_id || broker.id, broker.name);
                             return (
                             <Card
                                 key={broker.id}
-                                className="h-full border-slate-200 hover:border-green-300 hover:shadow-md transition-all cursor-pointer"
+                                className="h-full border-slate-200 hover:border-blue-300 hover:shadow-xl transition-all cursor-pointer"
                                 onClick={() => navigate(brokerPath)}
                                 role="button"
                                 tabIndex={0}
@@ -221,7 +221,7 @@ const BrokersPage: React.FC = () => {
                                     <div className="flex items-start gap-3">
                                         <Avatar className="h-12 w-12 border border-slate-200">
                                             <AvatarImage src={getProfileImageUrl(broker.profile_image)} alt={broker.name} />
-                                            <AvatarFallback className="bg-green-50 text-green-primary font-semibold">
+                                            <AvatarFallback className="bg-blue-50 text-blue-700 font-semibold">
                                                 {broker.name?.slice(0, 2).toUpperCase() || 'BR'}
                                             </AvatarFallback>
                                         </Avatar>
@@ -245,7 +245,7 @@ const BrokersPage: React.FC = () => {
                                     </div>
 
                                     <div className="mt-4">
-                                        <Badge variant="secondary" className="bg-green-50 text-green-primary border border-green-100">
+                                        <Badge variant="secondary" className="bg-blue-50 text-blue-700 border border-blue-100">
                                             <Building2 className="w-3.5 h-3.5 mr-1" />
                                             {broker.room_count || 0} Approved Listings
                                         </Badge>
@@ -274,7 +274,7 @@ const BrokersPage: React.FC = () => {
                                                         event.stopPropagation();
                                                         navigate(brokerPath);
                                                     }}
-                                                    className="w-full bg-green-primary hover:bg-green-600"
+                                                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110"
                                                     size="sm"
                                                 >
                                                     <BriefcaseBusiness className="w-4 h-4 mr-2" />
@@ -295,14 +295,14 @@ const BrokersPage: React.FC = () => {
                                                         </Button>
                                                     )}
                                                     {hasPhone ? (
-                                                        <Button asChild size="sm" className="bg-green-600 hover:bg-green-700">
+                                                        <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110">
                                                             <a href={whatsappUrl || '#'} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()}>
                                                                 <MessageCircle className="w-4 h-4 mr-1" />
                                                                 WhatsApp
                                                             </a>
                                                         </Button>
                                                     ) : (
-                                                        <Button size="sm" className="bg-green-600 hover:bg-green-700" disabled>
+                                                        <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110" disabled>
                                                             <MessageCircle className="w-4 h-4 mr-1" />
                                                             WhatsApp
                                                         </Button>

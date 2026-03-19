@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import { Building2, MapPin, Search, SlidersHorizontal, X, ChevronDown, ChevronUp
 import type { Room, RoomFilters } from '@/types';
 import { getRooms } from '@/services/roomService';
 import { useChat } from '@/context/ChatContext';
+import { useAuth } from '@/context/AuthContext';
 import RoomCard from '@/components/rooms/RoomCard';
 
 // Maharashtra Districts List
@@ -83,6 +84,8 @@ const RoomsListPage: React.FC = () => {
         preferences: true
     });
     const { openChat } = useChat();
+    const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
     const [pagination, setPagination] = useState({
         currentPage: 1,
         totalPages: 1,
@@ -413,6 +416,10 @@ const RoomsListPage: React.FC = () => {
         (filters.gender && filters.gender !== 'all');
 
     const handleChatClick = async (roomId: string) => {
+        if (!isAuthenticated) {
+            navigate('/login', { state: { from: { pathname: window.location.pathname, search: window.location.search } } });
+            return;
+        }
         const room = rooms.find((item) => item.room_id === roomId);
         const chatRoomId = room?.id ?? (room?.room_id ? Number(room.room_id) : undefined);
 
