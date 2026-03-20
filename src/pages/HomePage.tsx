@@ -22,9 +22,11 @@ import {
 } from 'lucide-react';
 import type { Room } from '@/types';
 import { getRooms, getActiveAds, type PublicAd } from '@/services/roomService';
+import { getPublicBrokers } from '@/services/brokerService';
 import { useChat } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
 import RoomCard from '@/components/rooms/RoomCard';
+import { WARM_BROKERS_LIST_KEY, WARM_ROOMS_LIST_KEY, writeWarmCache } from '@/lib/pageWarmCache';
 
 const HOME_CACHE_KEY = 'home-page-cache-v1';
 const HOME_CACHE_MAX_AGE_MS = 5 * 60 * 1000;
@@ -167,6 +169,42 @@ const HomePage: React.FC = () => {
                     total_members: Math.max(total * 8, 1200),
                     total_roommates: Math.max(Math.floor(total * 0.4), 80)
                 });
+
+                // Warm up Rooms/Brokers pages after Home is ready so navigation feels instant.
+                const runWarmPrefetch = async () => {
+                    try {
+                        const [roomsWarm, brokersWarm] = await Promise.all([
+                            getRooms({ page: 1, limit: 3 }),
+                            getPublicBrokers({ page: 1, limit: 3, sort: 'top_listed' })
+                        ]);
+
+                        writeWarmCache(WARM_ROOMS_LIST_KEY, {
+                            rooms: roomsWarm.data,
+                            pagination: roomsWarm.pagination,
+                        });
+
+                        writeWarmCache(WARM_BROKERS_LIST_KEY, {
+                            brokers: brokersWarm.data,
+                            pagination: brokersWarm.pagination,
+                        });
+                    } catch {
+                        // Silently ignore warmup errors.
+                    }
+                };
+
+                const idleHost = window as Window & {
+                    requestIdleCallback?: (cb: () => void) => number;
+                };
+
+                if (typeof idleHost.requestIdleCallback === 'function') {
+                    idleHost.requestIdleCallback(() => {
+                        void runWarmPrefetch();
+                    });
+                } else {
+                    globalThis.setTimeout(() => {
+                        void runWarmPrefetch();
+                    }, 400);
+                }
             } catch {
                 setIsRoomsLoading(false);
             }

@@ -17,6 +17,7 @@ import { getRooms } from '@/services/roomService';
 import { useChat } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
 import RoomCard from '@/components/rooms/RoomCard';
+import { readWarmCache, WARM_ROOMS_LIST_KEY } from '@/lib/pageWarmCache';
 
 // Maharashtra Districts List
 const MAHARASHTRA_DISTRICTS = [
@@ -73,6 +74,20 @@ const ROOM_CARD_ANIMATION_DELAY_CLASSES = [
     '[animation-delay:605ms]',
 ];
 
+const hasMeaningfulFilters = (filters: RoomFilters): boolean => {
+    return Boolean(
+        filters.city ||
+            filters.listingType ||
+            filters.search ||
+            filters.minRent !== undefined ||
+            filters.maxRent !== undefined ||
+            filters.roomType ||
+            filters.furnishingType ||
+            filters.gender ||
+            filters.userId !== undefined
+    );
+};
+
 const RoomsListPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
@@ -118,6 +133,27 @@ const RoomsListPage: React.FC = () => {
     const CACHE_MAX_AGE_MS = 60_000;
     // true until first successful fetch completes — prevents false "no results" flash
     const [isFetching, setIsFetching] = useState(true);
+    const [hasWarmStartData, setHasWarmStartData] = useState(false);
+
+    useEffect(() => {
+        if (hasMeaningfulFilters(filters) || pagination.currentPage !== 1) {
+            return;
+        }
+
+        const warm = readWarmCache<{ rooms: Room[]; pagination: typeof pagination }>(WARM_ROOMS_LIST_KEY);
+        if (!warm?.rooms?.length) {
+            return;
+        }
+
+        setRooms(warm.rooms);
+        setPagination((prev) => ({
+            ...prev,
+            ...warm.pagination,
+            currentPage: prev.currentPage,
+        }));
+        setIsFetching(false);
+        setHasWarmStartData(true);
+    }, []);
 
     useEffect(() => {
         const timer = window.setTimeout(() => {
@@ -133,12 +169,18 @@ const RoomsListPage: React.FC = () => {
         let isEffectActive = true;
 
         const fetchData = async () => {
-            setIsFetching(true);
             try {
                 // Convert 'all' values back to empty strings for API
                 const apiFilters = { ...debouncedFilters };
                 if (apiFilters.city === 'all') apiFilters.city = '';
                 if (apiFilters.listingType === 'all') apiFilters.listingType = '';
+
+                const canRunSilentRefresh =
+                    hasWarmStartData && !hasMeaningfulFilters(apiFilters) && pagination.currentPage === 1;
+
+                if (!canRunSilentRefresh) {
+                    setIsFetching(true);
+                }
 
                 const cacheKey = JSON.stringify({
                     ...apiFilters,

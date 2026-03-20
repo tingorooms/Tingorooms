@@ -11,6 +11,7 @@ import { Building2, MapPin, Search, Phone, Mail, Filter, BriefcaseBusiness, Mess
 import { getPublicBrokers, type PublicBroker } from '@/services/brokerService';
 import { getCities } from '@/services/roomService';
 import { buildBrokerPath, buildWhatsAppUrl, getProfileImageUrl, normalizePhoneForWhatsApp } from '@/lib/utils';
+import { readWarmCache, WARM_BROKERS_LIST_KEY } from '@/lib/pageWarmCache';
 
 const BrokersPage: React.FC = () => {
     const navigate = useNavigate();
@@ -24,10 +25,13 @@ const BrokersPage: React.FC = () => {
     const [cityFilter, setCityFilter] = useState('all');
     const [minListingsFilter, setMinListingsFilter] = useState('0');
     const [sortBy, setSortBy] = useState<'top_listed' | 'newest' | 'name_asc' | 'name_desc'>('top_listed');
+    const [hasWarmStartData, setHasWarmStartData] = useState(false);
 
-    const loadBrokers = async () => {
+    const loadBrokers = async (options?: { silent?: boolean }) => {
         try {
-            setLoading(true);
+            if (!options?.silent) {
+                setLoading(true);
+            }
             setError('');
 
             const brokersResponse = await getPublicBrokers({
@@ -48,7 +52,16 @@ const BrokersPage: React.FC = () => {
     };
 
     useEffect(() => {
-        loadBrokers();
+        const warm = readWarmCache<{ brokers: PublicBroker[] }>(WARM_BROKERS_LIST_KEY);
+        if (!warm?.brokers?.length) return;
+
+        setBrokers(warm.brokers);
+        setLoading(false);
+        setHasWarmStartData(true);
+    }, []);
+
+    useEffect(() => {
+        void loadBrokers({ silent: hasWarmStartData });
     }, [appliedSearch, cityFilter, minListingsFilter, sortBy]);
 
     useEffect(() => {

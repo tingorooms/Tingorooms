@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { MessageCircle, X, Star } from 'lucide-react';
 import { useChat } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
-import { getChatRooms, getUnreadCount, starChat, unstarChat } from '@/services/chatService';
+import { getCachedChatRooms, getChatRooms, getUnreadCount, starChat, unstarChat } from '@/services/chatService';
 import type { ChatRoom } from '@/types';
 import { getProfileImageUrl } from '@/lib/utils';
 
@@ -40,6 +40,22 @@ const FloatingChatButton: React.FC = () => {
         }
     }, []);
 
+    const openDropdownWithWarmData = useCallback(() => {
+        const cachedRooms = getCachedChatRooms();
+
+        if (cachedRooms && cachedRooms.length > 0) {
+            setChatRooms(cachedRooms);
+            const totalUnread = cachedRooms.reduce((sum, r) => sum + (r.unread_count || 0), 0);
+            setUnreadCount(totalUnread);
+            setLoading(false);
+        } else {
+            setLoading(true);
+        }
+
+        setShowDropdown(true);
+        void loadChatRooms(false);
+    }, [loadChatRooms]);
+
     // Load chat badge and rooms with route-friendly polling strategy.
     useEffect(() => {
         if (!isAuthenticated) {
@@ -50,7 +66,7 @@ const FloatingChatButton: React.FC = () => {
         }
 
         if (showDropdown) {
-            void loadChatRooms(true);
+            void loadChatRooms(false);
         } else {
             void refreshUnreadCount();
         }
@@ -214,7 +230,13 @@ const FloatingChatButton: React.FC = () => {
 
             {/* Main Button */}
             <button
-                onClick={() => setShowDropdown(!showDropdown)}
+                onClick={() => {
+                    if (showDropdown) {
+                        setShowDropdown(false);
+                        return;
+                    }
+                    openDropdownWithWarmData();
+                }}
                 className="relative bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all transform hover:scale-110 active:scale-95"
                 aria-label="Open chat"
                 title="Chat"

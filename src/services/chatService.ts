@@ -1,10 +1,60 @@
 import { get, post, put } from './api';
 import type { ApiResponse, ChatRoom, Message, User } from '@/types';
 
+const CHAT_ROOMS_CACHE_KEY = 'chat-rooms-cache-v1';
+const CHAT_ROOMS_CACHE_MAX_AGE_MS = 20_000;
+
+type ChatRoomsCachePayload = {
+    createdAt: number;
+    data: ChatRoom[];
+};
+
+let chatRoomsMemoryCache: ChatRoomsCachePayload | null = null;
+
+const writeChatRoomsCache = (rooms: ChatRoom[]) => {
+    const payload: ChatRoomsCachePayload = {
+        createdAt: Date.now(),
+        data: rooms,
+    };
+    chatRoomsMemoryCache = payload;
+
+    try {
+        window.sessionStorage.setItem(CHAT_ROOMS_CACHE_KEY, JSON.stringify(payload));
+    } catch {
+        // Ignore cache write failures.
+    }
+};
+
+const isFreshChatRoomsCache = (createdAt: number, maxAgeMs: number) => {
+    return Date.now() - createdAt <= maxAgeMs;
+};
+
+export const getCachedChatRooms = (maxAgeMs = CHAT_ROOMS_CACHE_MAX_AGE_MS): ChatRoom[] | null => {
+    if (chatRoomsMemoryCache && isFreshChatRoomsCache(chatRoomsMemoryCache.createdAt, maxAgeMs)) {
+        return chatRoomsMemoryCache.data;
+    }
+
+    try {
+        const raw = window.sessionStorage.getItem(CHAT_ROOMS_CACHE_KEY);
+        if (!raw) return null;
+
+        const parsed = JSON.parse(raw) as ChatRoomsCachePayload;
+        if (!parsed?.createdAt || !Array.isArray(parsed.data)) return null;
+        if (!isFreshChatRoomsCache(parsed.createdAt, maxAgeMs)) return null;
+
+        chatRoomsMemoryCache = parsed;
+        return parsed.data;
+    } catch {
+        return null;
+    }
+};
+
 // Get user's chat rooms
 export const getChatRooms = async (): Promise<ChatRoom[]> => {
     const response = await get<ApiResponse<ChatRoom[]>>('/chat/rooms');
-    return response.data;
+    const rooms = response.data || [];
+    writeChatRoomsCache(rooms);
+    return rooms;
 };
 
 // Get or create chat room for a listing
