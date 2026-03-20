@@ -637,8 +637,8 @@ const RoomsListPage: React.FC = () => {
                     <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
                 </div>
 
-                <div className="relative z-[60] w-full px-[10px] sm:px-[10px] pt-12 sm:pt-12 pb-[10px] lg:px-[5px]">
-                    <div className="-mt-[40px] bg-white/10 backdrop-blur border border-white/20 rounded-2xl overflow-visible shadow-sm">
+                <div className="relative z-10 w-full px-[10px] sm:px-[10px] pt-12 sm:pt-20 pb-[10px] lg:px-[5px]">
+                    <div className="-mt-[35px] md:-mt-[40px] bg-white/10 backdrop-blur border border-white/20 rounded-2xl overflow-visible shadow-sm">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
                             <div>
                                 <div className="flex items-center gap-3 mb-4">

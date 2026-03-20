@@ -341,7 +341,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-white/5 blur-3xl" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-5 sm:px-5 lg:px-6 relative z-10 space-y-[10px] md:space-y-[30px]">
+                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10 space-y-[10px] md:space-y-[30px]">
                     {/* Main Heading and Post Room Section - Two Column Layout */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                         {/* Left Column - Badges & Find Perfect Room */}
@@ -367,8 +367,7 @@ const HomePage: React.FC = () => {
                                     </span>
                                 </h1>
                                 <p className="text-lg sm:text-xl md:text-2xl text-white/90 leading-relaxed font-light">
-                                    Discover thousands of verified rooms, find compatible roommates,
-                                    and manage expenses—all in one platform.
+                                    Find your space, connect with the right people, and live smarter effortlessly.
                                 </p>
                             </div>
 
@@ -378,38 +377,44 @@ const HomePage: React.FC = () => {
                                     {
                                         icon: CheckCircle,
                                         title: 'Instant Verification',
-                                        desc: 'Get verified in minutes',
+                                        desc: 'Quick profile check',
+                                        label: 'Fast',
                                         color: 'from-emerald-500/40 via-green-500/25 to-lime-400/10',
                                         border: 'border-emerald-400/70',
                                         iconBg: 'bg-emerald-400/30',
                                         iconColor: 'text-emerald-200',
                                         delayClass: '[animation-delay:100ms]',
                                         gradient: 'from-emerald-400 via-green-400 to-lime-300',
-                                        glow: 'group-hover:shadow-[0_0_24px_rgba(16,185,129,0.35)]'
+                                        glow: 'group-hover:shadow-[0_0_24px_rgba(16,185,129,0.35)]',
+                                        labelClass: 'bg-emerald-300/20 text-emerald-100 border-emerald-200/40'
                                     },
                                     {
                                         icon: MessageCircle,
                                         title: 'Direct Communication',
-                                        desc: 'Built-in chat system',
+                                        desc: 'Chat with owners directly',
+                                        label: 'Live',
                                         color: 'from-blue-500/40 via-sky-500/25 to-indigo-400/10',
                                         border: 'border-blue-400/70',
                                         iconBg: 'bg-blue-400/30',
                                         iconColor: 'text-blue-200',
                                         delayClass: '[animation-delay:200ms]',
                                         gradient: 'from-blue-400 via-sky-400 to-indigo-300',
-                                        glow: 'group-hover:shadow-[0_0_24px_rgba(59,130,246,0.35)]'
+                                        glow: 'group-hover:shadow-[0_0_24px_rgba(59,130,246,0.35)]',
+                                        labelClass: 'bg-blue-300/20 text-blue-100 border-blue-200/40'
                                     },
                                     {
                                         icon: TrendingUp,
                                         title: 'Increased Visibility',
-                                        desc: 'Featured in search results',
+                                        desc: 'Boosted listing reach',
+                                        label: 'Boost',
                                         color: 'from-cyan-500/40 via-teal-500/25 to-sky-400/10',
                                         border: 'border-cyan-400/70',
                                         iconBg: 'bg-cyan-400/30',
                                         iconColor: 'text-cyan-200',
                                         delayClass: '[animation-delay:300ms]',
                                         gradient: 'from-cyan-400 via-teal-400 to-sky-300',
-                                        glow: 'group-hover:shadow-[0_0_24px_rgba(34,211,238,0.35)]'
+                                        glow: 'group-hover:shadow-[0_0_24px_rgba(34,211,238,0.35)]',
+                                        labelClass: 'bg-cyan-300/20 text-cyan-100 border-cyan-200/40'
                                     }
                                 ].map((item, idx) => (
                                     <div
@@ -425,18 +430,21 @@ const HomePage: React.FC = () => {
                                         <div className={`absolute -inset-px bg-gradient-to-r ${item.gradient} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300`}></div>
                                         
                                         {/* Content */}
-                                        <div className="relative z-10 p-4 space-y-3 h-full flex flex-col">
-                                            {/* Icon Container */}
-                                            <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${item.iconBg} transition-transform duration-300 backdrop-blur-sm border border-white/20 group-hover:scale-105`}>
-                                                <item.icon className={`w-5 h-5 md:w-5 md:h-5 ${item.iconColor}`} />
+                                        <div className="relative z-10 p-3 md:p-3.5 h-full flex items-start gap-2.5">
+                                            <div className={`flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-lg ${item.iconBg} transition-transform duration-300 backdrop-blur-sm border border-white/20 group-hover:scale-105 flex-shrink-0`}>
+                                                <item.icon className={`w-4 h-4 ${item.iconColor}`} />
                                             </div>
 
-                                            {/* Title and Description */}
-                                            <div className="flex-1 space-y-1.5">
-                                                <h3 className="text-sm md:text-base font-semibold text-white leading-tight">
-                                                    {item.title}
-                                                </h3>
-                                                <p className="text-white/75 text-xs md:text-sm leading-relaxed font-medium">
+                                            <div className="flex-1 min-w-0 space-y-1">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <h3 className="text-[13px] md:text-sm font-semibold text-white leading-tight">
+                                                        {item.title}
+                                                    </h3>
+                                                    <span className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold whitespace-nowrap ${item.labelClass}`}>
+                                                        {item.label}
+                                                    </span>
+                                                </div>
+                                                <p className="text-white/75 text-[11px] md:text-xs leading-snug font-medium">
                                                     {item.desc}
                                                 </p>
                                             </div>
@@ -449,7 +457,7 @@ const HomePage: React.FC = () => {
 
                         {/* Right Column - Simple Search Card */}
                         <div className="lg:mt-0 group">
-                            <Card ref={searchCardRef} className="shadow-[0_30px_80px_rgba(14,116,144,0.52)] border border-cyan-200/50 ring-1 ring-cyan-200/20 overflow-hidden rounded-3xl relative group bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-blue-950/85">
+                            <Card ref={searchCardRef} className="shadow-[0_18px_44px_rgba(14,116,144,0.35)] border border-cyan-100/40 ring-1 ring-white/15 overflow-hidden rounded-2xl relative group bg-gradient-to-br from-slate-900/95 via-slate-900/90 to-blue-950/85">
                                 <div className="absolute inset-0 w-full h-full pointer-events-none">
                                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.18),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(16,185,129,0.16),transparent_40%),linear-gradient(125deg,rgba(2,6,23,0.95),rgba(30,41,59,0.9),rgba(15,23,42,0.95))]" />
                                     <div className="absolute -top-28 -right-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
@@ -470,17 +478,17 @@ const HomePage: React.FC = () => {
                                     </div>
                                 )}
 
-                                <CardContent className="relative z-10 px-4 sm:px-5 py-4 md:py-5 space-y-5">
+                                <CardContent className="relative z-10 p-4 sm:p-5 space-y-4">
                                     <div className="space-y-2.5">
                                         <Badge className="px-4 py-2 bg-gradient-to-r from-cyan-500/85 to-blue-500/85 backdrop-blur-sm border-white/30 text-white font-semibold shadow-lg">
                                             <Search className="w-4 h-4 mr-2" />
                                             Quick Room Search
                                         </Badge>
-                                        <h3 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-cyan-200 via-sky-100 to-emerald-200 bg-clip-text text-transparent leading-tight">
-                                            Start with a keyword
+                                        <h3 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-cyan-200 via-sky-100 to-emerald-200 bg-clip-text text-transparent leading-tight">
+                                            Discover Rooms Near You
                                         </h3>
-                                        <p className="text-white/85 text-base md:text-lg leading-relaxed">
-                                            Tap and type to continue on Rooms page search.
+                                        <p className="text-white/85 text-sm md:text-base leading-relaxed">
+                                            Instantly explore affordable, verified spaces tailored to your needs.
                                         </p>
                                     </div>
 
@@ -544,7 +552,7 @@ const HomePage: React.FC = () => {
                     </div>
 
                     {/* Post Room Card (moved below search card) */}
-                    <Card className="mt-[10px] md:mt-6 relative border border-emerald-300/35 bg-gradient-to-br from-slate-900/95 via-slate-900/85 to-emerald-950/70 backdrop-blur-xl rounded-3xl overflow-hidden transition-all duration-500 shadow-[0_24px_60px_rgba(2,6,23,0.55)] hover:shadow-[0_24px_70px_rgba(16,185,129,0.35)]">
+                    <Card className="mt-[10px] md:mt-5 relative border border-emerald-200/45 ring-1 ring-white/10 bg-gradient-to-br from-slate-900/95 via-slate-900/85 to-emerald-950/70 backdrop-blur-xl rounded-2xl overflow-hidden transition-all duration-500 shadow-[0_16px_40px_rgba(2,6,23,0.45)] hover:shadow-[0_20px_48px_rgba(16,185,129,0.30)]">
                         {currentPostRoomAd && currentPostRoomAd.imageUrl && (
                             <div className="absolute inset-0 w-full h-full">
                                 <img
@@ -559,16 +567,16 @@ const HomePage: React.FC = () => {
                             </div>
                         )}
 
-                        <CardContent className="relative z-10 px-4 sm:px-5 py-4 md:py-5 space-y-3.5">
+                        <CardContent className="relative z-10 p-4 sm:p-5 space-y-4">
                             <Badge className="px-4 py-2 bg-emerald-500/85 backdrop-blur-sm border-white/25 text-white font-semibold">
                                 <Home className="w-4 h-4 mr-2" />
                                 For Property Owners
                             </Badge>
 
-                            <h3 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-emerald-200 via-teal-200 to-cyan-200 bg-clip-text text-transparent leading-tight">
+                            <h3 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-emerald-200 via-teal-200 to-cyan-200 bg-clip-text text-transparent leading-tight">
                                 List Your Room
                             </h3>
-                            <p className="text-white/90 text-base md:text-lg leading-relaxed font-medium">
+                            <p className="text-white/90 text-sm md:text-base leading-relaxed font-medium">
                                 Share your property with verified renters and get quality leads fast.
                             </p>
 
@@ -618,7 +626,7 @@ const HomePage: React.FC = () => {
                 {/* Decorative Background */}
                 <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-green-primary to-transparent opacity-5" />
                 
-                <div className="max-w-screen-2xl mx-auto px-5 sm:px-5 lg:px-6 relative z-10">
+                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10">
                     <div className="flex flex-wrap items-end justify-between gap-[10px] mb-[10px] md:gap-[30px] md:mb-[30px]">
                         <div className="space-y-3">
                             <Badge className="px-3 py-1.5 bg-green-50 text-green-primary border-green-200 font-semibold">
@@ -686,7 +694,7 @@ const HomePage: React.FC = () => {
                 <div className="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
                 <div className="absolute bottom-20 left-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
                 
-                <div className="max-w-screen-2xl mx-auto px-5 sm:px-5 lg:px-6 relative z-10">
+                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10">
                     <div className="flex flex-wrap items-end justify-between gap-[10px] mb-[10px] md:gap-[30px] md:mb-[30px]">
                         <div className="space-y-3">
                             <Badge className="px-3 py-1.5 bg-green-100 text-green-700 border-green-200 font-semibold">
@@ -748,6 +756,93 @@ const HomePage: React.FC = () => {
                 </div>
             </section>
 
+            {/* Trust Verification Section */}
+            <section className="py-[20px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden deferred-render-section md:py-[30px]">
+                <div className="absolute inset-0">
+                    <div className="absolute top-10 right-10 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute bottom-10 left-10 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
+                </div>
+
+                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10">
+                    <div className="text-center mb-[10px] max-w-3xl mx-auto md:mb-[30px]">
+                        <Badge className="px-4 py-2 mb-6 bg-white/10 backdrop-blur-sm border-white/20 text-white font-semibold">
+                            <Shield className="w-4 h-4 mr-2 inline" />
+                            Verified Before Approval
+                        </Badge>
+
+                        <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
+                            Built on Trust, Not Just{' '}
+                            <span className="bg-gradient-to-r from-cyan-300 to-emerald-300 bg-clip-text text-transparent">
+                                Listings
+                            </span>
+                        </h2>
+
+                        <p className="text-xl text-white/80 leading-relaxed">
+                            Every property goes through a strict verification process before it reaches you.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-[4px] md:gap-6">
+                        <Card className="group relative overflow-hidden border border-white/15 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <CardContent className="p-8 relative z-10">
+                                <div className="flex items-start justify-between gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center shadow-xl">
+                                        <CheckCircle className="w-6 h-6" />
+                                    </div>
+                                    <span className="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">Image Reality Check</h3>
+                                <p className="text-white/75 text-sm leading-relaxed mb-4">
+                                    Every uploaded image is reviewed to ensure clarity, authenticity, and relevance.
+                                </p>
+                                <p className="text-xs font-semibold text-blue-100 bg-blue-500/20 border border-blue-300/30 rounded-lg px-3 py-2 inline-block">
+                                    Clear and authentic visuals
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="group relative overflow-hidden border border-white/15 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <CardContent className="p-8 relative z-10">
+                                <div className="flex items-start justify-between gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-500 text-white flex items-center justify-center shadow-xl">
+                                        <Building2 className="w-6 h-6" />
+                                    </div>
+                                    <span className="w-7 h-7 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center">2</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">Detail Accuracy Review</h3>
+                                <p className="text-white/75 text-sm leading-relaxed mb-4">
+                                    We verify rent, deposit, and location details to ensure accuracy and consistency.
+                                </p>
+                                <p className="text-xs font-semibold text-orange-100 bg-orange-500/20 border border-orange-300/30 rounded-lg px-3 py-2 inline-block">
+                                    Accurate listing data
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="group relative overflow-hidden border border-white/15 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <CardContent className="p-8 relative z-10">
+                                <div className="flex items-start justify-between gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center shadow-xl">
+                                        <Users className="w-6 h-6" />
+                                    </div>
+                                    <span className="w-7 h-7 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2">Approval and Publish</h3>
+                                <p className="text-white/75 text-sm leading-relaxed mb-4">
+                                    Only verified listings go live, ensuring a safe and trusted experience.
+                                </p>
+                                <p className="text-xs font-semibold text-emerald-100 bg-emerald-500/20 border border-emerald-300/30 rounded-lg px-3 py-2 inline-block">
+                                    Trusted and live listings
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </section>
+
             {/* Features Section */}
             <section className="py-[20px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden deferred-render-section md:py-[30px]">
                 {/* Animated Background Elements */}
@@ -756,7 +851,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-5 sm:px-5 lg:px-6 relative z-10">
+                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10">
                     <div className="text-center mb-[10px] max-w-3xl mx-auto md:mb-[30px]">
                         <Badge className="px-4 py-2 mb-6 bg-white/10 backdrop-blur-sm border-white/20 text-white font-semibold">
                             <Shield className="w-4 h-4 mr-2 inline" />
@@ -802,7 +897,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-5 sm:px-5 lg:px-6 text-center relative z-10">
+                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 text-center relative z-10">
                     <div className="max-w-4xl mx-auto space-y-[10px] md:space-y-[30px]">
                         <Badge className="px-4 py-2 bg-white/20 backdrop-blur-sm border-white/30 text-white font-semibold text-base">
                             <Sparkles className="w-4 h-4 mr-2 inline" />

@@ -55,7 +55,7 @@ const PIN_CONFIGS: Record<string, PinConfig> = {
 const DEFAULT_CENTER: [number, number] = [18.5204, 73.8567]; // Pune
 const DEFAULT_ZOOM = 12;
 const USER_LOCATION_ZOOM = 13;
-const BASE_FOCUS_RADIUS_KM = 20;
+const BASE_FOCUS_RADIUS_KM = 30;
 const MIN_FOCUSED_LISTINGS = 3;
 const MAX_FOCUS_RADIUS_KM = 200;
 const FOCUS_RADIUS_STEP_KM = 10;
@@ -154,6 +154,7 @@ const MapSection: React.FC = () => {
     const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
     const [focusRadiusKm, setFocusRadiusKm] = useState(BASE_FOCUS_RADIUS_KM);
     const [focusedListingsCount, setFocusedListingsCount] = useState(0);
+    const [focusedRoomIds, setFocusedRoomIds] = useState<Set<Room['room_id']>>(new Set());
 
     // Inject custom popup/pin CSS once
     useEffect(() => {
@@ -312,10 +313,10 @@ const MapSection: React.FC = () => {
         return () => controller.abort();
     }, []);
 
-    // Place room markers when rooms load or map viewport changes
+    // Place markers only for focused listings (within adaptive focus radius), then cull by viewport.
     useEffect(() => {
         const map = mapRef.current;
-        if (!map || rooms.length === 0) return;
+        if (!map) return;
 
         // Expand bounds by 10% for smooth edge-loading experience
         const paddedBounds = mapBounds ? mapBounds.pad(0.1) : null;
@@ -323,7 +324,9 @@ const MapSection: React.FC = () => {
         // Clear previous markers
         layerGroupsRef.current.forEach((group) => group.clearLayers());
 
-        rooms.forEach((room) => {
+        const focusedRooms = rooms.filter((room) => focusedRoomIds.has(room.room_id));
+
+        focusedRooms.forEach((room) => {
             if (!room.latitude || !room.longitude) return;
 
             // Only render markers visible in (padded) current viewport
@@ -404,7 +407,7 @@ const MapSection: React.FC = () => {
             group?.addTo(map); // ensure group is on map
             group?.addLayer(marker);
         });
-    }, [rooms, mapBounds, createPinIcon, navigate]);
+    }, [rooms, focusedRoomIds, mapBounds, createPinIcon, navigate]);
 
     // Update user location marker
     useEffect(() => {
@@ -438,7 +441,7 @@ const MapSection: React.FC = () => {
         });
     }, [activeFilter]);
 
-    // Adaptive focus area: start at 20km, then widen radius until we can show at least 3 listings.
+    // Adaptive focus area: start at 30km, then widen radius until we can show at least 3 listings.
     useEffect(() => {
         const map = mapRef.current;
         if (!map) return;
@@ -453,6 +456,7 @@ const MapSection: React.FC = () => {
         if (filteredRooms.length === 0) {
             setFocusRadiusKm(BASE_FOCUS_RADIUS_KM);
             setFocusedListingsCount(0);
+            setFocusedRoomIds(new Set());
             map.setView(center, DEFAULT_ZOOM);
             return;
         }
@@ -496,6 +500,7 @@ const MapSection: React.FC = () => {
 
         setFocusRadiusKm(selectedRadiusKm);
         setFocusedListingsCount(focusedRooms.length);
+        setFocusedRoomIds(new Set(focusedRooms.map(({ room }) => room.room_id)));
 
         const boundsPoints: L.LatLngExpression[] = [
             center,
@@ -576,8 +581,8 @@ const MapSection: React.FC = () => {
                         </span>
                     </h2>
                     <p className="text-slate-500 text-base sm:text-lg max-w-2xl mx-auto">
-                        All listings are pinned. Map starts with a 20km focus area and auto-expands when
-                        needed so you can see at least 3 nearby listings. Hover
+                        Map starts with a 30km focus area and only shows nearby focused listings.
+                        If fewer than 3 listings are available, it auto-expands to include more. Hover
                         a pin to preview, click to view full details.
                     </p>
                 </motion.div>
@@ -716,8 +721,8 @@ const MapSection: React.FC = () => {
                     transition={{ duration: 0.5, delay: 0.5 }}
                     className="text-center text-xs sm:text-sm text-slate-400 mt-4"
                 >
-                    Map starts at ~20km and expands focus to surface at least 3 listings when available •
-                    All pins are active listings • Click any pin to open full details
+                    Map starts at ~30km and expands focus to surface at least 3 listings when available •
+                    Only focused nearby pins are shown • Click any pin to open full details
                 </motion.p>
             </div>
         </section>
