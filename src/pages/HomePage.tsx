@@ -527,7 +527,7 @@ const HomePage: React.FC = () => {
 
                                     <div className="space-y-3">
                                         <div className="relative">
-                                            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 animate-pulse" />
+                                            <Search className="pointer-events-none absolute z-10 left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500/95 animate-pulse" />
                                             <Input
                                                 value={searchDetails}
                                                 onChange={(event) => {
