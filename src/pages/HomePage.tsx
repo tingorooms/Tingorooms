@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -317,7 +317,7 @@ const HomePage: React.FC = () => {
     const placeholderTerms = ['Area', 'City', 'Landmark'];
     const currentSlide = adSlides[activeSlideIndex] || null;
 
-    const handleChatClick = async (roomId: string) => {
+    const handleChatClick = useCallback(async (roomId: string) => {
         try {
             if (!isAuthenticated) {
                 navigate('/login', { state: { from: { pathname: window.location.pathname, search: window.location.search } } });
@@ -346,7 +346,7 @@ const HomePage: React.FC = () => {
             await openChat(chatRoomId, resolvedRoom.user_id, resolvedRoom);
         } catch {
         }
-    };
+    }, [featuredRooms, isAuthenticated, navigate, openChat, recentRooms]);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-green-bg">

@@ -111,7 +111,7 @@ const BrokersPage: React.FC = () => {
                     minListings: parseInt(minListingsFilter, 10),
                     sort: sortBy,
                     page: 1,
-                    limit: 12,
+                    limit: 6,
                 },
                 { signal: options?.signal }
             );
@@ -338,7 +338,7 @@ const BrokersPage: React.FC = () => {
                             return (
                             <Card
                                 key={broker.id}
-                                className="h-full border-slate-200 hover:border-blue-300 hover:shadow-xl transition-all cursor-pointer"
+                                className="h-full border-slate-200 hover:border-blue-300 hover:shadow-xl transition-all cursor-pointer [content-visibility:auto] [contain-intrinsic-size:320px]"
                                 onClick={() => navigate(brokerPath)}
                                 role="button"
                                 tabIndex={0}

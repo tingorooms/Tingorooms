@@ -123,11 +123,13 @@ const MainLayout: React.FC = () => {
     };
 
     const handleNearbyRoomsClick = () => {
-        if (location.pathname === '/') {
+        const nearbyAnchor = document.getElementById('nearby-filter-anchor');
+        if (nearbyAnchor) {
             scrollToNearbyFilter('smooth');
             return;
         }
-        // Cross-page: signal MapSection to scroll after home page finishes loading
+
+        // Fallback only if anchor is not yet available for any reason.
         try { sessionStorage.setItem('scrollToNearbyFilter', '1'); } catch { /* noop */ }
         navigate('/');
     };

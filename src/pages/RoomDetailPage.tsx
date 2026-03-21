@@ -283,7 +283,7 @@ const RoomDetailPage: React.FC = () => {
 
     return (
         <>
-        <div className="min-h-screen bg-muted/30 pb-[80px] lg:pb-0">
+        <div className="min-h-screen bg-muted/30 pb-[30px] md:pb-[80px] lg:pb-0">
             {/* Back Button */}
             <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 py-0">
                 <Button variant="ghost" onClick={() => navigate(-1)}>
@@ -423,34 +423,34 @@ const RoomDetailPage: React.FC = () => {
                         </Card>
 
                         {/* Details Card */}
-                        <Card>
-                            <CardContent className="p-6">
-                                <div className="flex items-start justify-between mb-6">
+                        <Card className="border border-slate-200 shadow-sm rounded-2xl">
+                            <CardContent className="p-4 sm:p-6 space-y-6">
+                                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 pb-4 border-b border-slate-100">
                                     <div>
-                                        <div className="flex items-center gap-2 text-muted-foreground">
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                             <MapPin className="w-4 h-4" />
                                             {room.address}, {room.area}, {room.city} - {room.pincode}
                                         </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Button variant="outline" size="icon" onClick={handleShare} title={shareSuccess ? 'Link copied!' : 'Share'}>
+                                    <div className="flex gap-2 self-start sm:self-auto">
+                                        <Button variant="outline" size="icon" className="rounded-xl" onClick={handleShare} title={shareSuccess ? 'Link copied!' : 'Share'}>
                                             {shareSuccess ? <Check className="w-4 h-4 text-green-500" /> : <Share2 className="w-4 h-4" />}
                                         </Button>
-                                        <Button variant="outline" size="icon">
+                                        <Button variant="outline" size="icon" className="rounded-xl">
                                             <Heart className="w-4 h-4" />
                                         </Button>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-                                    <div className="flex items-center gap-2 bg-muted px-4 py-3 rounded-lg">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                                    <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl">
                                         <Bed className="w-5 h-5 text-primary" />
                                         <div>
                                             <p className="text-xs text-muted-foreground">Room Type</p>
                                             <span className="font-semibold text-sm">{room.room_type}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 bg-muted px-4 py-3 rounded-lg">
+                                    <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl">
                                         <Building2 className="w-5 h-5 text-primary" />
                                         <div>
                                             <p className="text-xs text-muted-foreground">House Type</p>
@@ -458,7 +458,7 @@ const RoomDetailPage: React.FC = () => {
                                         </div>
                                     </div>
                                     {room.size_sqft && (
-                                        <div className="flex items-center gap-2 bg-muted px-4 py-3 rounded-lg">
+                                        <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl">
                                             <Maximize className="w-5 h-5 text-primary" />
                                             <div>
                                                 <p className="text-xs text-muted-foreground">Size</p>
@@ -466,7 +466,7 @@ const RoomDetailPage: React.FC = () => {
                                             </div>
                                         </div>
                                     )}
-                                    <div className="flex items-center gap-2 bg-muted px-4 py-3 rounded-lg">
+                                    <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl">
                                         <Calendar className="w-5 h-5 text-primary" />
                                         <div>
                                             <p className="text-xs text-muted-foreground">Available</p>
@@ -476,18 +476,18 @@ const RoomDetailPage: React.FC = () => {
                                 </div>
 
                                 {/* Description Section */}
-                                <div className="mb-8 pb-8 border-b">
-                                    <h2 className="text-xl font-semibold mb-3">Description</h2>
+                                <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                                    <h2 className="text-lg font-semibold text-slate-900 mb-2">Description</h2>
                                     <p className="text-muted-foreground leading-relaxed">{room.note || 'No description available'}</p>
                                 </div>
 
                                 {/* Existing Roommates Section */}
                                 {room.existing_roommates && room.existing_roommates.length > 0 && (
-                                    <div className="mb-8 pb-8 border-b">
-                                        <h2 className="text-xl font-semibold mb-4">Existing Roommates</h2>
+                                    <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                                        <h2 className="text-lg font-semibold text-slate-900 mb-3">Existing Roommates</h2>
                                         <div className="flex flex-wrap gap-2">
                                             {room.existing_roommates.map((mate, index) => (
-                                                <Badge key={index} variant="secondary">
+                                                <Badge key={index} className="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100" variant="secondary">
                                                     {mate.name} ({mate.city})
                                                 </Badge>
                                             ))}
@@ -496,14 +496,14 @@ const RoomDetailPage: React.FC = () => {
                                 )}
 
                                 {/* Facilities Section */}
-                                <div className="mb-8 pb-8 border-b">
-                                    <h2 className="text-xl font-semibold mb-4">Facilities</h2>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                                    <h2 className="text-lg font-semibold text-slate-900 mb-3">Facilities</h2>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2.5">
                                         {parseFacilitiesFromString(room.facilities).length > 0 ? (
                                             parseFacilitiesFromString(room.facilities).map((facility, index) => (
-                                                <div key={index} className="flex items-center gap-3">
-                                                    <Check className="w-5 h-5 text-green-500 flex-shrink-0" />
-                                                    <span className="text-sm">{facility}</span>
+                                                <div key={index} className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                                                    <Check className="w-4 h-4 text-green-600 flex-shrink-0" />
+                                                    <span className="text-sm text-slate-700">{facility}</span>
                                                 </div>
                                             ))
                                         ) : (
@@ -513,18 +513,18 @@ const RoomDetailPage: React.FC = () => {
                                 </div>
 
                                 {/* Location Section */}
-                                <div>
-                                    <h2 className="text-xl font-semibold mb-4">Location</h2>
+                                <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                                    <h2 className="text-lg font-semibold text-slate-900 mb-3">Location</h2>
                                     <div className="space-y-4">
-                                        <div className="bg-muted p-6 rounded-lg flex items-center justify-between">
+                                        <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                             <div>
-                                                <p className="text-muted-foreground mb-1">See this property on map</p>
+                                                <p className="text-sm text-muted-foreground mb-1">See this property on map</p>
                                                 <p className="font-medium">{room.address}, {room.area}, {room.city}</p>
                                             </div>
                                             <Button 
                                                 variant="default" 
-                                                size="lg" 
-                                                className="gap-2"
+                                                size="sm"
+                                                className="gap-2 w-full sm:w-auto"
                                                 onClick={() => {
                                                     if (room.latitude && room.longitude) {
                                                         const mapsUrl = `https://www.google.com/maps?q=${room.latitude},${room.longitude}`;
@@ -543,11 +543,11 @@ const RoomDetailPage: React.FC = () => {
                     </div>
 
                     {/* Sidebar */}
-                    <div className="space-y-6">
+                    <div className="space-y-5 lg:sticky lg:top-24 self-start">
                         {/* Price Card */}
-                        <Card>
+                        <Card className="border border-slate-200 shadow-sm rounded-2xl">
                             <CardContent className="p-6">
-                                <div className="text-3xl font-bold text-primary mb-4">
+                                <div className="text-3xl font-bold text-primary mb-2">
                                     ₹{room.rent?.toLocaleString() || room.cost?.toLocaleString()}
                                     <span className="text-lg text-muted-foreground font-normal">
                                         {room.rent ? '/month' : ''}
@@ -558,10 +558,10 @@ const RoomDetailPage: React.FC = () => {
                                         Deposit: ₹{room.deposit.toLocaleString()}
                                     </div>
                                 )}
-                                <div className="space-y-3">
+                                <div className="space-y-2.5 pt-3 border-t border-slate-100">
                                     {!isOwner && (
                                         <Button 
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white" 
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl" 
                                             onClick={handleChatClick}
                                             disabled={chatLoading || isEstablishingChat}
                                         >
@@ -576,7 +576,7 @@ const RoomDetailPage: React.FC = () => {
                                     {room.contact_visibility === 'Public' && room.contact && (
                                         <>
                                             <Button 
-                                                className="w-full bg-green-600 hover:bg-green-700 text-white" 
+                                                className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl" 
                                                 onClick={() => {
                                                     const whatsappUrl = buildWhatsAppUrl(room.contact);
                                                     if (whatsappUrl) {
@@ -588,7 +588,7 @@ const RoomDetailPage: React.FC = () => {
                                                 WhatsApp
                                             </Button>
                                             <Button 
-                                                className="w-full bg-orange-600 hover:bg-orange-700 text-white" 
+                                                className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-xl" 
                                                 onClick={() => {
                                                     window.location.href = `tel:${room.contact}`;
                                                 }}
@@ -603,9 +603,9 @@ const RoomDetailPage: React.FC = () => {
                         </Card>
 
                         {/* Owner Card */}
-                        <Card>
+                        <Card className="border border-slate-200 shadow-sm rounded-2xl">
                             <CardContent className="p-6">
-                                <h3 className="font-semibold mb-4">Posted By</h3>
+                                <h3 className="font-semibold text-slate-900 mb-4">Posted By</h3>
                                 <div className="flex items-center gap-4">
                                     <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
                                         {room.owner_profile_image ? (
@@ -621,19 +621,19 @@ const RoomDetailPage: React.FC = () => {
                                         )}
                                     </div>
                                     <div>
-                                        <p className="font-medium">{room.owner_name}</p>
+                                        <p className="font-semibold text-slate-900">{room.owner_name}</p>
                                     </div>
                                 </div>
                                 {room.contact_visibility === 'Public' && (
-                                    <div className="mt-4 space-y-2">
+                                    <div className="mt-4 space-y-2 pt-3 border-t border-slate-100">
                                         {room.contact && (
-                                            <div className="flex items-center gap-2 text-sm">
+                                            <div className="flex items-center gap-2 text-sm text-slate-700">
                                                 <Phone className="w-4 h-4 text-muted-foreground" />
                                                 {room.contact}
                                             </div>
                                         )}
                                         {room.email && (
-                                            <div className="flex items-center gap-2 text-sm">
+                                            <div className="flex items-center gap-2 text-sm text-slate-700">
                                                 <Mail className="w-4 h-4 text-muted-foreground" />
                                                 {room.email}
                                             </div>
@@ -650,7 +650,7 @@ const RoomDetailPage: React.FC = () => {
 
                         {/* Similar Rooms */}
                         {room.similar_rooms && room.similar_rooms.length > 0 && (
-                            <Card>
+                            <Card className="border border-slate-200 shadow-sm rounded-2xl">
                                 <CardContent className="p-6">
                                     <h3 className="font-semibold mb-4">Similar Rooms</h3>
                                     <div className="space-y-4">

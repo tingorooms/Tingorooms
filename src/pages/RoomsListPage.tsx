@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -558,7 +558,7 @@ const RoomsListPage: React.FC = () => {
         (filters.furnishingType && filters.furnishingType !== 'all') ||
         (filters.gender && filters.gender !== 'all');
 
-    const handleChatClick = async (roomId: string) => {
+    const handleChatClick = useCallback(async (roomId: string) => {
         if (!isAuthenticated) {
             navigate('/login', { state: { from: { pathname: window.location.pathname, search: window.location.search } } });
             return;
@@ -585,7 +585,7 @@ const RoomsListPage: React.FC = () => {
             await openChat(chatRoomId, resolvedRoom.user_id, resolvedRoom);
         } catch {
         }
-    };
+    }, [isAuthenticated, navigate, openChat, rooms]);
 
     const displayedRooms = useMemo(() => {
         const sorted = [...rooms];
@@ -735,9 +735,9 @@ const RoomsListPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-bg via-white to-slate-100">
+        <div className="min-h-screen bg-gradient-to-br from-green-bg via-white to-slate-100 overflow-x-hidden">
             {/* Premium Header Section */}
-            <div className="relative overflow-visible bg-gradient-to-r from-green-primary via-green-secondary to-green-primary text-white">
+            <div className="relative overflow-hidden bg-gradient-to-r from-green-primary via-green-secondary to-green-primary text-white">
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
                     <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
@@ -1141,7 +1141,7 @@ const RoomsListPage: React.FC = () => {
 
                     {/* Similar Listings - always visible below main results */}
                     <div className="mt-4 w-full">
-                        <div className="mb-4 pb-2 border-b border-slate-200">
+                        <div className="mb-4 pb-2 border-b border-slate-200 pl-5">
                             <h4 className="text-sm sm:text-base font-bold text-slate-900 mb-1">You Can See Similar Listings</h4>
                             <p className="text-slate-600 text-xs">Available rooms in <span className="font-semibold text-blue-600">{filters.city || 'selected areas'}</span></p>
                         </div>
@@ -1164,7 +1164,7 @@ const RoomsListPage: React.FC = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="px-[2px] py-4 text-sm text-slate-500">
+                            <div className="px-[2px] py-4 pl-5 text-sm text-slate-500">
                                 Similar listings will appear here as you adjust filters.
                             </div>
                         )}
