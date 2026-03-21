@@ -180,8 +180,8 @@ const HomePage: React.FC = () => {
                 const runWarmPrefetch = async () => {
                     try {
                         const [roomsWarm, brokersWarm] = await Promise.all([
-                            getRooms({ page: 1, limit: 3 }),
-                            getPublicBrokers({ page: 1, limit: 3, sort: 'top_listed' })
+                            getRooms({ page: 1, limit: 12 }),
+                            getPublicBrokers({ page: 1, limit: 12, sort: 'top_listed' })
                         ]);
 
                         writeWarmCache(WARM_ROOMS_LIST_KEY, {

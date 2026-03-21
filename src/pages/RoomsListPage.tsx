@@ -143,7 +143,7 @@ const RoomsListPage: React.FC = () => {
     const roomsRequestCacheRef = useRef<Map<string, { createdAt: number; data: Room[]; pagination: typeof pagination }>>(new Map());
     const roomsRequestSequenceRef = useRef(0);
     const similarRoomsRequestSequenceRef = useRef(0);
-    const CACHE_MAX_AGE_MS = 60_000;
+    const CACHE_MAX_AGE_MS = 5 * 60 * 1000;
     // true until first successful fetch completes — prevents false "no results" flash
     const [isFetching, setIsFetching] = useState(true);
     const [hasWarmStartData, setHasWarmStartData] = useState(false);

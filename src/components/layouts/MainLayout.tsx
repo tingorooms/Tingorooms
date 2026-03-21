@@ -105,13 +105,26 @@ const MainLayout: React.FC = () => {
         navigate('/');
     };
 
+    const scrollToNearbyFilter = (withBehavior: ScrollBehavior = 'smooth') => {
+        const h = window.innerWidth < 640 ? 72 : 88;
+        const run = (behavior: ScrollBehavior) => {
+            const el = document.getElementById('nearby-filter-anchor');
+            if (!el) return;
+            window.scrollTo({
+                top: el.getBoundingClientRect().top + window.scrollY - h,
+                behavior,
+            });
+        };
+
+        run(withBehavior);
+        // Re-apply after delayed content/layout changes (cards/images/ads)
+        setTimeout(() => run('auto'), 350);
+        setTimeout(() => run('auto'), 900);
+    };
+
     const handleNearbyRoomsClick = () => {
         if (location.pathname === '/') {
-            const el = document.getElementById('nearby-filter-anchor');
-            if (el) {
-                const h = window.innerWidth < 640 ? 72 : 88;
-                window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - h, behavior: 'smooth' });
-            }
+            scrollToNearbyFilter('smooth');
             return;
         }
         // Cross-page: signal MapSection to scroll after home page finishes loading

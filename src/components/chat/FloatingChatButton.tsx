@@ -96,7 +96,7 @@ const FloatingChatButton: React.FC = () => {
         }
 
         setShowDropdown(true);
-        void loadChatRooms(false);
+        void loadChatRooms(!cachedRooms || cachedRooms.length === 0);
     }, [applyChatRooms, loadChatRooms]);
 
     const toggleDropdown = useCallback(() => {
@@ -288,7 +288,7 @@ const FloatingChatButton: React.FC = () => {
     return (
         <div
             ref={wrapperRef}
-            className={`fixed z-40 ${buttonPosition ? 'left-0 top-0' : 'bottom-4 right-4'}`}
+            className={`fixed z-40 ${buttonPosition ? 'left-0 top-0' : 'bottom-[30px] right-[30px]'}`}
         >
             {/* Dropdown Menu – absolutely positioned so button never shifts */}
             {showDropdown && (
@@ -412,6 +412,14 @@ const FloatingChatButton: React.FC = () => {
 
             {/* Main Button */}
             <button
+                onPointerEnter={() => {
+                    if (!isAuthenticated || showDropdown) return;
+                    void loadChatRooms(false);
+                }}
+                onTouchStart={() => {
+                    if (!isAuthenticated || showDropdown) return;
+                    void loadChatRooms(false);
+                }}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={finishPointerInteraction}

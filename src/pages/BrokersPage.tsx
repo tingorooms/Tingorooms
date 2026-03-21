@@ -14,7 +14,7 @@ import { buildBrokerPath, buildWhatsAppUrl, getProfileImageUrl, normalizePhoneFo
 import { readWarmCache, WARM_BROKERS_LIST_KEY } from '@/lib/pageWarmCache';
 
 const BROKERS_PAGE_CACHE_KEY = 'brokers-page-cache-v1';
-const BROKERS_PAGE_CACHE_MAX_AGE_MS = 2 * 60 * 1000;
+const BROKERS_PAGE_CACHE_MAX_AGE_MS = 5 * 60 * 1000;
 
 type BrokersPageCachePayload = {
     createdAt: number;

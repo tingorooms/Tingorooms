@@ -170,7 +170,11 @@ const MapSection: React.FC = () => {
             const el = document.getElementById('nearby-filter-anchor');
             if (el) {
                 const h = window.innerWidth < 640 ? 72 : 88;
-                window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - h, behavior: 'smooth' });
+                const toTop = () => el.getBoundingClientRect().top + window.scrollY - h;
+                window.scrollTo({ top: toTop(), behavior: 'smooth' });
+                // Correct after delayed layout shifts (images/cards)
+                setTimeout(() => window.scrollTo({ top: toTop(), behavior: 'auto' }), 350);
+                setTimeout(() => window.scrollTo({ top: toTop(), behavior: 'auto' }), 900);
                 return;
             }
             if (attempts++ < 20) setTimeout(tryScroll, 200);

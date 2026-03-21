@@ -2,7 +2,7 @@ import { get, post, put } from './api';
 import type { ApiResponse, ChatRoom, Message, User } from '@/types';
 
 const CHAT_ROOMS_CACHE_KEY = 'chat-rooms-cache-v1';
-const CHAT_ROOMS_CACHE_MAX_AGE_MS = 20_000;
+const CHAT_ROOMS_CACHE_MAX_AGE_MS = 2 * 60 * 1000;
 
 type ChatRoomsCachePayload = {
     createdAt: number;
