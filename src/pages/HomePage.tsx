@@ -526,26 +526,29 @@ const HomePage: React.FC = () => {
                                     )}
 
                                     <div className="space-y-3">
-                                        <Input
-                                            value={searchDetails}
-                                            onChange={(event) => {
-                                                const value = event.target.value;
-                                                setSearchDetails(value);
-                                            }}
-                                            onKeyDown={(event) => {
-                                                if (event.key === 'Enter') {
+                                        <div className="relative">
+                                            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 animate-pulse" />
+                                            <Input
+                                                value={searchDetails}
+                                                onChange={(event) => {
+                                                    const value = event.target.value;
+                                                    setSearchDetails(value);
+                                                }}
+                                                onKeyDown={(event) => {
+                                                    if (event.key === 'Enter') {
+                                                        const query = searchDetails.trim();
+                                                        navigate(query ? `/rooms?search=${encodeURIComponent(query)}&focusSearch=1` : '/rooms?focusSearch=1');
+                                                    }
+                                                }}
+                                                onFocus={() => {
+                                                    // Direct users to the full search experience on Rooms page
                                                     const query = searchDetails.trim();
                                                     navigate(query ? `/rooms?search=${encodeURIComponent(query)}&focusSearch=1` : '/rooms?focusSearch=1');
-                                                }
-                                            }}
-                                            onFocus={() => {
-                                                // Direct users to the full search experience on Rooms page
-                                                const query = searchDetails.trim();
-                                                navigate(query ? `/rooms?search=${encodeURIComponent(query)}&focusSearch=1` : '/rooms?focusSearch=1');
-                                            }}
-                                            placeholder={`Search ${placeholderTerms[searchPlaceholderIndex]}`}
-                                            className={`pl-4 pr-4 ${searchControlHeightClass} text-base font-semibold border-2 border-cyan-200/70 hover:border-cyan-300 focus:ring-2 focus:ring-cyan-200 focus:border-cyan-300 bg-white/95 backdrop-blur rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 text-slate-900 placeholder:text-slate-500`}
-                                        />
+                                                }}
+                                                placeholder={`Search ${placeholderTerms[searchPlaceholderIndex]}`}
+                                                className={`pl-11 pr-4 ${searchControlHeightClass} text-base font-semibold border-2 border-cyan-200/70 hover:border-cyan-300 focus:ring-2 focus:ring-cyan-200 focus:border-cyan-300 bg-white/95 backdrop-blur rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 text-slate-900 placeholder:text-slate-500`}
+                                            />
+                                        </div>
                                         {adSlides.length > 1 && (
                                             <div className="flex items-center gap-2 pt-1">
                                                 {adSlides.slice(0, 6).map((_, index) => (
