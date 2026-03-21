@@ -107,16 +107,16 @@ const MainLayout: React.FC = () => {
 
     const handleNearbyRoomsClick = () => {
         if (location.pathname === '/') {
-            const element = document.getElementById('nearby-filter-anchor');
-            if (element) {
-                const headerHeight = window.innerWidth < 640 ? 72 : 88;
-                const top = element.getBoundingClientRect().top + window.scrollY - headerHeight;
-                window.scrollTo({ top, behavior: 'smooth' });
-                return;
+            const el = document.getElementById('nearby-filter-anchor');
+            if (el) {
+                const h = window.innerWidth < 640 ? 72 : 88;
+                window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - h, behavior: 'smooth' });
             }
+            return;
         }
-
-        navigate('/#nearby-rooms-filter');
+        // Cross-page: signal MapSection to scroll after home page finishes loading
+        try { sessionStorage.setItem('scrollToNearbyFilter', '1'); } catch { /* noop */ }
+        navigate('/');
     };
 
     const navLinks = [

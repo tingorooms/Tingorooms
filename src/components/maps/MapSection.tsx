@@ -158,6 +158,28 @@ const MapSection: React.FC = () => {
     const [focusedListingsCount, setFocusedListingsCount] = useState(0);
     const [focusedRoomIds, setFocusedRoomIds] = useState<Set<Room['room_id']>>(new Set());
 
+    // Cross-page "scroll to Locate Me / filter bar" request (set by MainLayout before navigating to /)
+    useEffect(() => {
+        let pending = false;
+        try { pending = sessionStorage.getItem('scrollToNearbyFilter') === '1'; } catch { /* noop */ }
+        if (!pending) return;
+        try { sessionStorage.removeItem('scrollToNearbyFilter'); } catch { /* noop */ }
+
+        let attempts = 0;
+        const tryScroll = () => {
+            const el = document.getElementById('nearby-filter-anchor');
+            if (el) {
+                const h = window.innerWidth < 640 ? 72 : 88;
+                window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - h, behavior: 'smooth' });
+                return;
+            }
+            if (attempts++ < 20) setTimeout(tryScroll, 200);
+        };
+        // 800 ms gives home-page wave-1 data time to load and stabilise layout
+        // before we measure element position
+        setTimeout(tryScroll, 800);
+    }, []); // run once on mount
+
     // Inject custom popup/pin CSS once
     useEffect(() => {
         injectMapStyles();

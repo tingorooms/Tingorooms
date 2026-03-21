@@ -6,7 +6,7 @@ import { getCachedChatRooms, getChatRooms, getUnreadCount, starChat, unstarChat 
 import type { ChatRoom } from '@/types';
 import { getProfileImageUrl } from '@/lib/utils';
 
-const FLOATING_CHAT_POSITION_KEY = 'floating-chat-position-v2';
+const FLOATING_CHAT_POSITION_KEY = 'floating-chat-position-v3';
 const FLOATING_CHAT_BUTTON_SIZE = 56;
 const FLOATING_CHAT_EDGE_MARGIN = 12;
 
@@ -291,13 +291,13 @@ const FloatingChatButton: React.FC = () => {
         }
     };
 
-    const alignRight = buttonPosition ? buttonPosition.x > viewportWidth / 2 : false;
+    const alignRight = buttonPosition ? buttonPosition.x > viewportWidth / 2 : true;
     const dropdownBelow = buttonPosition ? buttonPosition.y < window.innerHeight / 2 : false;
 
     return (
         <div
             ref={wrapperRef}
-            className={`fixed z-40 ${buttonPosition ? 'left-0 top-0' : 'bottom-4 left-4'}`}
+            className={`fixed z-40 ${buttonPosition ? 'left-0 top-0' : 'bottom-4 right-4'}`}
         >
             {/* Dropdown Menu – absolutely positioned so button never shifts */}
             {showDropdown && (
