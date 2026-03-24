@@ -1,5 +1,11 @@
 -- Room Rental & Expense Management System - Database Schema
--- MySQL Database
+-- MySQL Database (Railway)
+-- 
+-- HOW TO USE:
+-- 1. Create Railway MySQL database service
+-- 2. Get connection credentials from Railway dashboard
+-- 3. Execute this SQL script to create schema and tables
+-- 4. Backend will automatically connect using DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
 
 -- Create Database
 CREATE DATABASE IF NOT EXISTS room_rental_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
