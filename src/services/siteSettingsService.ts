@@ -52,8 +52,8 @@ export interface SiteSettings {
 }
 
 export const defaultSiteSettings: SiteSettings = {
-    businessName: 'RoomRental',
-    businessTagline: 'Find Your Perfect Roommate',
+    businessName: 'Tingo Rooms',
+    businessTagline: 'Find Rooms • Roomates • Listing',
     supportEmail: 'customer@support.com',
     adminEmail: 'admin@roomrental.com',
     supportPhone: '+91 99999 99999',
