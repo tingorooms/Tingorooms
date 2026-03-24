@@ -223,7 +223,20 @@ const HomePage: React.FC = () => {
     useEffect(() => {
         if (window.innerWidth >= 1024) return;
         const timer = window.setTimeout(() => {
+            try {
+                sessionStorage.setItem('keepHeaderVisibleDuringAutoScroll', '1');
+            } catch {
+                // noop
+            }
             searchCardRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' });
+
+            window.setTimeout(() => {
+                try {
+                    sessionStorage.removeItem('keepHeaderVisibleDuringAutoScroll');
+                } catch {
+                    // noop
+                }
+            }, 1200);
         }, 0);
         return () => window.clearTimeout(timer);
     }, []);
@@ -349,9 +362,9 @@ const HomePage: React.FC = () => {
     }, [featuredRooms, isAuthenticated, navigate, openChat, recentRooms]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-green-bg">
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-green-primary via-green-secondary to-green-primary text-white pt-[20px] pb-[20px] md:pt-[30px] md:pb-[30px]">
+            <section className="relative overflow-hidden bg-gradient-to-br from-blue-500 via-blue-600 to-blue-500 text-white pt-[20px] pb-[20px] md:pt-[30px] md:pb-[30px]">
                 {/* Animated Background Elements */}
                 <div className="absolute inset-0 overflow-hidden">
                     <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-white/10 blur-3xl animate-pulse" />
@@ -359,7 +372,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-white/5 blur-3xl" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10 space-y-[10px] md:space-y-[30px]">
+                <div className="w-full px-[10px] lg:px-[20px] relative z-10 space-y-[10px] md:space-y-[30px]">
                     {/* Main Heading and Post Room Section - Two Column Layout */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                         {/* Left Column - Badges & Find Perfect Room */}
@@ -397,26 +410,26 @@ const HomePage: React.FC = () => {
                                         title: 'Instant Verification',
                                         desc: 'Quick profile check',
                                         label: 'Fast',
-                                        color: 'from-emerald-500/40 via-green-500/25 to-lime-400/10',
-                                        border: 'border-emerald-400/70',
-                                        iconBg: 'bg-emerald-400/30',
-                                        iconColor: 'text-emerald-200',
+                                        color: 'from-blue-500/40 via-green-500/25 to-lime-400/10',
+                                        border: 'border-blue-400/70',
+                                        iconBg: 'bg-blue-400/30',
+                                        iconColor: 'text-blue-200',
                                         delayClass: '[animation-delay:100ms]',
-                                        gradient: 'from-emerald-400 via-green-400 to-lime-300',
+                                        gradient: 'from-blue-400 via-green-400 to-lime-300',
                                         glow: 'group-hover:shadow-[0_0_24px_rgba(16,185,129,0.35)]',
-                                        labelClass: 'bg-emerald-300/20 text-emerald-100 border-emerald-200/40'
+                                        labelClass: 'bg-blue-300/20 text-blue-100 border-blue-200/40'
                                     },
                                     {
                                         icon: MessageCircle,
                                         title: 'Direct Communication',
                                         desc: 'Chat with owners directly',
                                         label: 'Live',
-                                        color: 'from-blue-500/40 via-sky-500/25 to-indigo-400/10',
+                                        color: 'from-blue-500/40 via-sky-500/25 to-blue-400/10',
                                         border: 'border-blue-400/70',
                                         iconBg: 'bg-blue-400/30',
                                         iconColor: 'text-blue-200',
                                         delayClass: '[animation-delay:200ms]',
-                                        gradient: 'from-blue-400 via-sky-400 to-indigo-300',
+                                        gradient: 'from-blue-400 via-sky-400 to-blue-300',
                                         glow: 'group-hover:shadow-[0_0_24px_rgba(59,130,246,0.35)]',
                                         labelClass: 'bg-blue-300/20 text-blue-100 border-blue-200/40'
                                     },
@@ -479,7 +492,7 @@ const HomePage: React.FC = () => {
                                 <div className="absolute inset-0 w-full h-full pointer-events-none">
                                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(56,189,248,0.18),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(16,185,129,0.16),transparent_40%),linear-gradient(125deg,rgba(2,6,23,0.95),rgba(30,41,59,0.9),rgba(15,23,42,0.95))]" />
                                     <div className="absolute -top-28 -right-24 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
-                                    <div className="absolute -bottom-20 -left-16 h-64 w-64 rounded-full bg-emerald-400/15 blur-3xl" />
+                                    <div className="absolute -bottom-20 -left-16 h-64 w-64 rounded-full bg-blue-400/15 blur-3xl" />
                                 </div>
 
                                 {currentSlide && currentSlide.imageUrl && (
@@ -502,7 +515,7 @@ const HomePage: React.FC = () => {
                                             <Search className="w-4 h-4 mr-2" />
                                             Quick Room Search
                                         </Badge>
-                                        <h3 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-cyan-200 via-sky-100 to-emerald-200 bg-clip-text text-transparent leading-tight">
+                                        <h3 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-cyan-200 via-sky-100 to-blue-200 bg-clip-text text-transparent leading-tight">
                                             Discover Rooms Near You
                                         </h3>
                                         <p className="text-white/85 text-sm md:text-base leading-relaxed">
@@ -582,13 +595,13 @@ const HomePage: React.FC = () => {
                         </div>
                         <div className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-5 text-center shadow-xl hover:bg-white/20 transition-all duration-300 hover:-translate-y-1">
                             <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5" />
-                            <Users className="w-8 h-8 mx-auto mb-3 text-green-300" />
+                            <Users className="w-8 h-8 mx-auto mb-3 text-blue-300" />
                             <div className="text-4xl font-extrabold mb-2">{animatedTotalMembers.toLocaleString('en-IN')}+</div>
                             <div className="text-sm text-white/90 font-medium">Happy Members</div>
                         </div>
                         <div className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-5 text-center shadow-xl hover:bg-white/20 transition-all duration-300 hover:-translate-y-1">
                             <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/5" />
-                            <MessageCircle className="w-8 h-8 mx-auto mb-3 text-green-300" />
+                            <MessageCircle className="w-8 h-8 mx-auto mb-3 text-blue-300" />
                             <div className="text-4xl font-extrabold mb-2">{animatedTotalChats.toLocaleString('en-IN')}+</div>
                             <div className="text-sm text-white/90 font-medium">Active Chats</div>
                         </div>
@@ -605,12 +618,12 @@ const HomePage: React.FC = () => {
             {/* Featured Rooms Section */}
             <section className="pt-[20px] pb-[20px] bg-white relative deferred-render-section md:pt-[30px] md:pb-[30px]">
                 {/* Decorative Background */}
-                <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-green-primary to-transparent opacity-5" />
+                <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-500 to-transparent opacity-5" />
                 
-                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10">
+                <div className="w-full px-[10px] lg:px-[20px] relative z-10">
                     <div className="flex flex-wrap items-end justify-between gap-[10px] mb-[10px] md:gap-[30px] md:mb-[30px]">
                         <div className="space-y-3">
-                            <Badge className="px-3 py-1.5 bg-green-50 text-green-primary border-green-200 font-semibold">
+                            <Badge className="px-3 py-1.5 bg-blue-50 text-blue-500 border-blue-200 font-semibold">
                                 <Star className="w-3.5 h-3.5 mr-1.5 inline fill-current" />
                                 Featured
                             </Badge>
@@ -673,12 +686,12 @@ const HomePage: React.FC = () => {
             <section className="pt-[20px] pb-[20px] bg-gradient-to-b from-slate-50 to-white relative overflow-hidden deferred-render-section md:pt-[30px] md:pb-[30px]">
                 {/* Decorative Elements */}
                 <div className="absolute top-20 right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-                <div className="absolute bottom-20 left-10 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
+                <div className="absolute bottom-20 left-10 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
                 
-                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10">
+                <div className="w-full px-[10px] lg:px-[20px] relative z-10">
                     <div className="flex flex-wrap items-end justify-between gap-[10px] mb-[10px] md:gap-[30px] md:mb-[30px]">
                         <div className="space-y-3">
-                            <Badge className="px-3 py-1.5 bg-green-100 text-green-700 border-green-200 font-semibold">
+                            <Badge className="px-3 py-1.5 bg-blue-100 text-blue-700 border-blue-200 font-semibold">
                                 <Clock className="w-3.5 h-3.5 mr-1.5 inline" />
                                 Fresh Listings
                             </Badge>
@@ -741,10 +754,10 @@ const HomePage: React.FC = () => {
             <section className="py-[20px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden deferred-render-section md:py-[30px]">
                 <div className="absolute inset-0">
                     <div className="absolute top-10 right-10 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute bottom-10 left-10 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
+                    <div className="absolute bottom-10 left-10 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10">
+                <div className="w-full px-[10px] lg:px-[20px] relative z-10">
                     <div className="text-center mb-[10px] max-w-3xl mx-auto md:mb-[30px]">
                         <Badge className="px-4 py-2 mb-6 bg-white/10 backdrop-blur-sm border-white/20 text-white font-semibold">
                             <Shield className="w-4 h-4 mr-2 inline" />
@@ -753,7 +766,7 @@ const HomePage: React.FC = () => {
 
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
                             Built on Trust, Not Just{' '}
-                            <span className="bg-gradient-to-r from-cyan-300 to-emerald-300 bg-clip-text text-transparent">
+                            <span className="bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
                                 Listings
                             </span>
                         </h2>
@@ -806,16 +819,16 @@ const HomePage: React.FC = () => {
                             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                             <CardContent className="p-8 relative z-10">
                                 <div className="flex items-start justify-between gap-3 mb-4">
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white flex items-center justify-center shadow-xl">
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center shadow-xl">
                                         <Users className="w-6 h-6" />
                                     </div>
-                                    <span className="w-7 h-7 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+                                    <span className="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">3</span>
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-2">Approval and Publish</h3>
                                 <p className="text-white/75 text-sm leading-relaxed mb-4">
                                     Only verified listings go live, ensuring a safe and trusted experience.
                                 </p>
-                                <p className="text-xs font-semibold text-emerald-100 bg-emerald-500/20 border border-emerald-300/30 rounded-lg px-3 py-2 inline-block">
+                                <p className="text-xs font-semibold text-blue-100 bg-blue-500/20 border border-blue-300/30 rounded-lg px-3 py-2 inline-block">
                                     Trusted and live listings
                                 </p>
                             </CardContent>
@@ -829,10 +842,10 @@ const HomePage: React.FC = () => {
                 {/* Animated Background Elements */}
                 <div className="absolute inset-0">
                     <div className="absolute top-10 left-10 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
+                    <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse [animation-delay:1s]" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 relative z-10">
+                <div className="w-full px-[10px] lg:px-[20px] relative z-10">
                     <div className="text-center mb-[10px] max-w-3xl mx-auto md:mb-[30px]">
                         <Badge className="px-4 py-2 mb-6 bg-white/10 backdrop-blur-sm border-white/20 text-white font-semibold">
                             <Shield className="w-4 h-4 mr-2 inline" />
@@ -840,7 +853,7 @@ const HomePage: React.FC = () => {
                         </Badge>
                         <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
                             Everything You Need in{' '}
-                            <span className="bg-gradient-to-r from-green-300 to-green-accent bg-clip-text text-transparent">
+                            <span className="bg-gradient-to-r from-blue-300 to-blue-700 bg-clip-text text-transparent">
                                 One Platform
                             </span>
                         </h2>
@@ -857,7 +870,7 @@ const HomePage: React.FC = () => {
                             >
                                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <CardContent className="p-8 text-center relative z-10">
-                                    <div className="w-20 h-20 bg-gradient-to-br from-primary to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl group-hover:scale-110 transition-transform duration-300">
                                         <feature.icon className="w-10 h-10 text-white" />
                                     </div>
                                     <h3 className="text-xl font-bold text-white mb-4">{feature.title}</h3>
@@ -871,14 +884,14 @@ const HomePage: React.FC = () => {
 
             {/* CTA Section */}
             {/* CTA Section */}
-            <section className="py-[20px] bg-gradient-to-r from-green-primary via-green-secondary to-green-primary text-white relative overflow-hidden deferred-render-section md:py-[30px]">
+            <section className="py-[20px] bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 text-white relative overflow-hidden deferred-render-section md:py-[30px]">
                 {/* Animated Background */}
                 <div className="absolute inset-0">
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse" />
                     <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse [animation-delay:1.5s]" />
                 </div>
 
-                <div className="max-w-screen-2xl mx-auto px-[10px] sm:px-5 lg:px-6 text-center relative z-10">
+                <div className="w-full px-[10px] lg:px-[20px] text-center relative z-10">
                     <div className="max-w-4xl mx-auto space-y-[10px] md:space-y-[30px]">
                         <Badge className="px-4 py-2 bg-white/20 backdrop-blur-sm border-white/30 text-white font-semibold text-base">
                             <Sparkles className="w-4 h-4 mr-2 inline" />
@@ -918,15 +931,15 @@ const HomePage: React.FC = () => {
                         {/* Trust Indicators */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-[8px] pt-[10px] md:gap-6 md:pt-[30px] max-w-3xl mx-auto">
                             <div className="text-center">
-                                <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-300" />
+                                <CheckCircle className="w-8 h-8 mx-auto mb-2 text-blue-300" />
                                 <p className="text-sm text-white/90 font-medium">100% Verified</p>
                             </div>
                             <div className="text-center">
-                                <Shield className="w-8 h-8 mx-auto mb-2 text-green-300" />
+                                <Shield className="w-8 h-8 mx-auto mb-2 text-blue-300" />
                                 <p className="text-sm text-white/90 font-medium">Secure Platform</p>
                             </div>
                             <div className="text-center">
-                                <Users className="w-8 h-8 mx-auto mb-2 text-green-300" />
+                                <Users className="w-8 h-8 mx-auto mb-2 text-blue-300" />
                                 <p className="text-sm text-white/90 font-medium">Active Community</p>
                             </div>
                             <div className="text-center">
@@ -942,3 +955,4 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+

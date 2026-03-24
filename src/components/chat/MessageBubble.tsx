@@ -49,7 +49,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
     >
       {/* Avatar for received messages */}
       {!isOwn && showAvatar && (
-        <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0 mt-0.5">
+        <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0 mt-0.5">
           {(senderName || 'U').charAt(0).toUpperCase()}
         </div>
       )}
@@ -58,7 +58,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
       <div
         className={`max-w-xs lg:max-w-md px-4 py-2.5 rounded-lg transition-all ${
           isOwn
-            ? 'bg-emerald-500 text-white rounded-br-none shadow-sm'
+            ? 'bg-blue-500 text-white rounded-br-none shadow-sm'
             : 'bg-gray-100 text-gray-900 rounded-bl-none shadow-sm'
         }`}
       >

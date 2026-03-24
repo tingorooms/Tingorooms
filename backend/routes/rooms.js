@@ -1,6 +1,5 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const axios = require('axios');
 const router = express.Router();
 
 const { executeQuery, withTransaction } = require('../config/database');
@@ -13,6 +12,7 @@ const {
     generateMetaTags 
 } = require('../utils/helpers');
 const { sendRoomApprovalEmail } = require('../utils/email');
+const { uploadImageFiles } = require('../utils/imageStorage');
 
 // Facilities list
 const FACILITIES_LIST = [
@@ -301,8 +301,8 @@ router.post('/', authenticate, requireMember, requireApprovedBroker, checkBroker
             for (const roommate of existingRoommates) {
                 if (roommate.name && roommate.city) {
                     await executeQuery(
-                        'INSERT INTO existing_roommates (room_id, name, city) VALUES (?, ?, ?)',
-                        [roomDbId, roommate.name, roommate.city]
+                        'INSERT INTO roommates (room_id, name, email, city, invited_by, group_id, status) VALUES (?, ?, ?, ?, ?, NULL, ?)',
+                        [roomDbId, roommate.name, roommate.name.toLowerCase().replace(/\s+/g, '') + '@room-occupant.local', roommate.city, req.user.userId, 'Accepted']
                     );
                 }
             }
@@ -378,43 +378,7 @@ router.post('/upload-images', optionalAuth, handleUpload('images', 5), async (re
             });
         }
 
-        const imageStorageApiKey = process.env.IMAGE_STORAGE_API_KEY;
-        const imageStorageUrl = process.env.IMAGE_STORAGE_URL || 'https://api.imgbb.com/1/upload';
-
-        if (!imageStorageApiKey) {
-            return res.status(500).json({
-                success: false,
-                message: 'Image storage is not configured. Please set IMAGE_STORAGE_API_KEY.'
-            });
-        }
-
-        const uploadResults = await Promise.all(
-            req.files.map(async (file) => {
-                const base64Image = file.buffer.toString('base64');
-                const payload = new URLSearchParams();
-                payload.append('image', base64Image);
-                payload.append('name', file.originalname || `room-${Date.now()}`);
-
-                const uploadResponse = await axios.post(
-                    `${imageStorageUrl}?key=${imageStorageApiKey}`,
-                    payload.toString(),
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        timeout: 30000,
-                    }
-                );
-
-                return (
-                    uploadResponse?.data?.data?.display_url ||
-                    uploadResponse?.data?.data?.url ||
-                    null
-                );
-            })
-        );
-
-        const imageUrls = uploadResults.filter(Boolean);
+        const imageUrls = await uploadImageFiles(req.files, 'rooms');
 
         if (imageUrls.length === 0) {
             return res.status(400).json({

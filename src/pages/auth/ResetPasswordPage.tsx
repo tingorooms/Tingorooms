@@ -52,7 +52,7 @@ const ResetPasswordPage: React.FC = () => {
     if (!token) {
         return (
             <div className="w-full max-w-md mx-auto">
-                    <Card className="border border-emerald-100 shadow-xl">
+                    <Card className="border border-blue-100 shadow-xl">
                         <CardContent className="p-6 text-center">
                             <Alert variant="destructive" className="mb-4">
                                 <AlertDescription>Invalid or missing reset token</AlertDescription>
@@ -69,9 +69,9 @@ const ResetPasswordPage: React.FC = () => {
     if (isSuccess) {
         return (
             <div className="w-full max-w-md mx-auto">
-                    <Card className="border border-emerald-100 shadow-xl">
+                    <Card className="border border-blue-100 shadow-xl">
                         <CardContent className="p-6 text-center">
-                            <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                            <CheckCircle2 className="w-16 h-16 text-blue-500 mx-auto mb-4" />
                             <h2 className="text-2xl font-bold mb-2">Password Reset Successful</h2>
                             <p className="text-muted-foreground mb-4">
                                 Your password has been reset successfully. Redirecting to login...
@@ -84,7 +84,7 @@ const ResetPasswordPage: React.FC = () => {
 
     return (
         <div className="w-full max-w-md mx-auto">
-                <Card className="border border-emerald-100 shadow-xl">
+                <Card className="border border-blue-100 shadow-xl">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl text-center">Reset Password</CardTitle>
                         <CardDescription className="text-center">

@@ -21,9 +21,14 @@ const createTransporter = () => {
     const smtpUser = process.env.SMTP_USER || '';
     const smtpPass = process.env.SMTP_PASS || '';
 
+    // rejectUnauthorized defaults to TRUE (secure) for production.
+    // Set SMTP_TLS_REJECT_UNAUTHORIZED=false only if your SMTP provider
+    // uses a self-signed certificate (uncommon with Brevo/SendGrid/Resend).
+    const rejectUnauthorized = process.env.SMTP_TLS_REJECT_UNAUTHORIZED !== 'false';
+
     return nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'localhost',
-        port: process.env.SMTP_PORT || 1025,
+        port: parseInt(process.env.SMTP_PORT) || 1025,
         secure: process.env.SMTP_SECURE === 'true',
         ...(smtpUser && smtpPass ? {
             auth: {
@@ -32,7 +37,7 @@ const createTransporter = () => {
             }
         } : {}),
         tls: {
-            rejectUnauthorized: false
+            rejectUnauthorized
         }
     });
 };
@@ -42,12 +47,22 @@ const sendEmail = async (options) => {
     try {
         const transporter = createTransporter();
         
+        const appName = process.env.APP_NAME || 'RoomRental';
+        const supportEmail = process.env.SUPPORT_EMAIL || 'support@example.com';
+        // Display name improves deliverability and avoids spam filters
+        const defaultFrom = `"${appName}" <${supportEmail}>`;
+
         const mailOptions = {
-            from: options.from || process.env.SUPPORT_EMAIL || 'customer@support.com',
+            from: options.from || defaultFrom,
             to: options.to,
             subject: options.subject,
             html: options.html,
             text: options.text || '',
+            // Standard headers that improve inbox delivery rates
+            headers: {
+                'X-Mailer': `${appName} Mailer`,
+                'X-Priority': '3'
+            },
             ...(options.attachments && { attachments: options.attachments })
         };
 

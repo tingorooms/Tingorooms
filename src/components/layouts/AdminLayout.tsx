@@ -72,7 +72,7 @@ const AdminLayout: React.FC = () => {
     return (
         <div className="min-h-screen flex">
             <aside className="hidden lg:flex w-64 flex-col border-r bg-slate-900 text-white">
-                <div className="h-20 flex items-center px-6 border-b border-slate-800 bg-gradient-to-r from-green-600 to-green-500">
+                <div className="h-20 flex items-center px-6 border-b border-slate-800 bg-gradient-to-r from-blue-600 to-blue-500">
                     <Link to="/admin" className="flex items-center gap-3">
                         {shouldShowLogo ? (
                             <img
@@ -88,7 +88,7 @@ const AdminLayout: React.FC = () => {
                         )}
                         <div>
                             <span className="text-xl font-bold text-white">Admin Panel</span>
-                            <p className="text-xs text-green-50">{businessName} Manager</p>
+                            <p className="text-xs text-blue-50">{businessName} Manager</p>
                         </div>
                     </Link>
                 </div>
@@ -101,7 +101,7 @@ const AdminLayout: React.FC = () => {
                             className={cn(
                                 'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 relative group',
                                 isActive(link.to)
-                                    ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/20'
+                                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-green-500/20'
                                     : 'text-slate-400 hover:bg-slate-800 hover:text-white hover:translate-x-1'
                             )}
                         >
@@ -125,15 +125,15 @@ const AdminLayout: React.FC = () => {
                 </div>
             </aside>
 
-            <div className="flex-1 flex flex-col min-w-0 bg-gradient-to-br from-slate-50 to-green-50/20">
-                <header className="sticky top-0 z-30 h-[68px] sm:h-16 bg-white/95 backdrop-blur border-b border-green-100 flex items-center justify-between px-3 sm:px-4 lg:px-8 shadow-sm">
+            <div className="flex-1 flex flex-col min-w-0 bg-gradient-to-br from-slate-50 to-blue-50/20">
+                <header className="sticky top-0 z-30 h-[68px] sm:h-16 bg-white/95 backdrop-blur border-b border-blue-100 flex items-center justify-between px-3 sm:px-4 lg:px-8 shadow-sm">
                     <div className="flex items-center gap-4">
                         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                             <SheetTrigger className="lg:hidden rounded-lg border border-slate-200 p-2 hover:bg-slate-50">
                                     <Menu className="h-5 w-5" />
                                 </SheetTrigger>
                             <SheetContent side="left" className="w-72 p-0 bg-slate-900 flex flex-col">
-                                <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-gradient-to-r from-green-600 to-green-500 shadow-lg">
+                                <div className="h-16 flex items-center px-6 border-b border-slate-800 bg-gradient-to-r from-blue-600 to-blue-500 shadow-lg">
                                     <Link to="/admin" className="flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
                                         {shouldShowLogo ? (
                                             <img
@@ -149,7 +149,7 @@ const AdminLayout: React.FC = () => {
                                         )}
                                         <div>
                                             <span className="text-xl font-bold text-white">Admin Panel</span>
-                                            <p className="text-xs text-green-50">{businessName}</p>
+                                            <p className="text-xs text-blue-50">{businessName}</p>
                                         </div>
                                     </Link>
                                 </div>
@@ -165,7 +165,7 @@ const AdminLayout: React.FC = () => {
                                                 className={cn(
                                                     'flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 relative group',
                                                     isActive(link.to)
-                                                        ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/20'
+                                                        ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-green-500/20'
                                                         : 'text-slate-400 hover:bg-slate-800 hover:text-white hover:translate-x-1'
                                                 )}
                                             >
@@ -204,12 +204,12 @@ const AdminLayout: React.FC = () => {
 
                                 <div className="border-t border-slate-800 px-4 py-4 bg-slate-900/50">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-md">
+                                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-md">
                                             <Shield className="w-5 h-5 text-white" />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
-                                            <p className="text-xs text-green-400">Administrator</p>
+                                            <p className="text-xs text-blue-400">Administrator</p>
                                         </div>
                                     </div>
                                 </div>
@@ -220,7 +220,7 @@ const AdminLayout: React.FC = () => {
                             <Link to="/admin" className="hover:text-green-600 font-medium transition-colors">Admin</Link>
                             {location.pathname !== '/admin' && (
                                 <>
-                                    <ChevronRight className="w-4 h-4 text-green-400" />
+                                    <ChevronRight className="w-4 h-4 text-blue-400" />
                                     <span className="text-green-600 font-semibold capitalize">
                                         {location.pathname.split('/').pop()?.replace('-', ' ')}
                                     </span>
@@ -238,12 +238,12 @@ const AdminLayout: React.FC = () => {
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild><Button variant="ghost" className="hidden sm:inline-flex gap-2 px-2 sm:px-3 hover:bg-green-50">
-                                    <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-md">
+                                    <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-md">
                                         <User className="w-4 h-4 text-white" />
                                     </div>
                                     <div className="hidden sm:flex flex-col items-start">
                                         <span className="text-sm font-semibold text-slate-700">{user?.name}</span>
-                                        <span className="text-xs text-green-600">Administrator</span>
+                                        <span className="text-xs text-blue-600">Administrator</span>
                                     </div>
                                 </Button></DropdownMenuTrigger>
                             <DropdownMenuContent align="end">

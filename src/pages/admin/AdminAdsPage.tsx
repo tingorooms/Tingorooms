@@ -346,7 +346,7 @@ const AdminAdsPage: React.FC = () => {
             {/* Ads Management Section */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">
                         Ads Management
                     </h1>
                     <p className="text-muted-foreground mt-2">Set ad priority, schedule, and images for homepage slider placement.</p>
@@ -376,10 +376,10 @@ const AdminAdsPage: React.FC = () => {
                 <Card className="border-t-4 border-t-emerald-500 shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Running</CardTitle>
-                        <Power className="h-5 w-5 text-emerald-600" />
+                        <Power className="h-5 w-5 text-blue-600" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-emerald-600">{stats.running}</div>
+                        <div className="text-3xl font-bold text-blue-600">{stats.running}</div>
                     </CardContent>
                 </Card>
                 <Card className="border-t-4 border-t-amber-500 shadow-sm">

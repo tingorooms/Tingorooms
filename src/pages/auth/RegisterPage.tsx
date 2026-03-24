@@ -23,6 +23,8 @@ const RegisterPage: React.FC = () => {
     const { register } = useAuth();
     const invitationToken = searchParams.get('token') || '';
     const prefillEmail = (location.state as any)?.prefillEmail || '';
+    const from = (location.state as any)?.from;
+    const chatIntent = (location.state as any)?.chatIntent;
     
     const [formData, setFormData] = useState({
         name: '',
@@ -339,7 +341,10 @@ const RegisterPage: React.FC = () => {
                         email: result.email,
                         role: formData.role,
                         name: formData.name,
-                        invitationToken
+                        invitationToken,
+                        password: formData.password,
+                        from,
+                        chatIntent,
                     }
                 });
             }
@@ -380,7 +385,7 @@ const RegisterPage: React.FC = () => {
 
     return (
         <div className="w-full max-w-xl mx-auto">
-                <Card className="border border-emerald-100 shadow-xl">
+                <Card className="border border-blue-100 shadow-xl">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl text-center">Create Account</CardTitle>
                         <CardDescription className="text-center">
@@ -400,7 +405,7 @@ const RegisterPage: React.FC = () => {
                                     <Label htmlFor="name">
                                         Full Name
                                         {formData.name && !fieldErrors.name && (
-                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-green-600" />
+                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-blue-600" />
                                         )}
                                     </Label>
                                     <Input
@@ -428,7 +433,7 @@ const RegisterPage: React.FC = () => {
                                     <Label htmlFor="email">
                                         Email
                                         {formData.email && !fieldErrors.email && (
-                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-green-600" />
+                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-blue-600" />
                                         )}
                                     </Label>
                                     <Input
@@ -460,7 +465,7 @@ const RegisterPage: React.FC = () => {
                                     <Label htmlFor="contact">
                                         Phone Number
                                         {formData.contact && !fieldErrors.contact && (
-                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-green-600" />
+                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-blue-600" />
                                         )}
                                     </Label>
                                     <Input
@@ -489,7 +494,7 @@ const RegisterPage: React.FC = () => {
                                     <Label htmlFor="pincode">
                                         PIN Code
                                         {formData.pincode && !fieldErrors.pincode && (
-                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-green-600" />
+                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-blue-600" />
                                         )}
                                     </Label>
                                     <Input
@@ -634,7 +639,7 @@ const RegisterPage: React.FC = () => {
                                                     })}
                                                 </div>
                                                 {formData.selectedPlanId && (
-                                                    <p className="text-xs text-green-600 bg-green-50 p-2 rounded flex items-center gap-1">
+                                                    <p className="text-xs text-blue-600 bg-blue-50 p-2 rounded flex items-center gap-1">
                                                         <CheckCircle2 className="w-3 h-3" /> Plan selected. Admin will review during broker approval.
                                                     </p>
                                                 )}
@@ -767,7 +772,7 @@ const RegisterPage: React.FC = () => {
                                     <Label htmlFor="password">
                                         Password
                                         {formData.password && !fieldErrors.password && (
-                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-green-600" />
+                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-blue-600" />
                                         )}
                                     </Label>
                                     <div className="relative">
@@ -812,7 +817,7 @@ const RegisterPage: React.FC = () => {
                                     <Label htmlFor="confirmPassword">
                                         Confirm Password
                                         {formData.confirmPassword && !fieldErrors.confirmPassword && (
-                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-green-600" />
+                                            <CheckCircle2 className="inline w-4 h-4 ml-1 text-blue-600" />
                                         )}
                                     </Label>
                                     <Input
@@ -856,8 +861,8 @@ const RegisterPage: React.FC = () => {
                                 fieldErrors.acceptTerms 
                                     ? 'bg-red-50 border-red-200' 
                                     : acceptedTerms 
-                                    ? 'bg-green-50 border-green-200'
-                                    : 'bg-green-50 border-green-200'
+                                    ? 'bg-green-50 border-blue-200'
+                                    : 'bg-green-50 border-blue-200'
                             }`}>
                                 <input
                                     type="checkbox"
@@ -880,7 +885,7 @@ const RegisterPage: React.FC = () => {
                                     </Label>
                                 </div>
                                 {acceptedTerms && !fieldErrors.acceptTerms && (
-                                    <CheckCircle2 className="w-4 h-4 mt-1 text-green-600 flex-shrink-0" />
+                                    <CheckCircle2 className="w-4 h-4 mt-1 text-blue-600 flex-shrink-0" />
                                 )}
                             </div>
                             {fieldErrors.acceptTerms && (

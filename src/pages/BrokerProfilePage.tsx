@@ -87,7 +87,7 @@ const BrokerProfilePage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-green-bg pt-0 pb-10 md:pt-0 md:pb-14\">
+            <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 pt-0 pb-10 md:pt-0 md:pb-14\">
                 <div className="max-w-screen-xl mx-auto px-3 md:px-[20px] space-y-6 md:space-y-8">
                     <Skeleton className="h-12 w-48" />
                     <Card>
@@ -109,7 +109,7 @@ const BrokerProfilePage: React.FC = () => {
 
     if (error || !broker) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-green-bg pt-[30px] pb-10 md:pt-[30px] md:pb-14">
+            <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 pt-[30px] pb-10 md:pt-[30px] md:pb-14">
                 <div className="max-w-screen-xl mx-auto px-3 md:px-[20px]">
                     <Button 
                         variant="ghost" 
@@ -149,7 +149,7 @@ const BrokerProfilePage: React.FC = () => {
     const whatsappUrl = buildWhatsAppUrl(broker.contact);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-green-bg pt-[30px] pb-10 md:pt-[30px] md:pb-14">
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 pt-[30px] pb-10 md:pt-[30px] md:pb-14">
             <div className="max-w-screen-xl mx-auto px-3 md:px-[20px] space-y-6 md:space-y-8">
                 {/* Back Button */}
                 <Button 
@@ -166,9 +166,9 @@ const BrokerProfilePage: React.FC = () => {
                     <CardContent className="pt-0 md:pt-[10px] px-4 sm:px-6 lg:px-8 pb-6 md:pb-8">
                         <div className="flex flex-col md:flex-row items-center md:items-start gap-5 md:gap-8">
                             {/* Avatar */}
-                            <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-green-50 shrink-0">
+                            <Avatar className="w-20 h-20 md:w-24 md:h-24 border-4 border-blue-50 shrink-0">
                                 <AvatarImage src={getProfileImageUrl(broker.profile_image)} alt={broker.name} />
-                                <AvatarFallback className="bg-green-primary text-white text-2xl font-bold">
+                                <AvatarFallback className="bg-blue-500 text-white text-2xl font-bold">
                                     {broker.name?.slice(0, 2).toUpperCase() || 'BR'}
                                 </AvatarFallback>
                             </Avatar>
@@ -199,7 +199,7 @@ const BrokerProfilePage: React.FC = () => {
                                 </div>
 
                                 <div className="flex flex-wrap gap-2 md:gap-3">
-                                    <Badge variant="default" className="bg-green-primary text-white px-4 py-1.5">
+                                    <Badge variant="default" className="bg-blue-500 text-white px-4 py-1.5">
                                         <Building2 className="w-4 h-4 mr-1.5" />
                                         {broker.room_count || 0} Active Listings
                                     </Badge>
@@ -213,11 +213,11 @@ const BrokerProfilePage: React.FC = () => {
                                     <h3 className="font-semibold text-slate-900 mb-3">Contact Information</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div className="flex items-center gap-3 text-slate-600">
-                                            <Phone className="w-5 h-5 text-green-primary" />
+                                            <Phone className="w-5 h-5 text-blue-500" />
                                             <span>{broker.contact || 'Not available'}</span>
                                         </div>
                                         <div className="flex items-center gap-3 text-slate-600 break-all">
-                                            <Mail className="w-5 h-5 text-green-primary" />
+                                            <Mail className="w-5 h-5 text-blue-500" />
                                             <span className="truncate">{broker.email || 'Not available'}</span>
                                         </div>
                                     </div>
@@ -262,7 +262,7 @@ const BrokerProfilePage: React.FC = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
                             <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                                <Home className="w-6 h-6 text-green-primary" />
+                                <Home className="w-6 h-6 text-blue-500" />
                                 Available Listings
                             </h2>
                             <p className="text-sm text-slate-600 mt-1">

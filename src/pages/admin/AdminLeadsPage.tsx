@@ -229,7 +229,7 @@ const AdminLeadsPage: React.FC = () => {
         <div className="space-y-6 p-4 sm:p-6 bg-gradient-to-br from-slate-50 via-emerald-50/30 to-slate-50 min-h-screen">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent">
                         Contact Leads
                     </h1>
                     <p className="text-muted-foreground mt-2">
@@ -267,7 +267,7 @@ const AdminLeadsPage: React.FC = () => {
                         <CardTitle className="text-sm font-semibold text-slate-700">New</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-emerald-600">{stats?.new || 0}</div>
+                        <div className="text-3xl font-bold text-blue-600">{stats?.new || 0}</div>
                         <p className="text-xs text-muted-foreground mt-1">Fresh valid leads awaiting action</p>
                     </CardContent>
                 </Card>
@@ -422,7 +422,7 @@ const AdminLeadsPage: React.FC = () => {
                         <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
                             {leads.map((lead) => (
                                 <Card key={lead.id} className="overflow-hidden border-slate-200 bg-white/95 py-0 shadow-sm">
-                                    <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-white to-emerald-50/60 px-4 py-4 sm:px-5">
+                                    <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-white to-blue-50/60 px-4 py-4 sm:px-5">
                                         <div className="flex items-start justify-between gap-3">
                                             <div className="min-w-0 space-y-2">
                                                 <div className="flex flex-wrap items-center gap-2">
@@ -449,10 +449,10 @@ const AdminLeadsPage: React.FC = () => {
                                     <CardContent className="space-y-4 px-4 py-4 sm:px-5">
                                         <div className="space-y-3 rounded-xl bg-slate-50 p-3.5">
                                             <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                                                <Sparkles className="h-4 w-4 text-emerald-600" />
+                                                <Sparkles className="h-4 w-4 text-blue-600" />
                                                 {lead.name}
                                             </div>
-                                            <a href={`mailto:${lead.email}`} className="flex items-center gap-2 text-sm text-emerald-700 hover:underline break-all">
+                                            <a href={`mailto:${lead.email}`} className="flex items-center gap-2 text-sm text-blue-700 hover:underline break-all">
                                                 <Mail className="h-4 w-4 shrink-0" />
                                                 {lead.email}
                                             </a>
@@ -559,7 +559,7 @@ const AdminLeadsPage: React.FC = () => {
                                         </CardHeader>
                                         <CardContent className="space-y-2 text-sm text-slate-600">
                                             <div>{selectedLead.name}</div>
-                                            <a href={`mailto:${selectedLead.email}`} className="block text-emerald-700 hover:underline">
+                                            <a href={`mailto:${selectedLead.email}`} className="block text-blue-700 hover:underline">
                                                 {selectedLead.email}
                                             </a>
                                             <div>{selectedLead.phone || 'Phone not provided'}</div>
@@ -644,7 +644,7 @@ const AdminLeadsPage: React.FC = () => {
                                             </Card>
                                             <Card className="border-none bg-slate-50 shadow-none">
                                                 <CardContent className="p-4 text-center">
-                                                    <CheckCircle2 className="mx-auto mb-2 h-5 w-5 text-emerald-500" />
+                                                    <CheckCircle2 className="mx-auto mb-2 h-5 w-5 text-blue-500" />
                                                     <div className="text-xs text-slate-500">Spam Score</div>
                                                     <div className="text-sm font-semibold text-slate-900">{selectedLead.spam_score}</div>
                                                 </CardContent>

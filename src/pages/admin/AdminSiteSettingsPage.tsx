@@ -101,7 +101,7 @@ const AdminSiteSettingsPage: React.FC = () => {
             
             {imageUrl ? (
                 <div className="relative inline-block">
-                    <div className="w-24 h-24 rounded-lg border-2 border-green-primary/20 bg-slate-50 flex items-center justify-center overflow-hidden">
+                    <div className="w-24 h-24 rounded-lg border-2 border-blue-500/20 bg-slate-50 flex items-center justify-center overflow-hidden">
                         <img
                             src={imageUrl}
                             alt={label}
@@ -132,9 +132,9 @@ const AdminSiteSettingsPage: React.FC = () => {
                 <div className="flex items-center gap-3">
                     <label 
                         htmlFor={`${fileType}-upload`}
-                        className="flex-1 border-2 border-dashed border-green-primary/30 rounded-lg p-6 text-center cursor-pointer hover:border-green-primary/60 transition-colors"
+                        className="flex-1 border-2 border-dashed border-blue-500/30 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500/60 transition-colors"
                     >
-                        <Upload className="h-6 w-6 mx-auto mb-2 text-green-primary" />
+                        <Upload className="h-6 w-6 mx-auto mb-2 text-blue-500" />
                         <p className="text-sm font-medium text-slate-700">Click to upload {fileType}</p>
                         <p className="text-xs text-slate-500 mt-1">PNG, JPG, GIF up to 5MB</p>
                         <input
@@ -154,7 +154,7 @@ const AdminSiteSettingsPage: React.FC = () => {
                 </div>
             )}
             {uploading === fileType && (
-                <p className="text-sm text-green-600 flex items-center gap-2">
+                <p className="text-sm text-blue-600 flex items-center gap-2">
                     <span className="animate-spin">⌛</span>
                     Uploading...
                 </p>
@@ -167,7 +167,7 @@ const AdminSiteSettingsPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                        <Settings className="h-6 w-6 text-green-primary" />
+                        <Settings className="h-6 w-6 text-blue-500" />
                         Site Settings
                     </h1>
                     <p className="text-sm text-slate-600 mt-1">
@@ -192,7 +192,7 @@ const AdminSiteSettingsPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-2">
                             <Label htmlFor="businessName" className="flex items-center gap-2">
-                                <Building2 className="h-4 w-4 text-green-primary" />
+                                <Building2 className="h-4 w-4 text-blue-500" />
                                 Business Name
                             </Label>
                             <Input
@@ -206,7 +206,7 @@ const AdminSiteSettingsPage: React.FC = () => {
 
                         <div className="space-y-2">
                             <Label htmlFor="businessTagline" className="flex items-center gap-2">
-                                <Sparkles className="h-4 w-4 text-green-primary" />
+                                <Sparkles className="h-4 w-4 text-blue-500" />
                                 Business Tagline
                             </Label>
                             <Input
@@ -221,7 +221,7 @@ const AdminSiteSettingsPage: React.FC = () => {
 
                         <div className="space-y-2">
                             <Label htmlFor="supportPhone" className="flex items-center gap-2">
-                                <Phone className="h-4 w-4 text-green-primary" />
+                                <Phone className="h-4 w-4 text-blue-500" />
                                 Support Mobile Number
                             </Label>
                             <Input
@@ -235,7 +235,7 @@ const AdminSiteSettingsPage: React.FC = () => {
 
                         <div className="space-y-2">
                             <Label htmlFor="supportEmail" className="flex items-center gap-2">
-                                <Mail className="h-4 w-4 text-green-primary" />
+                                <Mail className="h-4 w-4 text-blue-500" />
                                 Support Email
                             </Label>
                             <Input
@@ -250,7 +250,7 @@ const AdminSiteSettingsPage: React.FC = () => {
 
                         <div className="space-y-2">
                             <Label htmlFor="adminEmail" className="flex items-center gap-2">
-                                <Mail className="h-4 w-4 text-green-primary" />
+                                <Mail className="h-4 w-4 text-blue-500" />
                                 Admin Email
                             </Label>
                             <Input
@@ -265,7 +265,7 @@ const AdminSiteSettingsPage: React.FC = () => {
 
                         <div className="space-y-2">
                             <Label htmlFor="supportAddress" className="flex items-center gap-2">
-                                <MapPin className="h-4 w-4 text-green-primary" />
+                                <MapPin className="h-4 w-4 text-blue-500" />
                                 Support Address
                             </Label>
                             <Input
@@ -301,13 +301,13 @@ const AdminSiteSettingsPage: React.FC = () => {
                             label="Business Logo"
                             fileType="logo"
                             imageUrl={formData.logoUrl}
-                            icon={<Image className="h-4 w-4 text-green-primary" />}
+                            icon={<Image className="h-4 w-4 text-blue-500" />}
                         />
                         <FileUploadField 
                             label="Favicon"
                             fileType="favicon"
                             imageUrl={formData.faviconUrl}
-                            icon={<Image className="h-4 w-4 text-green-primary" />}
+                            icon={<Image className="h-4 w-4 text-blue-500" />}
                         />
                     </div>
                 </CardContent>

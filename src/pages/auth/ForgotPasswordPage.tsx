@@ -34,9 +34,9 @@ const ForgotPasswordPage: React.FC = () => {
     if (isSuccess) {
         return (
             <div className="w-full max-w-md mx-auto">
-                    <Card className="border border-emerald-100 shadow-xl">
+                    <Card className="border border-blue-100 shadow-xl">
                         <CardContent className="p-6 text-center">
-                            <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                            <CheckCircle2 className="w-16 h-16 text-blue-500 mx-auto mb-4" />
                             <h2 className="text-2xl font-bold mb-2">Check Your Email</h2>
                             <p className="text-muted-foreground mb-4">
                                 We've sent a password reset link to<br />
@@ -53,7 +53,7 @@ const ForgotPasswordPage: React.FC = () => {
 
     return (
         <div className="w-full max-w-md mx-auto">
-                <Card className="border border-emerald-100 shadow-xl">
+                <Card className="border border-blue-100 shadow-xl">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl text-center">Forgot Password</CardTitle>
                         <CardDescription className="text-center">

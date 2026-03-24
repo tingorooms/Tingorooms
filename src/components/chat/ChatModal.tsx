@@ -21,7 +21,7 @@ interface ChatModalProps {
     isEstablishing?: boolean;
 }
 
-const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, chatRoom, room, onNavigateToRoom, isEstablishing }) => {
+const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, chatRoom, room, onNavigateToRoom }) => {
     const { user } = useAuth();
     const messagesEndRef = useRef<HTMLDivElement>(null);
     
@@ -194,14 +194,14 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, chatRoom, room, 
 
     if (!chatRoom) {
         // Show a connecting-state dialog while the room is being fetched
-        if (!isOpen && !isEstablishing) return null;
+        if (!isOpen) return null;
         return (
             <Dialog open={isOpen} onOpenChange={onClose}>
                 <DialogContent className="max-w-sm w-full p-0 gap-0 flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white shadow-xl overflow-hidden" showCloseButton={false}>
                     <DialogTitle className="sr-only">Connecting chat</DialogTitle>
                     <DialogDescription className="sr-only">Establishing chat connection with owner</DialogDescription>
                     <div className="flex flex-col items-center gap-4 py-10 px-8">
-                        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
                             <MessageSquare className="w-8 h-8 text-white" />
                         </div>
                         <div className="text-center">
@@ -235,7 +235,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, chatRoom, room, 
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                             <Avatar className="w-10 h-10 ring-2 ring-gray-200 flex-shrink-0">
                                 <AvatarImage src={getProfileImageUrl(otherParticipant.image)} />
-                                <AvatarFallback className="bg-emerald-100 text-emerald-700">
+                                <AvatarFallback className="bg-blue-100 text-blue-700">
                                     {otherParticipantInitials || 'U'}
                                 </AvatarFallback>
                             </Avatar>
@@ -258,7 +258,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, chatRoom, room, 
                                  roomContactInfo.user_id !== user?.id && (
                                     <a 
                                         href={`tel:${roomContactInfo.contact}`}
-                                        className="text-xs text-emerald-600 font-medium mt-0.5 hover:text-emerald-700 hover:underline cursor-pointer inline-block transition-colors"
+                                        className="text-xs text-blue-600 font-medium mt-0.5 hover:text-blue-700 hover:underline cursor-pointer inline-block transition-colors"
                                         title="Click to call"
                                     >
                                         📞 {roomContactInfo.contact}
@@ -301,7 +301,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, chatRoom, room, 
                                     disabled={isTogglingVisibility}
                                     className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md transition-all ${
                                         roomContactInfo.contact_visibility === 'Public'
-                                            ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                                            ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                                     title={`Contact is ${roomContactInfo.contact_visibility.toLowerCase()}. Click to ${roomContactInfo.contact_visibility === 'Private' ? 'show' : 'hide'} contact`}

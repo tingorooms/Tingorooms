@@ -588,7 +588,7 @@ const MapSection: React.FC = () => {
     ];
 
     return (
-        <section id="nearby-rooms-map" className="py-16 bg-gradient-to-b from-white to-green-bg relative isolate scroll-mt-24">
+        <section id="nearby-rooms-map" className="py-16 bg-gradient-to-b from-white to-slate-50 relative isolate scroll-mt-24">
             <div className="max-w-screen-2xl mx-auto px-5">
                 {/* Section Header */}
                 <motion.div
@@ -598,13 +598,13 @@ const MapSection: React.FC = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-8"
                 >
-                    <Badge className="mb-4 px-4 py-2 bg-green-primary/10 text-green-primary border-green-primary/20 font-semibold text-sm">
+                    <Badge className="mb-4 px-4 py-2 bg-blue-500/10 text-blue-500 border-blue-500/20 font-semibold text-sm">
                         <MapPin className="w-4 h-4 mr-2 inline" />
                         Explore on Map
                     </Badge>
                     <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-3 leading-tight">
                         Find Rooms on{' '}
-                        <span className="bg-gradient-to-r from-green-primary to-green-secondary bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
                             Live Map
                         </span>
                     </h2>
@@ -699,7 +699,7 @@ const MapSection: React.FC = () => {
                     {isLoading && (
                         <div className="absolute inset-0 z-20 bg-white/90 backdrop-blur-sm flex items-center justify-center">
                             <div className="flex flex-col items-center gap-3">
-                                <Loader2 className="w-10 h-10 animate-spin text-green-primary" />
+                                <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
                                 <p className="text-slate-600 font-semibold">Loading listings...</p>
                             </div>
                         </div>
@@ -713,7 +713,6 @@ const MapSection: React.FC = () => {
                         <button
                             onClick={() => setIsLegendOpen(prev => !prev)}
                             className="flex items-center gap-3 w-full px-3.5 py-2.5"
-                            aria-expanded={isLegendOpen}
                             aria-label="Toggle map legend"
                         >
                             <p className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Legend</p>

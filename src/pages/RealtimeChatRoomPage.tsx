@@ -244,7 +244,7 @@ const RealtimeChatRoomPage: React.FC = () => {
     return (
         <div className="w-full h-[calc(100vh-120px)] flex flex-col">
             {/* Chat Header */}
-            <div className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 border-b shadow-sm">
+            <div className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 border-b shadow-sm">
                 <div className="flex items-center gap-4 flex-1">
                     <Button
                         variant="ghost"

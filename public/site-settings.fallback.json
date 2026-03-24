@@ -1,10 +1,10 @@
 {
-  "businessName": "RoomRental",
+  "businessName": "Tingo Rooms",
   "businessTagline": "Find Your Perfect Roommate",
   "supportEmail": "customer@support.com",
   "adminEmail": "customer@support.com",
   "supportPhone": "+91 99999 99999",
-  "logoUrl": "/uploads/sites/logo-1773026130134-konwzk.png",
+  "logoUrl": "/uploads/sites/logo-1774102960299-9vlxtj.jpeg",
   "faviconUrl": "/uploads/sites/favicon-1773026134415-we7sli.png",
   "supportAddress": "Pune, Maharashtra",
   "facebookUrl": "",
@@ -14,5 +14,5 @@
   "youtubeUrl": "",
   "defaultAdBgSearchUrl": "/uploads/ads/default-bg-search.jpg",
   "defaultAdBgPostUrl": "/uploads/ads/default-bg-post.jpeg",
-  "updatedAt": "2026-03-21T14:21:34.363Z"
+  "updatedAt": "2026-03-23T13:11:18.138Z"
 }

@@ -5,12 +5,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Retained token names for compatibility, remapped to the blue/purple theme
-        'green-primary': '#2563EB',
-        'green-secondary': '#7C3AED',
-        'green-accent': '#A855F7',
-        'green-bg': '#F9FAFB',
-        'green-text': '#1F2937',
+        // Retained token names for compatibility, remapped to minimal white/navy/blue theme
+        'green-primary': '#3B82F6',
+        'green-secondary': '#2563EB',
+        'green-accent': '#1D4ED8',
+        'green-bg': '#F8FAFC',
+        'green-text': '#0F172A',
         'green-border': '#CBD5E1',
         // Design System Colors
         border: "hsl(var(--border))",

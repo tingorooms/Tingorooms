@@ -171,7 +171,7 @@ const AdminReportsPage: React.FC = () => {
         <div className="space-y-6 p-3 sm:p-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 min-h-screen">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Reports</h1>
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">Reports</h1>
                     <p className="text-muted-foreground mt-2">Generate, review, and download platform reports</p>
                 </div>
                 <Button className="w-full sm:w-auto" onClick={() => { void fetchReports(); }} variant="outline" disabled={loading}>
@@ -246,10 +246,10 @@ const AdminReportsPage: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="border-t-4 border-t-green-500 shadow-sm">
+                <Card className="border-t-4 border-t-blue-500 shadow-sm">
                     <CardContent className="p-6">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
                                 <Calendar className="w-6 h-6 text-white" />
                             </div>
                             <div>
@@ -257,15 +257,15 @@ const AdminReportsPage: React.FC = () => {
                                 <p className="text-sm text-muted-foreground">Selected range</p>
                             </div>
                         </div>
-                        <p className="text-2xl font-bold text-green-600 mt-4">{totals.roomsTotal}</p>
+                        <p className="text-2xl font-bold text-blue-600 mt-4">{totals.roomsTotal}</p>
                         <Badge variant="outline" className="mt-2">Rooms listed</Badge>
                     </CardContent>
                 </Card>
 
-                <Card className="border-t-4 border-t-purple-500 shadow-sm">
+                <Card className="border-t-4 border-t-blue-500 shadow-sm">
                     <CardContent className="p-6">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
                                 <Calendar className="w-6 h-6 text-white" />
                             </div>
                             <div>
@@ -273,7 +273,7 @@ const AdminReportsPage: React.FC = () => {
                                 <p className="text-sm text-muted-foreground">Selected range</p>
                             </div>
                         </div>
-                        <p className="text-2xl font-bold text-purple-600 mt-4">₹{Number(totals.expensesTotal).toLocaleString()}</p>
+                        <p className="text-2xl font-bold text-blue-600 mt-4">₹{Number(totals.expensesTotal).toLocaleString()}</p>
                         <Badge variant="outline" className="mt-2">Total cost</Badge>
                     </CardContent>
                 </Card>

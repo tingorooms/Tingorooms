@@ -1,7 +1,6 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const router = express.Router();
-const axios = require('axios');
 
 const isValidURL = (url) => {
     try {
@@ -20,6 +19,7 @@ const {
     ensureContactLeadsTable,
     escapeLikeSearchTerm
 } = require('../utils/contactLeads');
+const { uploadImageFiles } = require('../utils/imageStorage');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -1341,9 +1341,9 @@ router.get('/rooms/:roomId', authenticate, requireAdmin, async (req, res, next) 
             });
         }
 
-        // Get existing roommates
+        // Get existing roommates (from roommates table where room_id is set)
         const roommates = await executeQuery(
-            'SELECT name, city FROM existing_roommates WHERE room_id = ?',
+            'SELECT name, city FROM roommates WHERE room_id = ? AND room_id IS NOT NULL',
             [rooms[0].id]
         );
 
@@ -1953,43 +1953,7 @@ router.post('/ads/upload-images', authenticate, requireAdmin, handleUpload('imag
             });
         }
 
-        const imageStorageApiKey = process.env.IMAGE_STORAGE_API_KEY;
-        const imageStorageUrl = process.env.IMAGE_STORAGE_URL || 'https://api.imgbb.com/1/upload';
-
-        if (!imageStorageApiKey) {
-            return res.status(500).json({
-                success: false,
-                message: 'Image storage is not configured. Please set IMAGE_STORAGE_API_KEY.'
-            });
-        }
-
-        const uploadResults = await Promise.all(
-            req.files.map(async (file) => {
-                const base64Image = file.buffer.toString('base64');
-                const payload = new URLSearchParams();
-                payload.append('image', base64Image);
-                payload.append('name', file.originalname || `ad-${Date.now()}`);
-
-                const uploadResponse = await axios.post(
-                    `${imageStorageUrl}?key=${imageStorageApiKey}`,
-                    payload.toString(),
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        timeout: 30000
-                    }
-                );
-
-                return (
-                    uploadResponse?.data?.data?.display_url ||
-                    uploadResponse?.data?.data?.url ||
-                    null
-                );
-            })
-        );
-
-        const imageUrls = uploadResults.filter(Boolean);
+        const imageUrls = await uploadImageFiles(req.files, 'ads');
 
         if (imageUrls.length === 0) {
             return res.status(400).json({

@@ -121,10 +121,10 @@ const AdminRoomsPage: React.FC = () => {
                 >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Approved</CardTitle>
-                        <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        <CheckCircle2 className="h-5 w-5 text-blue-600" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-green-600">{stats?.approved_count || 0}</div>
+                        <div className="text-3xl font-bold text-blue-600">{stats?.approved_count || 0}</div>
                         <p className="text-xs text-muted-foreground mt-1">Active listings</p>
                     </CardContent>
                 </Card>
@@ -265,7 +265,7 @@ const AdminRoomsPage: React.FC = () => {
                                                     <DropdownMenuLabel>Change Status</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
                                                     <DropdownMenuItem onClick={() => handleStatusChange(room.room_id, 'Approved', room.status)} disabled={room.status === 'Approved'}>
-                                                        <CheckCircle2 className="w-4 h-4 mr-2 text-green-600" />
+                                                        <CheckCircle2 className="w-4 h-4 mr-2 text-blue-600" />
                                                         <span>Approve</span>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem onClick={() => handleStatusChange(room.room_id, 'Pending', room.status)} disabled={room.status === 'Pending'}>
@@ -363,7 +363,7 @@ const AdminRoomsPage: React.FC = () => {
                                                                 onClick={() => handleStatusChange(room.room_id, 'Approved', room.status)}
                                                                 disabled={room.status === 'Approved'}
                                                             >
-                                                                <CheckCircle2 className="w-4 h-4 mr-2 text-green-600" />
+                                                                <CheckCircle2 className="w-4 h-4 mr-2 text-blue-600" />
                                                                 <span>Approve</span>
                                                             </DropdownMenuItem>
                                                             <DropdownMenuItem

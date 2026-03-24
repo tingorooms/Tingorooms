@@ -58,7 +58,7 @@ const AcceptInvitationPage: React.FC = () => {
     }, [token, isAuthenticated, isLoading]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-bg via-white to-green-bg flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center p-4">
             <Card className="w-full max-w-xl shadow-xl">
                 <CardHeader>
                     <CardTitle className="text-2xl">Roommate Invitation</CardTitle>
@@ -125,8 +125,8 @@ const AcceptInvitationPage: React.FC = () => {
 
                     {!isLoading && isAuthenticated && status === 'success' && (
                         <>
-                            <Alert className="border-green-200 bg-green-50 text-green-900">
-                                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            <Alert className="border-green-200 bg-blue-50 text-blue-900">
+                                <CheckCircle2 className="h-4 w-4 text-blue-600" />
                                 <AlertDescription>
                                     {message}
                                     {groupId ? ` Group ID: ${groupId}` : ''}

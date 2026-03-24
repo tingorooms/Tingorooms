@@ -20,9 +20,8 @@ import { useSiteSettings } from '@/context/SiteSettingsContext';
 const VerifyOTPPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { verifyOTP, resendOTP } = useAuth();
+    const { verifyOTP, resendOTP, login } = useAuth();
     const { settings } = useSiteSettings();
-    
     const email = (location.state as any)?.email || '';
     const role = (location.state as any)?.role || '';
     const name = (location.state as any)?.name || '';
@@ -72,38 +71,54 @@ const VerifyOTPPage: React.FC = () => {
         try {
             await verifyOTP(email, otpString);
 
-            let invitationAccepted = false;
-            let invitationAcceptError = '';
             if (invitationToken) {
                 try {
                     await acceptInvitationAfterRegistration(invitationToken, email);
-                    invitationAccepted = true;
                 } catch (inviteErr: any) {
-                    invitationAcceptError = inviteErr?.response?.data?.message || 'Email verified, but invitation acceptance failed.';
+                    // Invitation acceptance failed, but continue
                 }
             }
-            
+
             // Handle post-verification based on role
             if (role === 'Broker') {
                 // Show success modal for brokers (pending approval)
                 setShowBrokerSuccessModal(true);
             } else {
-                // For members, redirect to login page with success message
-                if (invitationToken && !invitationAccepted) {
-                    navigate(`/accept-invite?token=${encodeURIComponent(invitationToken)}`, {
-                        state: {
-                            message: invitationAcceptError || 'Email verified. Please login to complete invitation acceptance.'
-                        }
-                    });
-                } else {
+                // For members, log in and redirect to dashboard (or chat context if present)
+                // Try to get password from location.state if present (for chat/quick flows)
+                let password = (location.state as any)?.password || '';
+                if (!password) {
+                    // fallback: try tempPassword or ask user to login manually
                     navigate('/login', {
                         state: {
-                            message: invitationToken
-                                ? 'Email verified and invitation accepted successfully! Please login to continue.'
-                                : 'Email verified successfully! Please login to continue.',
+                            message: 'Email verified successfully! Please login to continue.',
                             type: 'success'
                         }
                     });
+                    return;
+                }
+                try {
+                    await login({ email, password });
+                } catch {
+                    navigate('/login', {
+                        state: {
+                            message: 'Email verified, but automatic login failed. Please login manually.',
+                            type: 'success'
+                        }
+                    });
+                    return;
+                }
+                // If chat context is present, redirect back to chat
+                const chatIntent = (location.state as any)?.chatIntent;
+                if (chatIntent && chatIntent.roomId && chatIntent.receiverId) {
+                    const fromPath = (location.state as any)?.from?.pathname || `/room/${chatIntent.roomId}`;
+                    const fromSearch = (location.state as any)?.from?.search || '';
+                    const params = new URLSearchParams(fromSearch.startsWith('?') ? fromSearch.slice(1) : fromSearch);
+                    params.set('startChat', '1');
+                    params.set('receiverId', String(chatIntent.receiverId));
+                    navigate(`${fromPath}?${params.toString()}`, { replace: true });
+                } else {
+                    navigate('/dashboard', { replace: true });
                 }
             }
         } catch (err: any) {
@@ -131,7 +146,7 @@ const VerifyOTPPage: React.FC = () => {
 
     return (
         <div className="w-full max-w-md mx-auto">
-                <Card className="border border-emerald-100 shadow-xl">
+                <Card className="border border-blue-100 shadow-xl">
                     <CardHeader className="space-y-1">
                         <CardTitle className="text-2xl text-center">Verify Your Email</CardTitle>
                         <CardDescription className="text-center">
@@ -194,8 +209,8 @@ const VerifyOTPPage: React.FC = () => {
                 <AlertDialogContent className="max-w-md">
                     <AlertDialogHeader>
                         <div className="flex justify-center mb-4">
-                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                                <CheckCircle2 className="w-8 h-8 text-green-600" />
+                            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                <CheckCircle2 className="w-8 h-8 text-blue-600" />
                             </div>
                         </div>
                         <AlertDialogTitle className="text-center text-2xl">Email Verified!</AlertDialogTitle>

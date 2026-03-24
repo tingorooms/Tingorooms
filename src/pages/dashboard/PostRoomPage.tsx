@@ -31,14 +31,14 @@ import LocationPickerMap from '@/components/maps/LocationPickerMap';
 import type { Plan } from '@/types';
 
 const steps = [
-    { id: 1, title: 'Listing Type', icon: Building2 },
-    { id: 2, title: 'Room Type', icon: Home },
-    { id: 3, title: 'Location', icon: MapPin },
-    { id: 4, title: 'Details', icon: Building2 },
+    { id: 1, title: 'What are you looking for?', icon: Building2 },
+    { id: 2, title: 'Select Room Type', icon: Home },
+    { id: 3, title: 'Location Details', icon: MapPin },
+    { id: 4, title: 'More Details', icon: Building2 },
     { id: 5, title: 'Furnishing & Facilities', icon: Check },
-    { id: 6, title: 'Title & Note', icon: Building2 },
-    { id: 7, title: 'Images', icon: Upload },
-    { id: 8, title: 'Plan', icon: Check },
+    { id: 6, title: 'Title & Description', icon: Building2 },
+    { id: 7, title: 'Upload Images', icon: Upload },
+    { id: 8, title: 'Select Plan', icon: Check },
 ];
 
 const getTodayDateString = () => {
@@ -150,6 +150,7 @@ const PostRoomPage: React.FC = () => {
     const navigate = useNavigate();
     const { user, isAuthenticated, isLoading, register, verifyOTP, resendOTP, login } = useAuth();
     const imageInputRef = useRef<HTMLInputElement | null>(null);
+    const formStartRef = useRef<HTMLDivElement | null>(null);
     const [currentStep, setCurrentStep] = useState(() => {
         const savedStep = localStorage.getItem('postRoomCurrentStep');
         if (savedStep) {
@@ -521,11 +522,25 @@ const PostRoomPage: React.FC = () => {
             setIsLoadingNext(false);
         }
 
-        if (currentStep < steps.length) setCurrentStep(currentStep + 1);
+        if (currentStep < steps.length) {
+            setCurrentStep(currentStep + 1);
+            requestAnimationFrame(() => {
+                const topOffset = window.innerWidth < 640 ? 84 : 96;
+                const top = (formStartRef.current?.getBoundingClientRect().top || 0) + window.scrollY - topOffset;
+                window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+            });
+        }
     };
 
     const handleBack = () => {
-        if (currentStep > 1) setCurrentStep(currentStep - 1);
+        if (currentStep > 1) {
+            setCurrentStep(currentStep - 1);
+            requestAnimationFrame(() => {
+                const topOffset = window.innerWidth < 640 ? 84 : 96;
+                const top = (formStartRef.current?.getBoundingClientRect().top || 0) + window.scrollY - topOffset;
+                window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+            });
+        }
     };
 
     const persistDraftSnapshot = useCallback(() => {
@@ -1005,12 +1020,8 @@ const PostRoomPage: React.FC = () => {
         switch (currentStep) {
             case 1:
                 return (
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-foreground">What are you looking for? <span className="text-red-500 text-lg">*</span></h2>
-                            <p className="text-muted-foreground">Select the type of listing you want to create</p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-4 sm:space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
                             {[
                                 { type: 'For Rent', icon: Building2 },
                                 { type: 'Required Roommate', icon: Users },
@@ -1021,17 +1032,17 @@ const PostRoomPage: React.FC = () => {
                                     className={`cursor-pointer hover:shadow-md transition-all border-2 ${formData.listingType === type ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
                                     onClick={() => setFormData({ ...formData, listingType: type })}
                                 >
-                                    <CardContent className="p-6 text-center">
-                                        <Icon className={`w-12 h-12 mx-auto mb-4 ${formData.listingType === type ? 'text-primary' : 'text-muted-foreground'}`} />
-                                        <h3 className={`font-semibold text-lg ${formData.listingType === type ? 'text-foreground' : 'text-muted-foreground'}`}>{type}</h3>
+                                    <CardContent className="p-4 sm:p-6 text-center">
+                                        <Icon className={`w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-2 sm:mb-4 ${formData.listingType === type ? 'text-primary' : 'text-muted-foreground'}`} />
+                                        <h3 className={`font-semibold text-sm sm:text-lg ${formData.listingType === type ? 'text-foreground' : 'text-muted-foreground'}`}>{type}</h3>
                                     </CardContent>
                                 </Card>
                             ))}
                         </div>
                         {(formData.listingType === 'For Rent' || formData.listingType === 'Required Roommate') && (
-                            <div className="space-y-4 p-6 rounded-lg bg-muted/50 border border-border">
-                                <Label className="text-base font-semibold">Preferred Gender</Label>
-                                <div className="grid grid-cols-3 gap-3">
+                            <div className="space-y-3 sm:space-y-4 p-4 sm:p-6 rounded-lg bg-muted/50 border border-border">
+                                <Label className="text-sm sm:text-base font-semibold">Preferred Gender</Label>
+                                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                                     {[
                                         { label: 'Male', icon: User },
                                         { label: 'Female', icon: Users },
@@ -1042,9 +1053,9 @@ const PostRoomPage: React.FC = () => {
                                             className={`cursor-pointer transition-all border-2 ${formData.preferredGender === label ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
                                             onClick={() => setFormData({ ...formData, preferredGender: label })}
                                         >
-                                            <CardContent className="p-4 flex flex-col items-center gap-2">
-                                                <Icon className={`w-6 h-6 ${formData.preferredGender === label ? 'text-primary' : 'text-muted-foreground'}`} />
-                                                <p className={`text-sm font-medium ${formData.preferredGender === label ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</p>
+                                            <CardContent className="p-3 sm:p-4 flex flex-col items-center gap-1 sm:gap-2">
+                                                <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${formData.preferredGender === label ? 'text-primary' : 'text-muted-foreground'}`} />
+                                                <p className={`text-xs sm:text-sm font-medium ${formData.preferredGender === label ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</p>
                                             </CardContent>
                                         </Card>
                                     ))}
@@ -1056,12 +1067,8 @@ const PostRoomPage: React.FC = () => {
 
             case 2:
                 return (
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-foreground">Select Room Type <span className="text-red-500 text-lg">*</span></h2>
-                            <p className="text-muted-foreground">Choose the type and configuration of your property</p>
-                        </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="space-y-4 sm:space-y-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                             {[
                                 { type: '1RK', icon: DoorOpen },
                                 { type: '1BHK', icon: Home },
@@ -1081,16 +1088,16 @@ const PostRoomPage: React.FC = () => {
                                     }`}
                                     onClick={() => setFormData({ ...formData, roomType: type })}
                                 >
-                                    <CardContent className="p-4 text-center">
-                                        <Icon className={`w-8 h-8 mx-auto mb-2 ${formData.roomType === type ? 'text-primary' : 'text-muted-foreground'}`} />
-                                        <p className={`font-semibold text-sm ${formData.roomType === type ? 'text-foreground' : 'text-muted-foreground'}`}>{type}</p>
+                                    <CardContent className="p-3 sm:p-4 text-center">
+                                        <Icon className={`w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-1 sm:mb-2 ${formData.roomType === type ? 'text-primary' : 'text-muted-foreground'}`} />
+                                        <p className={`font-semibold text-xs sm:text-sm ${formData.roomType === type ? 'text-foreground' : 'text-muted-foreground'}`}>{type}</p>
                                     </CardContent>
                                 </Card>
                             ))}
                         </div>
-                        <div className="space-y-4">
-                            <Label className="text-base font-semibold">House Type</Label>
-                            <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-3 sm:space-y-4">
+                            <Label className="text-sm sm:text-base font-semibold">House Type</Label>
+                            <div className="grid grid-cols-3 gap-3 sm:gap-4">
                                 {[
                                     { label: 'Flat', icon: Building2 },
                                     { label: 'Apartment', icon: Warehouse },
@@ -1103,9 +1110,9 @@ const PostRoomPage: React.FC = () => {
                                         }`}
                                         onClick={() => setFormData({ ...formData, houseType: label })}
                                     >
-                                        <CardContent className="p-6 flex flex-col items-center gap-3 text-center">
-                                            <Icon className={`w-8 h-8 ${formData.houseType === label ? 'text-primary' : 'text-muted-foreground'}`} />
-                                            <p className={`font-medium text-sm ${formData.houseType === label ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</p>
+                                        <CardContent className="p-4 sm:p-6 flex flex-col items-center gap-2 sm:gap-3 text-center">
+                                            <Icon className={`w-6 h-6 sm:w-8 sm:h-8 ${formData.houseType === label ? 'text-primary' : 'text-muted-foreground'}`} />
+                                            <p className={`font-medium text-xs sm:text-sm ${formData.houseType === label ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</p>
                                         </CardContent>
                                     </Card>
                                 ))}
@@ -1116,12 +1123,8 @@ const PostRoomPage: React.FC = () => {
 
             case 3:
                 return (
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-foreground">Location Details <span className="text-red-500 text-lg">*</span></h2>
-                            <p className="text-muted-foreground">Provide accurate location information for your property</p>
-                        </div>
-                        <div className="space-y-3 p-4 rounded-lg bg-muted/50 border border-border">
+                    <div className="space-y-4 sm:space-y-6">
+                        <div className="space-y-3 p-3 sm:p-4 rounded-lg bg-muted/50 border border-border">
                             <LocationPickerMap
                                 latitude={formData.latitude}
                                 longitude={formData.longitude}
@@ -1132,30 +1135,44 @@ const PostRoomPage: React.FC = () => {
                                 Search in India, fetch your current location, or click/drag the marker to set exact room location.
                             </p>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label className="font-semibold">
-                                    City / District
-                                    {locationFetched && <span className="text-green-600 ml-1">✓ Detected</span>}
-                                </Label>
-                                <Input 
-                                    placeholder="e.g., Pune"
-                                    value={formData.city}
-                                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                                />
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label className="font-semibold">
+                                        City / District
+                                        {locationFetched && <span className="text-green-600 ml-1">✓ Detected</span>}
+                                    </Label>
+                                    <Input 
+                                        placeholder="e.g., Pune"
+                                        value={formData.city}
+                                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="font-semibold">
+                                        Area <span className="text-red-500">*</span>
+                                        {locationFetched && formData.area && <span className="text-green-600 ml-1">✓ Detected</span>}
+                                    </Label>
+                                    <Input 
+                                        placeholder="e.g., Koregaon Park"
+                                        value={formData.area}
+                                        onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="font-semibold">
+                                        PIN Code <span className="text-red-500">*</span>
+                                        {locationFetched && formData.pincode && <span className="text-green-600 ml-1">✓ Detected</span>}
+                                    </Label>
+                                    <Input 
+                                        placeholder="411001"
+                                        maxLength={6}
+                                        value={formData.pincode}
+                                        onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
-                                <Label className="font-semibold">
-                                    Area <span className="text-red-500">*</span>
-                                    {locationFetched && formData.area && <span className="text-green-600 ml-1">✓ Detected</span>}
-                                </Label>
-                                <Input 
-                                    placeholder="e.g., Koregaon Park"
-                                    value={formData.area}
-                                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-                                />
-                            </div>
-                            <div className="space-y-2 md:col-span-2">
                                 <Label className="font-semibold">
                                     Full Address <span className="text-red-500">*</span>
                                     {locationFetched && formData.address && <span className="text-green-600 ml-1">✓ Detected</span>}
@@ -1166,36 +1183,47 @@ const PostRoomPage: React.FC = () => {
                                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="font-semibold">
-                                    PIN Code <span className="text-red-500">*</span>
-                                    {locationFetched && formData.pincode && <span className="text-green-600 ml-1">✓ Detected</span>}
-                                </Label>
-                                <Input 
-                                    placeholder="411001"
-                                    maxLength={6}
-                                    value={formData.pincode}
-                                    onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-                                />
-                            </div>
                         </div>
                     </div>
                 );
 
             case 4:
                 return (
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-foreground">More Details <span className="text-red-500 text-lg">*</span></h2>
-                            <p className="text-muted-foreground">Add pricing and availability information</p>
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="font-semibold">Available From <span className="text-red-500">*</span></Label>
-                            <Input 
-                                type="date"
-                                value={formData.availabilityFrom}
-                                onChange={(e) => setFormData({ ...formData, availabilityFrom: e.target.value })}
-                            />
+                    <div className="space-y-4 sm:space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="font-semibold">Available From <span className="text-red-500">*</span></Label>
+                                <Input 
+                                    type="date"
+                                    value={formData.availabilityFrom}
+                                    onChange={(e) => setFormData({ ...formData, availabilityFrom: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="font-semibold">Contact Privacy</Label>
+                                <div className="flex gap-3">
+                                    {[
+                                        { value: 'Private', label: 'Secure Chat', icon: Lock, help: 'Your number stays private, contact through platform' },
+                                        { value: 'Public', label: 'Share Details', icon: Share2, help: 'Your number is visible to everyone' }
+                                    ].map(({ value, label, icon: Icon, help }) => (
+                                        <div key={value} className="flex-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData({ ...formData, contactVisibility: value as 'Private' | 'Public' })}
+                                                className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
+                                                    formData.contactVisibility === value
+                                                        ? 'border-primary bg-primary/10 text-primary'
+                                                        : 'border-border bg-background text-muted-foreground hover:border-primary/50'
+                                                }`}
+                                            >
+                                                <Icon className="w-4 h-4" />
+                                                <span className="text-sm font-medium">{label}</span>
+                                            </button>
+                                            <p className="text-xs text-muted-foreground mt-1">{help}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                         {(formData.listingType === 'For Rent' || formData.listingType === 'Required Roommate') && (
                             <div className="grid grid-cols-2 gap-4">
@@ -1254,31 +1282,6 @@ const PostRoomPage: React.FC = () => {
                                 onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
                                 required
                             />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className="font-semibold">Contact Privacy</Label>
-                            <div className="flex gap-3">
-                                {[
-                                    { value: 'Private', label: 'Secure Chat', icon: Lock, help: 'Your number stays private, contact through platform' },
-                                    { value: 'Public', label: 'Share Details', icon: Share2, help: 'Your number is visible to everyone' }
-                                ].map(({ value, label, icon: Icon, help }) => (
-                                    <div key={value} className="flex-1">
-                                        <button
-                                            type="button"
-                                            onClick={() => setFormData({ ...formData, contactVisibility: value as 'Private' | 'Public' })}
-                                            className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-all ${
-                                                formData.contactVisibility === value
-                                                    ? 'border-primary bg-primary/10 text-primary'
-                                                    : 'border-border bg-background text-muted-foreground hover:border-primary/50'
-                                            }`}
-                                        >
-                                            <Icon className="w-4 h-4" />
-                                            <span className="text-sm font-medium">{label}</span>
-                                        </button>
-                                        <p className="text-xs text-muted-foreground mt-1">{help}</p>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
                         <div className="space-y-3">
                             <div className="flex items-center justify-between">
@@ -1368,13 +1371,9 @@ const PostRoomPage: React.FC = () => {
 
                 return (
                     <div className="space-y-8">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-foreground">Furnishing & Facilities</h2>
-                            <p className="text-muted-foreground">Select furnishing type and available facilities</p>
-                        </div>
                         <div className="space-y-4">
                             <Label className="text-base font-semibold">Furnishing Type</Label>
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-3 gap-2 sm:gap-4">
                                 {[
                                     { label: 'Furnished', icon: Sofa },
                                     { label: 'Semi-furnished', icon: Box },
@@ -1385,9 +1384,9 @@ const PostRoomPage: React.FC = () => {
                                         className={`cursor-pointer transition-all border-2 ${formData.furnishingType === label ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
                                         onClick={() => setFormData({ ...formData, furnishingType: label })}
                                     >
-                                        <CardContent className="p-6 flex flex-col items-center gap-3 text-center">
-                                            <Icon className={`w-8 h-8 ${formData.furnishingType === label ? 'text-primary' : 'text-muted-foreground'}`} />
-                                            <p className={`font-medium text-sm ${formData.furnishingType === label ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</p>
+                                        <CardContent className="p-3 sm:p-6 flex flex-col items-center gap-3 text-center">
+                                            <Icon className={`w-6 h-6 sm:w-8 sm:h-8 ${formData.furnishingType === label ? 'text-primary' : 'text-muted-foreground'}`} />
+                                            <p className={`font-medium text-xs sm:text-sm ${formData.furnishingType === label ? 'text-foreground' : 'text-muted-foreground'}`}>{label}</p>
                                         </CardContent>
                                     </Card>
                                 ))}
@@ -1395,7 +1394,7 @@ const PostRoomPage: React.FC = () => {
                         </div>
                         <div className="space-y-4">
                             <Label className="text-base font-semibold">Facilities</Label>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
                                 {['WiFi', 'Parking', 'Lift', 'Gym', 'Power Backup', 'Water Supply', 'Security', 'CCTV'].map((facility) => {
                                     const Icon = facilityIcons[facility];
                                     return (
@@ -1410,9 +1409,9 @@ const PostRoomPage: React.FC = () => {
                                                 }
                                             }}
                                         >
-                                            <CardContent className="p-4 flex flex-col items-center gap-2 text-center">
-                                                {Icon && <Icon className={`w-6 h-6 ${formData.facilities.includes(facility) ? 'text-primary' : 'text-muted-foreground'}`} />}
-                                                <Label className={`font-normal text-sm cursor-pointer ${formData.facilities.includes(facility) ? 'text-foreground' : 'text-muted-foreground'}`}>{facility}</Label>
+                                            <CardContent className="p-2 sm:p-4 flex flex-col items-center gap-2 text-center">
+                                                {Icon && <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${formData.facilities.includes(facility) ? 'text-primary' : 'text-muted-foreground'}`} />}
+                                                <Label className={`font-normal text-xs sm:text-sm cursor-pointer ${formData.facilities.includes(facility) ? 'text-foreground' : 'text-muted-foreground'}`}>{facility}</Label>
                                             </CardContent>
                                         </Card>
                                     );
@@ -1424,11 +1423,7 @@ const PostRoomPage: React.FC = () => {
 
             case 6:
                 return (
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-foreground">Title & Description</h2>
-                            <p className="text-muted-foreground">Create an attractive title and add details about your property</p>
-                        </div>
+                    <div className="space-y-4 sm:space-y-6">
                         <div className="space-y-2">
                             <Label className="text-base font-semibold">Title</Label>
                             <Input 
@@ -1455,11 +1450,7 @@ const PostRoomPage: React.FC = () => {
 
             case 7:
                 return (
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-foreground">Upload Images</h2>
-                            <p className="text-muted-foreground">Add photos to make your listing more attractive (max 5 images)</p>
-                        </div>
+                    <div className="space-y-4 sm:space-y-6">
                         <div className="border-2 border-dashed border-border bg-muted/30 rounded-lg p-12 text-center transition-all hover:border-primary/50">
                             <input
                                 ref={imageInputRef}
@@ -1512,11 +1503,7 @@ const PostRoomPage: React.FC = () => {
 
             case 8:
                 return (
-                    <div className="space-y-6">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-bold text-foreground">Select Plan</h2>
-                            <p className="text-muted-foreground">Choose a plan that suits your listing requirements</p>
-                        </div>
+                    <div className="space-y-4 sm:space-y-6">
                         {user?.role === 'Broker' && !isBrokerSubscriptionActive && (
                             <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
                                 Without active subscription, broker needs to pay for each post and the listing will go to pending approval.
@@ -1591,15 +1578,17 @@ const PostRoomPage: React.FC = () => {
         if (progress < 25) return 'Let\'s get started';
         if (progress < 50) return 'You\'re doing great';
         if (progress < 75) return 'Making good progress';
-        if (progress < 100) return 'Almost there';
+        if (progress < 100) return 'You are very close, almost done';
         return 'Ready to submit';
     };
 
     const isGuestView = !isAuthenticated;
 
+    const activeStepTitle = steps[currentStep - 1]?.title || 'Post Room';
+
     return (
-        <div className={`${isGuestView ? 'max-w-7xl' : 'max-w-6xl'} mx-auto px-2 sm:px-4 lg:px-6 pb-8`}> 
-            <div className="flex items-center gap-4 mb-6">
+        <div className={`${isGuestView ? 'max-w-[1600px]' : 'max-w-[1440px]'} mx-auto px-1 sm:px-4 lg:px-6 pb-8`}>
+            <div className="flex items-center gap-4 mb-4 sm:mb-6">
                 <Button variant="ghost" onClick={() => navigate(isAuthenticated ? '/dashboard/rooms' : '/')}>
                     <ChevronLeft className="w-4 h-4 mr-2" />
                     Back
@@ -1608,7 +1597,7 @@ const PostRoomPage: React.FC = () => {
             </div>
 
             {isGuestView && (
-                <div className="mb-6 rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-indigo-50 to-cyan-50 p-4">
+                <div className="mb-6 rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 via-blue-100 to-cyan-50 p-3 sm:p-4">
                     <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                         <div>
                             <p className="text-sm font-semibold text-slate-800">Guest Posting Mode</p>
@@ -1619,51 +1608,72 @@ const PostRoomPage: React.FC = () => {
                 </div>
             )}
 
-            <div className="mb-8 space-y-2">
-                <div className="flex items-center justify-end mb-1">
-                    <span className="text-sm font-medium text-primary">{getMotivatingText()}</span>
-                </div>
-                <progress
-                    className="w-full h-2 rounded-full overflow-hidden"
-                    value={currentStep}
-                    max={steps.length}
-                    aria-label="Form completion progress"
-                />
-            </div>
+            <Card ref={formStartRef} className="shadow-sm border-border/70 bg-gradient-to-b from-background to-muted/20">
+                <CardContent className="px-0.5 py-2 sm:px-1 sm:py-4 lg:px-1.25 lg:py-5">
+                    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0">
+                            <h3 className="text-base sm:text-lg font-semibold text-foreground truncate">
+                                {activeStepTitle}
+                            </h3>
+                        </div>
 
-            <Card className="shadow-sm">
-                <CardContent className="p-6">
+                        <span className="text-xs sm:text-sm font-medium text-primary sm:text-right">
+                            {getMotivatingText()}
+                        </span>
+                    </div>
+
+                    <div className="mb-4">
+                        <progress
+                            className="w-full h-2 rounded-full overflow-hidden"
+                            value={currentStep}
+                            max={steps.length}
+                            aria-label="Form completion progress"
+                        />
+                    </div>
+
                     {renderStep()}
 
-                    <div className="flex gap-3 mt-8">
-                        <Button 
-                            variant="outline" 
-                            onClick={handleBack}
-                            disabled={currentStep === 1}
-                        >
-                            <ChevronLeft className="w-4 h-4 mr-2" />
-                            Back
-                        </Button>
-                        
-                        <Button 
-                            variant="outline" 
-                            onClick={handleClearForm}
-                            className="ml-auto"
-                        >
-                            <RefreshCcw className="w-4 h-4 mr-2" />
-                            Reset All
-                        </Button>
-                        
-                        {currentStep < steps.length ? (
-                            <Button onClick={handleNext} disabled={isLoadingNext}>
-                                {isLoadingNext ? 'Loading...' : 'Next'}
-                                <ChevronRight className="w-4 h-4 ml-2" />
+                    <div className="mt-6 flex items-center justify-between gap-2 overflow-x-auto">
+                        <div className="flex items-center gap-2 flex-nowrap">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleBack}
+                                disabled={currentStep === 1}
+                                className="whitespace-nowrap"
+                            >
+                                <ChevronLeft className="w-4 h-4 mr-1.5" />
+                                Back
                             </Button>
-                        ) : (
-                            <Button onClick={() => void handleSubmit()} disabled={isSubmitting || !isTermsAccepted} className="min-w-32">
-                                {isSubmitting ? 'Submitting...' : 'Post Room'}
+
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleClearForm}
+                                className="whitespace-nowrap"
+                            >
+                                <RefreshCcw className="w-4 h-4 mr-1.5" />
+                                Reset All
                             </Button>
-                        )}
+                        </div>
+
+                        <div className="flex items-center justify-end flex-nowrap ml-auto">
+                            {currentStep < steps.length ? (
+                                <Button size="sm" onClick={handleNext} disabled={isLoadingNext} className="whitespace-nowrap">
+                                    {isLoadingNext ? 'Loading...' : 'Next'}
+                                    <ChevronRight className="w-4 h-4 ml-1.5" />
+                                </Button>
+                            ) : (
+                                <Button
+                                    size="sm"
+                                    onClick={() => void handleSubmit()}
+                                    disabled={isSubmitting || !isTermsAccepted}
+                                    className="min-w-32 whitespace-nowrap"
+                                >
+                                    {isSubmitting ? 'Submitting...' : 'Post Room'}
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </CardContent>
             </Card>

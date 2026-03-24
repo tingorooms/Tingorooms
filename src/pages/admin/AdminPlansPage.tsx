@@ -261,7 +261,7 @@ const AdminPlansPage: React.FC = () => {
         <div className="space-y-4 sm:space-y-6 md:space-y-8 pt-0 px-3 sm:px-6 py-3 sm:py-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 min-h-screen">
             <div className="flex flex-col gap-3 sm:gap-4">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">
                         Plan Management
                     </h1>
                     <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">Add, edit, activate, and deactivate subscription plans with full control.</p>
@@ -298,24 +298,24 @@ const AdminPlansPage: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="border-t-4 border-t-emerald-500 shadow-sm">
+                <Card className="border-t-4 border-t-blue-500 shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 sm:p-6">
                         <CardTitle className="text-sm font-medium">Active Plans</CardTitle>
-                        <Power className="h-5 w-5 text-emerald-600" />
+                        <Power className="h-5 w-5 text-blue-600" />
                     </CardHeader>
                     <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-                        <div className="text-2xl sm:text-3xl font-bold text-emerald-600">{planStats.active}</div>
+                        <div className="text-2xl sm:text-3xl font-bold text-blue-600">{planStats.active}</div>
                         <p className="text-xs text-muted-foreground mt-1">Available for subscriptions</p>
                     </CardContent>
                 </Card>
 
-                <Card className="border-t-4 border-t-violet-500 shadow-sm">
+                <Card className="border-t-4 border-t-blue-500 shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 sm:p-6">
                         <CardTitle className="text-sm font-medium">Broker Plans</CardTitle>
-                        <ShieldCheck className="h-5 w-5 text-violet-600" />
+                        <ShieldCheck className="h-5 w-5 text-blue-600" />
                     </CardHeader>
                     <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-                        <div className="text-2xl sm:text-3xl font-bold text-violet-600">{planStats.broker}</div>
+                        <div className="text-2xl sm:text-3xl font-bold text-blue-600">{planStats.broker}</div>
                         <p className="text-xs text-muted-foreground mt-1">For broker subscriptions</p>
                     </CardContent>
                 </Card>
@@ -381,17 +381,17 @@ const AdminPlansPage: React.FC = () => {
                         <div className="space-y-2">
                             <Label className="text-sm font-bold drop-shadow-sm">📋 Plan Type</Label>
                             <Select value={planTypeFilter} onValueChange={(value) => setPlanTypeFilter(value as PlanType)}>
-                                <SelectTrigger className="h-11 sm:h-14 text-sm sm:text-base font-semibold border-2 border-slate-300 hover:border-indigo-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 rounded-xl sm:rounded-2xl shadow-md transition-all duration-200">
+                                <SelectTrigger className="h-11 sm:h-14 text-sm sm:text-base font-semibold border-2 border-slate-300 hover:border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-xl sm:rounded-2xl shadow-md transition-all duration-200">
                                     <SelectValue placeholder="Filter by type" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-xl sm:rounded-2xl border-2 border-slate-200 shadow-xl">
-                                    <SelectItem value="all" className="text-sm sm:text-base py-2 font-medium hover:bg-indigo-50">
+                                    <SelectItem value="all" className="text-sm sm:text-base py-2 font-medium hover:bg-blue-50">
                                         📌 All Types
                                     </SelectItem>
-                                    <SelectItem value="Broker" className="text-sm sm:text-base py-2 font-medium hover:bg-indigo-50">
+                                    <SelectItem value="Broker" className="text-sm sm:text-base py-2 font-medium hover:bg-blue-50">
                                         🛡️ Broker
                                     </SelectItem>
-                                    <SelectItem value="Regular" className="text-sm sm:text-base py-2 font-medium hover:bg-indigo-50">
+                                    <SelectItem value="Regular" className="text-sm sm:text-base py-2 font-medium hover:bg-blue-50">
                                         📦 Regular
                                     </SelectItem>
                                 </SelectContent>

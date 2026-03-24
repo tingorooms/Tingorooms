@@ -37,6 +37,7 @@ import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { getMediaAssetUrl } from '@/lib/utils';
 import { useRef } from 'react';
 import MapSection from '@/components/maps/MapSection';
+import BusinessNameWordmark from '@/components/ui/BusinessNameWordmark';
 
 const MainLayout: React.FC = () => {
     const { isAuthenticated, user, logout } = useAuth();
@@ -80,8 +81,14 @@ const MainLayout: React.FC = () => {
             const nextScrollY = window.scrollY;
             const nextScrolled = nextScrollY > 20;
             const scrollingDown = nextScrollY > lastScrollYRef.current;
+            let suppressAutoHide = false;
+            try {
+                suppressAutoHide = sessionStorage.getItem('keepHeaderVisibleDuringAutoScroll') === '1';
+            } catch {
+                suppressAutoHide = false;
+            }
             // On desktop (lg+) the header is always visible; only hide on mobile/tablet
-            const shouldHideHeader = !isDesktop && scrollingDown && nextScrollY > 120;
+            const shouldHideHeader = !isDesktop && !suppressAutoHide && scrollingDown && nextScrollY > 120;
 
             setScrolled((prev) => (prev === nextScrolled ? prev : nextScrolled));
             setHeaderHidden((prev) => (prev === shouldHideHeader ? prev : shouldHideHeader));
@@ -107,6 +114,21 @@ const MainLayout: React.FC = () => {
 
     const scrollToNearbyFilter = (withBehavior: ScrollBehavior = 'smooth') => {
         const h = window.innerWidth < 640 ? 72 : 88;
+        try {
+            sessionStorage.setItem('keepHeaderVisibleDuringAutoScroll', '1');
+        } catch {
+            // noop
+        }
+        setHeaderHidden(false);
+
+        window.setTimeout(() => {
+            try {
+                sessionStorage.removeItem('keepHeaderVisibleDuringAutoScroll');
+            } catch {
+                // noop
+            }
+        }, 1500);
+
         const run = (behavior: ScrollBehavior) => {
             const el = document.getElementById('nearby-filter-anchor');
             if (!el) return;
@@ -169,23 +191,18 @@ const MainLayout: React.FC = () => {
                             <div
                                 className={`w-[52px] h-[52px] sm:w-12 sm:h-12 rounded-md flex items-center justify-center transition-all duration-300 ${
                                     scrolled
-                                        ? 'bg-gradient-to-br from-blue-600 to-purple-600 shadow-lg'
-                                        : 'bg-gradient-to-br from-blue-600 to-purple-600 shadow-md'
+                                        ? 'bg-gradient-to-br from-blue-600 to-blue-600 shadow-lg'
+                                        : 'bg-gradient-to-br from-blue-600 to-blue-600 shadow-md'
                                 }`}
                             >
                                 <Building2 className="w-6 h-6 text-white" />
                             </div>
                         )}
                         <div className="flex min-w-0 flex-col">
-                            <span
-                                className={`text-base sm:text-2xl font-extrabold tracking-tight leading-tight ${
-                                    scrolled
-                                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'
-                                        : 'bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'
-                                }`}
-                            >
-                                {businessName}
-                            </span>
+                            <BusinessNameWordmark
+                                name={businessName}
+                                className="text-base sm:text-2xl font-extrabold tracking-tight leading-tight"
+                            />
                             <span className={`text-[9px] sm:text-[10px] font-medium -mt-0.5 max-w-[170px] sm:max-w-none truncate ${scrolled ? 'text-slate-500' : 'text-slate-500'}`}>
                                 {businessTagline}
                             </span>
@@ -204,10 +221,10 @@ const MainLayout: React.FC = () => {
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
                                         scrolled
                                             ? active
-                                                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
+                                                ? 'bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow-md'
                                                 : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                                             : active
-                                              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
+                                              ? 'bg-gradient-to-r from-blue-600 to-blue-600 text-white shadow-md'
                                               : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                                     }`}
                                 >
@@ -228,7 +245,7 @@ const MainLayout: React.FC = () => {
 
                         <Button
                             onClick={() => navigate('/rooms/add')}
-                            className="rounded-xl px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-emerald-500 to-cyan-500 text-white hover:brightness-110"
+                            className="rounded-xl px-4 py-2.5 text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:brightness-110"
                         >
                             <Building2 className="w-4 h-4 mr-2" />
                             Post Room
@@ -258,7 +275,7 @@ const MainLayout: React.FC = () => {
                                                     : 'hover:bg-slate-100 border border-slate-200'
                                             }`}
                                         >
-                                            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                                                 <User className="w-5 h-5 text-white" />
                                             </div>
                                             <div className="hidden sm:flex flex-col items-start">
@@ -316,8 +333,8 @@ const MainLayout: React.FC = () => {
                                     onClick={() => navigate('/register')}
                                     className={`rounded-xl font-semibold shadow-lg transition-all duration-300 hover:scale-105 ${
                                         scrolled
-                                            ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:brightness-110'
-                                            : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:brightness-110'
+                                            ? 'bg-gradient-to-r from-blue-600 to-blue-600 text-white hover:brightness-110'
+                                            : 'bg-gradient-to-r from-blue-600 to-blue-600 text-white hover:brightness-110'
                                     }`}
                                 >
                                     <Sparkles className="w-4 h-4 mr-2" />
@@ -339,7 +356,7 @@ const MainLayout: React.FC = () => {
                             </SheetTrigger>
 
                             <SheetContent side="right" className="w-80 p-0 flex flex-col">
-                                <div className="h-16 flex items-center px-6 border-b bg-gradient-to-r from-green-primary to-green-secondary">
+                                <div className="h-16 flex items-center px-6 border-b bg-gradient-to-r from-blue-500 to-blue-600">
                                     <SheetClose asChild>
                                         <Link to="/" className="flex items-center gap-3">
                                             {shouldShowLogo ? (
@@ -368,7 +385,7 @@ const MainLayout: React.FC = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => navigate('/rooms/add')}
-                                                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-emerald-500 to-cyan-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                                                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                                             >
                                                 <Building2 className="w-5 h-5" />
                                                 Post Room
@@ -379,7 +396,7 @@ const MainLayout: React.FC = () => {
                                             <button
                                                 type="button"
                                                 onClick={handleNearbyRoomsClick}
-                                                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-green-primary transition-all duration-300 hover:translate-x-1"
+                                                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-blue-500 transition-all duration-300 hover:translate-x-1"
                                             >
                                                 <MapPin className="w-5 h-5" />
                                                 Nearby Rooms
@@ -398,8 +415,8 @@ const MainLayout: React.FC = () => {
                                                         to={link.to}
                                                         className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 group ${
                                                             active
-                                                                ? 'bg-gradient-to-r from-green-primary to-green-secondary text-white shadow-lg shadow-green-primary/30'
-                                                                : 'text-gray-700 hover:bg-green-50 hover:text-green-primary hover:translate-x-1'
+                                                                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/30'
+                                                                : 'text-gray-700 hover:bg-green-50 hover:text-blue-500 hover:translate-x-1'
                                                         }`}
                                                     >
                                                         <Icon className="w-5 h-5" />
@@ -427,7 +444,7 @@ const MainLayout: React.FC = () => {
                                             <SheetClose asChild>
                                                 <Link
                                                     to="/register"
-                                                    className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-green-primary to-green-secondary text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                                                    className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                                                 >
                                                     <Sparkles className="w-5 h-5" />
                                                     Register Now
@@ -443,7 +460,7 @@ const MainLayout: React.FC = () => {
                                             <SheetClose asChild>
                                                 <Link
                                                     to="/dashboard"
-                                                    className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-green-primary transition-all duration-300 hover:translate-x-1"
+                                                    className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-blue-500 transition-all duration-300 hover:translate-x-1"
                                                 >
                                                     <LayoutDashboard className="w-5 h-5" />
                                                     Dashboard
@@ -452,7 +469,7 @@ const MainLayout: React.FC = () => {
                                             <SheetClose asChild>
                                                 <Link
                                                     to="/dashboard/profile"
-                                                    className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-green-primary transition-all duration-300 hover:translate-x-1"
+                                                    className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-blue-500 transition-all duration-300 hover:translate-x-1"
                                                 >
                                                     <User className="w-5 h-5" />
                                                     Profile
@@ -462,7 +479,7 @@ const MainLayout: React.FC = () => {
                                                 <SheetClose asChild>
                                                     <Link
                                                         to="/admin"
-                                                        className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-green-primary transition-all duration-300 hover:translate-x-1"
+                                                        className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 hover:text-blue-500 transition-all duration-300 hover:translate-x-1"
                                                     >
                                                         <LayoutDashboard className="w-5 h-5" />
                                                         Admin Panel
@@ -495,7 +512,7 @@ const MainLayout: React.FC = () => {
 
             <MapSection />
 
-            <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-green-900 text-white">
+            <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 text-white">
                 <div className="container mx-auto px-4 py-16">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                         <div className="space-y-4">
@@ -508,15 +525,15 @@ const MainLayout: React.FC = () => {
                                         onError={() => setLogoLoadFailed(true)}
                                     />
                                 ) : (
-                                    <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                                         <Building2 className="w-7 h-7 text-white" />
                                     </div>
                                 )}
                                 <div>
-                                    <span className="text-2xl font-bold bg-gradient-to-r from-green-400 to-green-200 bg-clip-text text-transparent">
+                                    <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-200 bg-clip-text text-transparent">
                                         {businessName}
                                     </span>
-                                    <p className="text-xs text-green-300">{businessTagline}</p>
+                                    <p className="text-xs text-blue-300">{businessTagline}</p>
                                 </div>
                             </div>
                             <p className="text-sm text-slate-300 leading-relaxed">
@@ -587,8 +604,8 @@ const MainLayout: React.FC = () => {
                         </div>
 
                         <div>
-                            <h4 className="text-lg font-bold mb-6 text-green-300 flex items-center gap-2">
-                                <span className="w-1 h-6 bg-green-400 rounded-full"></span>
+                            <h4 className="text-lg font-bold mb-6 text-blue-300 flex items-center gap-2">
+                                <span className="w-1 h-6 bg-blue-400 rounded-full"></span>
                                 Quick Links
                             </h4>
                             <ul className="space-y-3">
@@ -620,8 +637,8 @@ const MainLayout: React.FC = () => {
                         </div>
 
                         <div>
-                            <h4 className="text-lg font-bold mb-6 text-green-300 flex items-center gap-2">
-                                <span className="w-1 h-6 bg-green-400 rounded-full"></span>
+                            <h4 className="text-lg font-bold mb-6 text-blue-300 flex items-center gap-2">
+                                <span className="w-1 h-6 bg-blue-400 rounded-full"></span>
                                 Support
                             </h4>
                             <ul className="space-y-3">
@@ -649,14 +666,14 @@ const MainLayout: React.FC = () => {
                         </div>
 
                         <div>
-                            <h4 className="text-lg font-bold mb-6 text-green-300 flex items-center gap-2">
-                                <span className="w-1 h-6 bg-green-400 rounded-full"></span>
+                            <h4 className="text-lg font-bold mb-6 text-blue-300 flex items-center gap-2">
+                                <span className="w-1 h-6 bg-blue-400 rounded-full"></span>
                                 Contact Us
                             </h4>
                             <ul className="space-y-4">
                                 <li className="flex items-start gap-3 text-slate-300">
-                                    <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                                        <Mail className="w-4 h-4 text-green-400" />
+                                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <Mail className="w-4 h-4 text-blue-400" />
                                     </div>
                                     <div>
                                         <p className="text-xs text-slate-400 mb-0.5">Email</p>
@@ -666,8 +683,8 @@ const MainLayout: React.FC = () => {
                                     </div>
                                 </li>
                                 <li className="flex items-start gap-3 text-slate-300">
-                                    <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                                        <Phone className="w-4 h-4 text-green-400" />
+                                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <Phone className="w-4 h-4 text-blue-400" />
                                     </div>
                                     <div>
                                         <p className="text-xs text-slate-400 mb-0.5">Phone</p>
@@ -677,8 +694,8 @@ const MainLayout: React.FC = () => {
                                     </div>
                                 </li>
                                 <li className="flex items-start gap-3 text-slate-300">
-                                    <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                                        <MapPin className="w-4 h-4 text-green-400" />
+                                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <MapPin className="w-4 h-4 text-blue-400" />
                                     </div>
                                     <div>
                                         <p className="text-xs text-slate-400 mb-0.5">Location</p>

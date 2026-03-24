@@ -235,10 +235,8 @@ function App() {
                                 <Route path="broker/:brokerId/:slug?" element={<BrokerProfilePage />} />
                                 <Route path="about" element={<AboutPage />} />
                                 <Route path="contact" element={<ContactPage />} />
+                            <Route path="terms-conditions" element={<TermsAndConditionsPage />} />
                             </Route>
-
-                            {/* Terms & Conditions Page */}
-                            <Route path="/terms-conditions" element={<TermsAndConditionsPage />} />
 
                             {/* Auth Routes */}
                             <Route element={<AuthBusinessLayout />}>

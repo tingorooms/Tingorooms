@@ -110,7 +110,7 @@ const DashboardPage: React.FC = () => {
             value: groups.length,
             subtitle: 'Active groups',
             icon: Users,
-            color: 'bg-purple-500',
+            color: 'bg-blue-500',
             link: '/dashboard/roommates'
         },
         {

@@ -36,6 +36,7 @@ const LoginPage: React.FC = () => {
 
     const fromPath = (location.state as any)?.from?.pathname || '/dashboard';
     const fromSearch = (location.state as any)?.from?.search || '';
+    const chatIntent = (location.state as any)?.chatIntent;
     const from = `${fromPath}${fromSearch}`;
     const registerPath = fromPath === '/accept-invite' && fromSearch
         ? `/register${fromSearch}`
@@ -136,9 +137,9 @@ const LoginPage: React.FC = () => {
 
     return (
         <div className="w-full">
-            <Card className="backdrop-blur-sm bg-white shadow-xl border border-emerald-100 overflow-hidden">
+            <Card className="backdrop-blur-sm bg-white shadow-xl border border-blue-100 overflow-hidden">
                     {/* Gradient top border */}
-                    <div className="h-1 bg-gradient-to-r from-green-primary via-green-secondary to-green-accent"></div>
+                    <div className="h-1 bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700"></div>
                     
                     <CardHeader className="space-y-2 pb-6 pt-8">
                         <CardTitle className="text-3xl text-center font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
@@ -152,8 +153,8 @@ const LoginPage: React.FC = () => {
                     <CardContent className="px-8 pb-8">
                         {/* Success Message */}
                         {successMessage && (
-                            <Alert className="mb-6 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 animate-in fade-in slide-in-from-top-2 duration-500">
-                                <CheckCircle2 className="h-5 w-5 text-green-600" />
+                            <Alert className="mb-6 border-blue-200 bg-gradient-to-r from-blue-50 to-blue-50 animate-in fade-in slide-in-from-top-2 duration-500">
+                                <CheckCircle2 className="h-5 w-5 text-blue-600" />
                                 <AlertDescription className="text-green-800 font-medium ml-2">
                                     {successMessage}
                                 </AlertDescription>
@@ -176,7 +177,7 @@ const LoginPage: React.FC = () => {
                             {/* Email Field */}
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                    <Mail className="w-4 h-4 text-green-primary" />
+                                    <Mail className="w-4 h-4 text-blue-500" />
                                     Email Address
                                 </Label>
                                 <div className="relative group">
@@ -191,13 +192,13 @@ const LoginPage: React.FC = () => {
                                             fieldErrors.email 
                                                 ? 'border-red-300 bg-red-50/50 focus:border-red-500 focus:ring-red-500/20' 
                                                 : email 
-                                                ? 'border-green-300 bg-green-50/50 focus:border-green-500 focus:ring-green-500/20'
-                                                : 'border-gray-200 focus:border-green-primary focus:ring-green-primary/20 group-hover:border-gray-300'
+                                                ? 'border-green-300 bg-blue-50/50 focus:border-green-500 focus:ring-green-500/20'
+                                                : 'border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 group-hover:border-gray-300'
                                         } rounded-xl`}
                                         required
                                     />
                                     {email && !fieldErrors.email && (
-                                        <CheckCircle2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-600 animate-in zoom-in duration-300" />
+                                        <CheckCircle2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-600 animate-in zoom-in duration-300" />
                                     )}
                                 </div>
                                 {fieldErrors.email && (
@@ -211,7 +212,7 @@ const LoginPage: React.FC = () => {
                             {/* Password Field */}
                             <div className="space-y-2">
                                 <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                    <Lock className="w-4 h-4 text-green-primary" />
+                                    <Lock className="w-4 h-4 text-blue-500" />
                                     Password
                                 </Label>
                                 <div className="relative group">
@@ -226,8 +227,8 @@ const LoginPage: React.FC = () => {
                                             fieldErrors.password 
                                                 ? 'border-red-300 bg-red-50/50 focus:border-red-500 focus:ring-red-500/20' 
                                                 : password 
-                                                ? 'border-green-300 bg-green-50/50 focus:border-green-500 focus:ring-green-500/20'
-                                                : 'border-gray-200 focus:border-green-primary focus:ring-green-primary/20 group-hover:border-gray-300'
+                                                ? 'border-green-300 bg-blue-50/50 focus:border-green-500 focus:ring-green-500/20'
+                                                : 'border-gray-200 focus:border-blue-500 focus:ring-blue-500/20 group-hover:border-gray-300'
                                         } rounded-xl`}
                                         required
                                     />
@@ -250,7 +251,7 @@ const LoginPage: React.FC = () => {
                             <div className="flex items-center justify-end">
                                 <Link 
                                     to="/forgot-password" 
-                                    className="text-sm font-medium text-green-primary hover:text-green-secondary hover:underline transition-colors"
+                                    className="text-sm font-medium text-blue-500 hover:text-blue-600 hover:underline transition-colors"
                                 >
                                     Forgot password?
                                 </Link>
@@ -258,7 +259,7 @@ const LoginPage: React.FC = () => {
 
                             <Button 
                                 type="submit" 
-                                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-green-primary to-green-secondary hover:from-green-secondary hover:to-green-primary shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl group" 
+                                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-500 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl group" 
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
@@ -281,6 +282,10 @@ const LoginPage: React.FC = () => {
                             Don't have an account?{' '}
                             <Link 
                                 to="/register" 
+                                state={{
+                                    from: (location.state as any)?.from,
+                                    chatIntent,
+                                }}
                                 className="font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-colors"
                             >
                                 Create Account
@@ -300,7 +305,11 @@ const LoginPage: React.FC = () => {
                     <AlertDialogAction
                         onClick={() => {
                             navigate(registerPath, {
-                                state: { prefillEmail: registerPromptEmail }
+                                state: {
+                                    prefillEmail: registerPromptEmail,
+                                    from: (location.state as any)?.from,
+                                    chatIntent,
+                                }
                             });
                         }}
                     >

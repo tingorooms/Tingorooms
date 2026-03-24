@@ -106,7 +106,7 @@ const AdminUsersPage: React.FC = () => {
 		<div className="space-y-6 p-3 sm:p-6 bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 min-h-screen">
 			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 				<div>
-					<h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+					<h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">
 						User Management
 					</h1>
 					<p className="text-muted-foreground mt-2 text-base">Manage and monitor all platform users</p>
@@ -140,10 +140,10 @@ const AdminUsersPage: React.FC = () => {
 				<Card className="cursor-pointer border-t-4 border-t-green-500" onClick={() => setFilters({ ...filters, status: 'Active' })}>
 					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 						<CardTitle className="text-sm font-semibold text-slate-700">Active</CardTitle>
-						<div className="p-2 bg-green-100 rounded-lg"><UserCheck className="h-5 w-5 text-green-600" /></div>
+						<div className="p-2 bg-blue-100 rounded-lg"><UserCheck className="h-5 w-5 text-blue-600" /></div>
 					</CardHeader>
 					<CardContent>
-						<div className="text-4xl font-bold text-green-600 mb-1">{stats?.active || 0}</div>
+						<div className="text-4xl font-bold text-blue-600 mb-1">{stats?.active || 0}</div>
 						<p className="text-xs text-slate-500 font-medium">Currently active users</p>
 					</CardContent>
 				</Card>

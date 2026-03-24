@@ -107,6 +107,7 @@ router.get('/rooms', async (req, res, next) => {
     try {
         const { 
             city, 
+            roommateCity,
             area, 
             listingType, 
             roomType, 
@@ -124,7 +125,7 @@ router.get('/rooms', async (req, res, next) => {
         let searchScoreExpression = '0';
 
         let sql = `
-            SELECT r.id, r.room_id, r.listing_type, r.title, r.room_type, r.house_type,
+            SELECT ${roommateCity ? 'DISTINCT' : ''} r.id, r.room_id, r.listing_type, r.title, r.room_type, r.house_type,
                    r.city, r.area, r.rent, r.deposit, r.cost, r.size_sqft,
                    r.availability_from, r.furnishing_type, r.facilities, 
                    r.preferred_gender, r.images, r.views_count, r.post_date,
@@ -134,6 +135,7 @@ router.get('/rooms', async (req, res, next) => {
                    ${searchScoreExpression} as search_score
             FROM rooms r
             JOIN users u ON r.user_id = u.id
+            ${roommateCity ? 'LEFT JOIN roommates rm ON r.id = rm.room_id AND rm.room_id IS NOT NULL' : ''}
             WHERE r.status = 'Approved' AND r.is_occupied = FALSE AND r.deleted_at IS NULL
         `;
         const params = [];
@@ -182,6 +184,11 @@ router.get('/rooms', async (req, res, next) => {
         if (userId) {
             sql += ' AND r.user_id = ?';
             params.push(parseInt(userId));
+        }
+
+        if (roommateCity) {
+            sql += ' AND LOWER(rm.city) = LOWER(?)';
+            params.push(roommateCity);
         }
 
         if (search) {
@@ -273,8 +280,11 @@ router.get('/rooms', async (req, res, next) => {
         }
 
         // Get total count for pagination
+        const countQuery = roommateCity 
+            ? sql.replace(/SELECT[\s\S]*?FROM/, 'SELECT COUNT(DISTINCT r.id) as total FROM')
+            : sql.replace(/SELECT[\s\S]*?FROM/, 'SELECT COUNT(*) as total FROM');
         const countResult = await executeQuery(
-            sql.replace(/SELECT[\s\S]*?FROM/, 'SELECT COUNT(*) as total FROM'),
+            countQuery,
             params
         );
 
@@ -396,9 +406,9 @@ router.get('/rooms/:roomId', async (req, res, next) => {
 
         const room = rooms[0];
 
-        // Get existing roommates
+        // Get existing roommates (from roommates table where room_id is set)
         const roommates = await executeQuery(
-            'SELECT name, city FROM existing_roommates WHERE room_id = ?',
+            'SELECT name, city FROM roommates WHERE room_id = ? AND room_id IS NOT NULL',
             [room.id]
         );
         room.existing_roommates = roommates;
@@ -598,6 +608,29 @@ router.get('/cities', async (req, res, next) => {
              FROM maharashtra_cities 
              WHERE is_active = TRUE 
              ORDER BY room_count DESC, city_name`
+        );
+
+        res.json({
+            success: true,
+            data: cities
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get roommate cities list (public) - Distinct cities for room occupants
+router.get('/roommate-cities', async (req, res, next) => {
+    try {
+        const cities = await executeQuery(
+            `SELECT rm.city as city_name, COUNT(DISTINCT rm.room_id) as room_count
+             FROM roommates rm
+             LEFT JOIN rooms r ON r.id = rm.room_id
+             WHERE rm.room_id IS NOT NULL AND rm.city IS NOT NULL AND rm.city != ''
+               AND r.status = 'Approved' AND r.deleted_at IS NULL
+             GROUP BY rm.city
+             ORDER BY room_count DESC, rm.city ASC`
         );
 
         res.json({

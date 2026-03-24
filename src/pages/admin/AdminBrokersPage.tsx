@@ -517,10 +517,10 @@ export default function AdminBrokersPage() {
                 >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Approved</CardTitle>
-                        <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        <CheckCircle2 className="h-5 w-5 text-blue-600" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-green-600">{stats?.approved || 0}</div>
+                        <div className="text-3xl font-bold text-blue-600">{stats?.approved || 0}</div>
                         <p className="text-xs text-muted-foreground mt-1">Active brokers</p>
                     </CardContent>
                 </Card>
@@ -584,7 +584,7 @@ export default function AdminBrokersPage() {
                                 </div>
                             ) : brokers.filter(b => b.broker_status === 'Pending').length === 0 ? (
                                 <div className="p-8 text-center">
-                                    <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-2" />
+                                    <CheckCircle2 className="h-12 w-12 text-blue-500 mx-auto mb-2" />
                                     <p className="text-muted-foreground">No pending broker requests</p>
                                 </div>
                             ) : (

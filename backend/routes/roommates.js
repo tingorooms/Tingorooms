@@ -1,6 +1,5 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const axios = require('axios');
 const router = express.Router();
 
 const { executeQuery, withTransaction } = require('../config/database');
@@ -8,6 +7,7 @@ const { authenticate, requireMember } = require('../middleware/auth');
 const { handleUpload } = require('../middleware/upload');
 const { generateGroupId, generateInviteToken } = require('../utils/helpers');
 const { sendRoommateInviteEmail } = require('../utils/email');
+const { uploadImageBuffer } = require('../utils/imageStorage');
 
 let ensureExpenseGroupSchemaPromise = null;
 
@@ -917,34 +917,12 @@ router.post('/group/:groupId/admin-scanner-upload', authenticate, requireMember,
             });
         }
 
-        const imageStorageApiKey = process.env.IMAGE_STORAGE_API_KEY;
-        const imageStorageUrl = process.env.IMAGE_STORAGE_URL || 'https://api.imgbb.com/1/upload';
-
-        if (!imageStorageApiKey) {
-            return res.status(500).json({
-                success: false,
-                message: 'Image storage is not configured. Please set IMAGE_STORAGE_API_KEY.'
-            });
-        }
-
-        const payload = new URLSearchParams();
-        payload.append('image', scannerFile.buffer.toString('base64'));
-        payload.append('name', scannerFile.originalname || `scanner-${Date.now()}`);
-
-        const uploadResponse = await axios.post(
-            `${imageStorageUrl}?key=${imageStorageApiKey}`,
-            payload.toString(),
-            {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                timeout: 30000,
-            }
-        );
-
-        const scannerUrl = (
-            uploadResponse?.data?.data?.display_url
-            || uploadResponse?.data?.data?.url
-            || null
-        );
+        const scannerUrl = await uploadImageBuffer({
+            buffer: scannerFile.buffer,
+            mimeType: scannerFile.mimetype,
+            originalName: scannerFile.originalname || `scanner-${Date.now()}`,
+            folder: 'scanner'
+        });
 
         if (!scannerUrl) {
             return res.status(400).json({

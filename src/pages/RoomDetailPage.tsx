@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +24,8 @@ import {
     Image as ImageIcon,
     ChevronRight,
     Map,
-    X
+    X,
+    UserCheck
 } from 'lucide-react';
 import { parseImages, getProfileImageUrl, buildWhatsAppUrl } from '@/lib/utils';
 import type { Room } from '@/types';
@@ -88,6 +89,7 @@ const upsertCanonicalLink = (href: string) => {
 const RoomDetailPage: React.FC = () => {
     const { roomId } = useParams<{ roomId: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
     const { isAuthenticated, user } = useAuth();
     const [room, setRoom] = useState<Room | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -95,7 +97,8 @@ const RoomDetailPage: React.FC = () => {
     const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
     const [isEstablishingChat, setIsEstablishingChat] = useState(false);
     const [shareSuccess, setShareSuccess] = useState(false);
-    const { openChat, isLoading: chatLoading } = useChat();
+    const autoChatAttemptRef = useRef<string | null>(null);
+    const { openChat } = useChat();
 
     const isOwner = user && room && user.id === room.user_id;
 
@@ -124,22 +127,69 @@ const RoomDetailPage: React.FC = () => {
 
     const handleChatClick = async () => {
         if (!isAuthenticated) {
-            navigate('/login');
+            // Pass chat intent through login/register/OTP
+            const params = new URLSearchParams(location.search);
+            params.set('startChat', '1');
+            if (room?.user_id) {
+                params.set('receiverId', String(room.user_id));
+            }
+
+            navigate('/login', {
+                state: {
+                    chatIntent: {
+                        roomId: room?.id,
+                        receiverId: room?.user_id
+                    },
+                    from: { pathname: location.pathname, search: params.toString() ? `?${params.toString()}` : '' }
+                }
+            });
             return;
         }
-        
         if (!room?.id || !room?.user_id) {
             return;
         }
-
         try {
             setIsEstablishingChat(true);
             await openChat(room.id, room.user_id, room);
+
+            const params = new URLSearchParams(location.search);
+            if (params.has('startChat') || params.has('receiverId')) {
+                params.delete('startChat');
+                params.delete('receiverId');
+                const cleanedSearch = params.toString();
+                navigate(
+                    {
+                        pathname: location.pathname,
+                        search: cleanedSearch ? `?${cleanedSearch}` : '',
+                    },
+                    { replace: true }
+                );
+            }
         } catch (error) {
         } finally {
             setIsEstablishingChat(false);
         }
     };
+
+    useEffect(() => {
+        if (!room || isOwner || isEstablishingChat) return;
+
+        const params = new URLSearchParams(location.search);
+        const shouldStartChat = params.get('startChat') === '1';
+        const receiverId = params.get('receiverId');
+        const matchesReceiver = receiverId ? Number(receiverId) === room.user_id : true;
+
+        if (!shouldStartChat || !matchesReceiver) {
+            autoChatAttemptRef.current = null;
+            return;
+        }
+
+        const intentKey = `${room.id}:${receiverId || ''}:${location.search}`;
+        if (autoChatAttemptRef.current === intentKey) return;
+
+        autoChatAttemptRef.current = intentKey;
+        void handleChatClick();
+    }, [room, isOwner, isEstablishingChat, location.search]);
 
     useEffect(() => {
         const fetchRoom = async () => {
@@ -434,7 +484,7 @@ const RoomDetailPage: React.FC = () => {
                                     </div>
                                     <div className="flex gap-2 self-start sm:self-auto">
                                         <Button variant="outline" size="icon" className="rounded-xl" onClick={handleShare} title={shareSuccess ? 'Link copied!' : 'Share'}>
-                                            {shareSuccess ? <Check className="w-4 h-4 text-green-500" /> : <Share2 className="w-4 h-4" />}
+                                            {shareSuccess ? <Check className="w-4 h-4 text-blue-500" /> : <Share2 className="w-4 h-4" />}
                                         </Button>
                                         <Button variant="outline" size="icon" className="rounded-xl">
                                             <Heart className="w-4 h-4" />
@@ -475,25 +525,39 @@ const RoomDetailPage: React.FC = () => {
                                     </div>
                                 </div>
 
+                                {/* Existing Roommates Section */}
+                                {room.existing_roommates && room.existing_roommates.length > 0 && (
+                                    <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-blue-50 to-blue-50 p-4 sm:p-5">
+                                        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                                            <UserCheck className="w-5 h-5 text-blue-600" />
+                                            Existing Roommates
+                                        </h2>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {room.existing_roommates.map((mate, index) => (
+                                                <div key={index} className="bg-white border border-blue-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow">
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+                                                            {mate.name.charAt(0).toUpperCase()}
+                                                        </div>
+                                                        <div className="min-w-0 flex-1">
+                                                            <p className="font-medium text-slate-900 text-sm line-clamp-1">{mate.name}</p>
+                                                            <p className="text-xs text-slate-600 flex items-center gap-1 mt-1">
+                                                                <MapPin className="w-3 h-3" />
+                                                                {mate.city}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Description Section */}
                                 <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
                                     <h2 className="text-lg font-semibold text-slate-900 mb-2">Description</h2>
                                     <p className="text-muted-foreground leading-relaxed">{room.note || 'No description available'}</p>
                                 </div>
-
-                                {/* Existing Roommates Section */}
-                                {room.existing_roommates && room.existing_roommates.length > 0 && (
-                                    <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-                                        <h2 className="text-lg font-semibold text-slate-900 mb-3">Existing Roommates</h2>
-                                        <div className="flex flex-wrap gap-2">
-                                            {room.existing_roommates.map((mate, index) => (
-                                                <Badge key={index} className="bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100" variant="secondary">
-                                                    {mate.name} ({mate.city})
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
 
                                 {/* Facilities Section */}
                                 <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
@@ -502,7 +566,7 @@ const RoomDetailPage: React.FC = () => {
                                         {parseFacilitiesFromString(room.facilities).length > 0 ? (
                                             parseFacilitiesFromString(room.facilities).map((facility, index) => (
                                                 <div key={index} className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
-                                                    <Check className="w-4 h-4 text-green-600 flex-shrink-0" />
+                                                    <Check className="w-4 h-4 text-blue-600 flex-shrink-0" />
                                                     <span className="text-sm text-slate-700">{facility}</span>
                                                 </div>
                                             ))
@@ -563,20 +627,20 @@ const RoomDetailPage: React.FC = () => {
                                         <Button 
                                             className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl" 
                                             onClick={handleChatClick}
-                                            disabled={chatLoading || isEstablishingChat}
+                                            disabled={isEstablishingChat}
                                         >
-                                            {isEstablishingChat || chatLoading ? (
+                                            {isEstablishingChat ? (
                                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                                             ) : (
                                                 <MessageSquare className="w-4 h-4 mr-2" />
                                             )}
-                                            {isEstablishingChat || chatLoading ? 'Establishing chat with owner...' : 'Chat with Owner'}
+                                            {isEstablishingChat ? 'Establishing chat with owner...' : 'Chat with Owner'}
                                         </Button>
                                     )}
                                     {room.contact_visibility === 'Public' && room.contact && (
                                         <>
                                             <Button 
-                                                className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl" 
+                                                className="w-full bg-blue-600 hover:bg-green-700 text-white rounded-xl" 
                                                 onClick={() => {
                                                     const whatsappUrl = buildWhatsAppUrl(room.contact);
                                                     if (whatsappUrl) {
@@ -691,19 +755,22 @@ const RoomDetailPage: React.FC = () => {
                             </div>
                             {/* Fullscreen Image Viewer Modal */}
                             <Dialog open={isFullscreenOpen} onOpenChange={setIsFullscreenOpen}>
-                                <DialogContent className="max-w-full w-screen h-screen p-0 bg-black border-0">
-                                    <div className="relative w-full h-full flex items-center justify-center">
+                                <DialogContent className="fixed inset-0 z-[9999] max-w-full w-screen h-screen p-0 gap-0 border-0 bg-black/85">
+                                    <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                                        {/* Backdrop blur overlay */}
+                                        <div className="absolute inset-0 backdrop-blur-[10px]" />
+                                        
                                         {/* Close Button */}
                                         <button
                                             onClick={() => setIsFullscreenOpen(false)}
-                                            className="absolute top-4 right-4 z-50 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full transition-all"
+                                            className="absolute top-4 right-4 z-50 bg-white/40 backdrop-blur-md hover:bg-white/60 text-white p-3 rounded-full transition-all shadow-lg"
                                             aria-label="Close fullscreen"
                                         >
                                             <X className="w-6 h-6" />
                                         </button>
 
                                         {/* Main Image */}
-                                        <div className="relative w-full h-full flex items-center justify-center">
+                                        <div className="relative w-full h-full flex items-center justify-center z-10">
                                             <img 
                                                 src={images[selectedImage]} 
                                                 alt={room.title}
@@ -713,7 +780,7 @@ const RoomDetailPage: React.FC = () => {
                                             />
 
                                             {/* Image Counter */}
-                                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm">
+                                            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white/30 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
                                                 {selectedImage + 1} / {images.length}
                                             </div>
 
@@ -721,7 +788,7 @@ const RoomDetailPage: React.FC = () => {
                                             {images.length > 1 && (
                                                 <button
                                                     onClick={() => setSelectedImage((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
-                                                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 transition-all z-40"
+                                                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 backdrop-blur-md hover:bg-white/50 text-white rounded-full p-3 transition-all z-40 shadow-lg"
                                                     aria-label="Previous image"
                                                 >
                                                     <ChevronLeft className="w-8 h-8" />
@@ -732,7 +799,7 @@ const RoomDetailPage: React.FC = () => {
                                             {images.length > 1 && (
                                                 <button
                                                     onClick={() => setSelectedImage((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
-                                                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 transition-all z-40"
+                                                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 backdrop-blur-md hover:bg-white/50 text-white rounded-full p-3 transition-all z-40 shadow-lg"
                                                     aria-label="Next image"
                                                 >
                                                     <ChevronRight className="w-8 h-8" />
@@ -771,9 +838,9 @@ const RoomDetailPage: React.FC = () => {
                         <Button
                             className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-12 text-sm font-semibold shadow-md"
                             onClick={handleChatClick}
-                            disabled={chatLoading || isEstablishingChat}
+                            disabled={isEstablishingChat}
                         >
-                            {isEstablishingChat || chatLoading ? (
+                            {isEstablishingChat ? (
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                             ) : (
                                 <MessageSquare className="w-4 h-4 mr-2" />

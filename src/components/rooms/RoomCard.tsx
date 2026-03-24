@@ -32,7 +32,8 @@ const LISTING_TYPE_STYLES: Record<string, string> = {
 
 const RoomCard: React.FC<RoomCardProps> = ({ room, onChat, viewMode = 'grid' }) => {
     const navigate = useNavigate();
-    const { isAuthenticated, user } = useAuth();
+    const { user } = useAuth();
+    void onChat;
     const isOwner = user?.id === room.user_id;
     const roomPath = buildRoomPath(room.room_id, room.title, room.area, room.city);
     const images = parseImages(room.images);
@@ -123,14 +124,14 @@ const RoomCard: React.FC<RoomCardProps> = ({ room, onChat, viewMode = 'grid' }) 
 
     const handleChatButtonClick = async () => {
         if (isChatStarting) return;
-        if (!isAuthenticated) {
-            navigate('/login', { state: { from: { pathname: window.location.pathname, search: window.location.search } } });
-            return;
-        }
-        if (!onChat) return;
         try {
             setIsChatStarting(true);
-            await onChat(room.room_id);
+            const params = new URLSearchParams({
+                startChat: '1',
+                receiverId: String(room.user_id),
+            });
+
+            navigate(`${roomPath}?${params.toString()}`);
         } finally {
             setIsChatStarting(false);
         }

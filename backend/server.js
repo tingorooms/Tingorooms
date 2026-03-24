@@ -8,6 +8,8 @@ require('dotenv').config();
 
 const { testConnection, ensureAutoIncrementOnPrimaryIds } = require('./config/database');
 const { initializeSupabase } = require('./config/supabase');
+const { startKeepAlive } = require('./utils/keepAlive');
+const { pushLog } = require('./utils/logDrain');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -37,6 +39,102 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.disable('x-powered-by');
 app.set('trust proxy', Number(process.env.TRUST_PROXY || 1));
+
+const isTruthy = (value) => String(value || '').toLowerCase() === 'true';
+
+const buildIntegrationSelfCheck = async () => {
+    const dbConnected = await testConnection();
+
+    const nodeEnv = process.env.NODE_ENV || 'development';
+    const imageProvider = String(process.env.IMAGE_STORAGE_PROVIDER || 'imgbb').toLowerCase();
+    const dbHost = String(process.env.DB_HOST || '');
+    const smtpHost = String(process.env.SMTP_HOST || '').toLowerCase();
+    const siteUrl = String(process.env.SITE_URL || '');
+
+    const checks = {
+        database_connected: {
+            active: dbConnected,
+            details: dbConnected ? 'Database connection OK' : 'Database connection failed'
+        },
+        planetscale_configured: {
+            active: Boolean(process.env.DB_HOST && process.env.DB_USER && process.env.DB_NAME),
+            details: dbHost.includes('psdb.cloud') ? 'Planetscale host detected' : 'Generic MySQL host configured'
+        },
+        planetscale_auto_backups: {
+            active: dbHost.includes('psdb.cloud'),
+            details: dbHost.includes('psdb.cloud')
+                ? 'Planetscale managed backups are provider-side'
+                : 'Unknown provider; verify backup policy in DB dashboard'
+        },
+        supabase_realtime: {
+            active: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY),
+            details: process.env.SUPABASE_URL ? 'Supabase URL and anon key configured' : 'Supabase credentials missing'
+        },
+        supabase_admin_key: {
+            active: Boolean(process.env.SUPABASE_SERVICE_KEY),
+            details: process.env.SUPABASE_SERVICE_KEY ? 'Service role key configured' : 'Service role key missing'
+        },
+        keep_alive_scheduler: {
+            active: nodeEnv === 'production',
+            details: nodeEnv === 'production'
+                ? `Keep-alive enabled with cron: ${process.env.KEEP_ALIVE_CRON || '15 3 * * *'}`
+                : 'Enabled only in production'
+        },
+        image_storage: {
+            active: (
+                (imageProvider === 'r2' && Boolean(process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY && process.env.R2_BUCKET_NAME)) ||
+                (imageProvider === 'imgbb' && Boolean(process.env.IMAGE_STORAGE_API_KEY))
+            ),
+            details: imageProvider === 'r2'
+                ? 'Cloudflare R2 provider selected'
+                : 'ImgBB provider selected'
+        },
+        log_drain_better_stack: {
+            active: isTruthy(process.env.ENABLE_LOG_DRAIN) && Boolean(process.env.LOGTAIL_SOURCE_TOKEN || process.env.BETTER_STACK_SOURCE_TOKEN),
+            details: isTruthy(process.env.ENABLE_LOG_DRAIN)
+                ? 'Better Stack log drain enabled'
+                : 'Log drain disabled'
+        },
+        email_brevo_smtp: {
+            active: smtpHost.includes('brevo') && Boolean(process.env.SMTP_USER && process.env.SMTP_PASS),
+            details: smtpHost.includes('brevo')
+                ? 'Brevo SMTP host configured'
+                : 'SMTP host is not Brevo (smtp-relay.brevo.com expected)'
+        },
+        email_spf_configured: {
+            active: isTruthy(process.env.SMTP_SPF_CONFIGURED),
+            details: isTruthy(process.env.SMTP_SPF_CONFIGURED) ? 'SPF marked configured' : 'SPF not marked configured'
+        },
+        email_dkim_configured: {
+            active: isTruthy(process.env.SMTP_DKIM_CONFIGURED),
+            details: isTruthy(process.env.SMTP_DKIM_CONFIGURED) ? 'DKIM marked configured' : 'DKIM not marked configured'
+        },
+        cloudflare_cdn_expected: {
+            active: siteUrl.includes('.vercel.app') || siteUrl.includes('http'),
+            details: 'CDN is configured via DNS/provider; validate domain proxy in Cloudflare dashboard'
+        }
+    };
+
+    const requiredInProduction = [
+        'database_connected',
+        'supabase_realtime',
+        'image_storage',
+        'email_brevo_smtp',
+        'email_spf_configured',
+        'email_dkim_configured'
+    ];
+
+    const failedRequired = requiredInProduction.filter((key) => !checks[key].active);
+    const productionReady = nodeEnv !== 'production' ? null : failedRequired.length === 0;
+
+    return {
+        environment: nodeEnv,
+        production_ready: productionReady,
+        failed_required_checks: failedRequired,
+        checks,
+        timestamp: new Date().toISOString()
+    };
+};
 
 // Security middleware
 app.use(helmet({
@@ -213,7 +311,9 @@ app.use(sanitizeRequestBody);
 app.use(compression());
 
 // Logging middleware
-app.use(morgan('dev'));
+if (process.env.NODE_ENV !== 'production') {
+    app.use(morgan('dev'));
+}
 app.use(requestLogger);
 
 // Static files for uploads
@@ -232,12 +332,45 @@ app.use('/uploads', express.static('uploads', {
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
     const dbConnected = await testConnection();
+    const mem = process.memoryUsage();
     res.json({
         success: true,
         message: 'Server is running',
         database: dbConnected ? 'connected' : 'disconnected',
+        environment: process.env.NODE_ENV || 'development',
+        uptime_seconds: Math.floor(process.uptime()),
+        memory_mb: {
+            rss: Math.round(mem.rss / 1024 / 1024),
+            heap_used: Math.round(mem.heapUsed / 1024 / 1024),
+            heap_total: Math.round(mem.heapTotal / 1024 / 1024)
+        },
+        version: '1.0.0',
         timestamp: new Date().toISOString()
     });
+});
+
+// Startup integration self-check endpoint (optional token-gated)
+app.get('/api/startup/self-check', async (req, res, next) => {
+    try {
+        const configuredToken = process.env.INTEGRATION_CHECK_TOKEN;
+        const providedToken = req.headers['x-integration-check-token'] || req.query.token;
+
+        if (configuredToken && providedToken !== configuredToken) {
+            return res.status(403).json({
+                success: false,
+                message: 'Forbidden: invalid integration check token'
+            });
+        }
+
+        const data = await buildIntegrationSelfCheck();
+        return res.json({
+            success: true,
+            message: 'Startup integration self-check completed',
+            data
+        });
+    } catch (error) {
+        return next(error);
+    }
 });
 
 // API Routes
@@ -295,8 +428,25 @@ const startServer = async () => {
         // Initialize Supabase
         initializeSupabase();
 
+        // Email deliverability guardrails (SPF/DKIM are DNS-side settings)
+        if (process.env.NODE_ENV === 'production') {
+            const hasSmtpUser = Boolean(process.env.SMTP_USER);
+            const hasSmtpPass = Boolean(process.env.SMTP_PASS);
+            const spfConfigured = process.env.SMTP_SPF_CONFIGURED === 'true';
+            const dkimConfigured = process.env.SMTP_DKIM_CONFIGURED === 'true';
+
+            if (hasSmtpUser && hasSmtpPass && (!spfConfigured || !dkimConfigured)) {
+                console.warn('⚠️  Email DNS records not fully marked as configured. Set SMTP_SPF_CONFIGURED=true and SMTP_DKIM_CONFIGURED=true after adding DNS records.');
+            }
+        }
+
+        // Start keep-alive pings to prevent free-tier services from pausing
+        if (process.env.NODE_ENV === 'production') {
+            startKeepAlive();
+        }
+
         // Start server
-        app.listen(PORT, () => {
+        const server = app.listen(PORT, () => {
             console.log(`\n🚀 Server running on port ${PORT}`);
             console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
             console.log(`🔗 API URL: http://localhost:${PORT}/api`);
@@ -312,6 +462,23 @@ const startServer = async () => {
             console.log('   • Public:     /api/public');
             console.log('   • Health:     /api/health\n');
         });
+
+        // Graceful shutdown — Railway sends SIGTERM on deploy/restart
+        const gracefulShutdown = (signal) => {
+            console.log(`\n${signal} received. Shutting down gracefully...`);
+            server.close(() => {
+                console.log('✅ HTTP server closed');
+                process.exit(0);
+            });
+            // Force exit if server.close() hangs beyond 10 seconds
+            setTimeout(() => {
+                console.error('⏰ Forced shutdown after 10s timeout');
+                process.exit(1);
+            }, 10000);
+        };
+
+        process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+        process.on('SIGINT', () => gracefulShutdown('SIGINT'));
     } catch (error) {
         console.error('❌ Failed to start server:', error);
         process.exit(1);
@@ -321,11 +488,23 @@ const startServer = async () => {
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
     console.error('❌ Unhandled Promise Rejection:', err);
+    pushLog({
+        event: 'unhandled_rejection',
+        level: 'error',
+        message: err && err.message ? err.message : 'Unhandled Promise Rejection',
+        stack: err && err.stack ? String(err.stack).split('\n').slice(0, 10).join('\n') : undefined,
+    });
 });
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
     console.error('❌ Uncaught Exception:', err);
+    pushLog({
+        event: 'uncaught_exception',
+        level: 'error',
+        message: err && err.message ? err.message : 'Uncaught Exception',
+        stack: err && err.stack ? String(err.stack).split('\n').slice(0, 10).join('\n') : undefined,
+    });
     process.exit(1);
 });
 

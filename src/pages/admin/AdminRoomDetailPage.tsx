@@ -453,7 +453,7 @@ const AdminRoomDetailPage: React.FC = () => {
                                     <SelectContent>
                                         <SelectItem value="Approved">
                                             <div className="flex items-center gap-2">
-                                                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                                <CheckCircle2 className="w-4 h-4 text-blue-600" />
                                                 Approved
                                             </div>
                                         </SelectItem>

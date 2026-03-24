@@ -311,7 +311,7 @@ const AdminDashboardPage: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
-                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Admin Control Center</h1>
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">Admin Control Center</h1>
                     <p className="text-muted-foreground mt-2 flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
                         Complete control and monitoring of the platform
                         {lastUpdated && (
@@ -351,30 +351,30 @@ const AdminDashboardPage: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="cursor-pointer border-t-4 border-t-violet-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white" onClick={() => navigate('/admin/users')}>
+                <Card className="cursor-pointer border-t-4 border-t-blue-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white" onClick={() => navigate('/admin/users')}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Members</CardTitle>
-                        <div className="p-2 rounded-lg bg-violet-100">
-                            <Users className="h-5 w-5 text-violet-600" />
+                        <div className="p-2 rounded-lg bg-blue-100">
+                            <Users className="h-5 w-5 text-blue-600" />
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-violet-600">{stats?.total_members || 0}</div>
+                        <div className="text-3xl font-bold text-blue-600">{stats?.total_members || 0}</div>
                         <p className="text-xs text-muted-foreground mt-2">
                             {stats?.today_registrations || 0} joined today
                         </p>
                     </CardContent>
                 </Card>
 
-                <Card className="cursor-pointer border-t-4 border-t-emerald-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white" onClick={() => navigate('/admin/brokers')}>
+                <Card className="cursor-pointer border-t-4 border-t-blue-500 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white" onClick={() => navigate('/admin/brokers')}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Approved Brokers</CardTitle>
-                        <div className="p-2 rounded-lg bg-emerald-100">
-                            <UserCheck className="h-5 w-5 text-emerald-600" />
+                        <div className="p-2 rounded-lg bg-blue-100">
+                            <UserCheck className="h-5 w-5 text-blue-600" />
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold text-emerald-600">{stats?.approved_brokers || 0}</div>
+                        <div className="text-3xl font-bold text-blue-600">{stats?.approved_brokers || 0}</div>
                         <p className="text-xs text-muted-foreground mt-2">
                             {stats?.pending_brokers || 0} awaiting approval
                         </p>
@@ -436,22 +436,22 @@ const AdminDashboardPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-start space-x-3 p-4 bg-green-50 rounded-lg border border-green-200">
-                                <Home className="h-5 w-5 text-green-600 mt-0.5" />
+                            <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <Home className="h-5 w-5 text-blue-600 mt-0.5" />
                                 <div className="flex-1 space-y-1">
                                     <p className="text-sm font-medium leading-none">Occupied Rooms</p>
-                                    <p className="text-2xl font-bold text-green-600">{stats?.occupied_rooms || 0}</p>
+                                    <p className="text-2xl font-bold text-blue-600">{stats?.occupied_rooms || 0}</p>
                                     <p className="text-xs text-muted-foreground">
                                         {occupancyRate}% of approved rooms
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-start space-x-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                                <Award className="h-5 w-5 text-purple-600 mt-0.5" />
+                            <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <Award className="h-5 w-5 text-blue-600 mt-0.5" />
                                 <div className="flex-1 space-y-1">
                                     <p className="text-sm font-medium leading-none">Approval Success</p>
-                                    <p className="text-2xl font-bold text-purple-600">{approvalRate}%</p>
+                                    <p className="text-2xl font-bold text-blue-600">{approvalRate}%</p>
                                     <p className="text-xs text-muted-foreground">
                                         {stats?.approved_rooms || 0} of {stats?.total_rooms || 0} approved
                                     </p>

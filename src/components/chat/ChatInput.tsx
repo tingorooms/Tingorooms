@@ -182,7 +182,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
                     onClick={handleSendMessage}
                     disabled={isSubmitting || disabled || isLoading || isEmpty}
                     size="icon"
-                    className="h-6 w-6 flex-shrink-0 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110 text-white shadow-sm hover:shadow-md transition-all p-0"
+                    className="h-6 w-6 flex-shrink-0 rounded-full bg-gradient-to-r from-blue-600 to-blue-600 hover:brightness-110 text-white shadow-sm hover:shadow-md transition-all p-0"
                     title="Send message"
                 >
                     <Send size={16} />

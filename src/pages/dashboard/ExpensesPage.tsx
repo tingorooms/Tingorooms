@@ -1122,7 +1122,7 @@ const ExpensesPage: React.FC = () => {
                 <Card>
                     <CardContent className="p-3 sm:p-4">
                         <div className="flex items-center gap-2 sm:gap-3">
-                            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-green-500 text-white">
+                            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-blue-500 text-white">
                                 <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
                             <div>
@@ -1148,7 +1148,7 @@ const ExpensesPage: React.FC = () => {
                 <Card>
                     <CardContent className="p-3 sm:p-4">
                         <div className="flex items-center gap-2 sm:gap-3">
-                            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-purple-500 text-white">
+                            <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-blue-500 text-white">
                                 <Users className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
                             <div>

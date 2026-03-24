@@ -216,7 +216,7 @@ const BrokersPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-green-bg via-white to-slate-100 py-0 md:py-6">
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 py-0 md:py-6">
             <div className="max-w-screen-2xl mx-auto px-4 space-y-6">
                 <div className="text-center space-y-3">
                     <Badge className="px-3 py-1.5 bg-blue-50 text-blue-700 border-blue-200 font-semibold">
@@ -406,7 +406,7 @@ const BrokersPage: React.FC = () => {
                                                         event.stopPropagation();
                                                         navigate(brokerPath);
                                                     }}
-                                                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110"
+                                                    className="w-full bg-gradient-to-r from-blue-600 to-blue-600 hover:brightness-110"
                                                     size="sm"
                                                 >
                                                     <BriefcaseBusiness className="w-4 h-4 mr-2" />
@@ -427,14 +427,14 @@ const BrokersPage: React.FC = () => {
                                                         </Button>
                                                     )}
                                                     {hasPhone ? (
-                                                        <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110">
+                                                        <Button asChild size="sm" className="bg-gradient-to-r from-blue-600 to-blue-600 hover:brightness-110">
                                                             <a href={whatsappUrl || '#'} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()}>
                                                                 <MessageCircle className="w-4 h-4 mr-1" />
                                                                 WhatsApp
                                                             </a>
                                                         </Button>
                                                     ) : (
-                                                        <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110" disabled>
+                                                        <Button size="sm" className="bg-gradient-to-r from-blue-600 to-blue-600 hover:brightness-110" disabled>
                                                             <MessageCircle className="w-4 h-4 mr-1" />
                                                             WhatsApp
                                                         </Button>

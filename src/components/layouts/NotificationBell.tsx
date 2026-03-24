@@ -176,7 +176,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({
                                         <p className={cn('text-sm', !notification.is_read && 'font-semibold')}>
                                             {notification.title}
                                         </p>
-                                        {!notification.is_read && <span className="w-2 h-2 rounded-full bg-green-500" />}
+                                        {!notification.is_read && <span className="w-2 h-2 rounded-full bg-blue-500" />}
                                     </div>
                                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2 w-full">
                                         {notification.message}

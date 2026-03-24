@@ -94,7 +94,7 @@ const FloatingChatWidget: React.FC<FloatingChatWidgetProps> = ({
     return (
         <div className="fixed bottom-4 right-4 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-lg shadow-2xl flex flex-col z-50 animate-in slide-in-from-bottom-4 duration-300">
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-4 rounded-t-lg flex items-center justify-between flex-shrink-0">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-600 px-4 py-4 rounded-t-lg flex items-center justify-between flex-shrink-0">
                 <div className="flex items-center gap-3">
                     {otherParticipant?.image ? (
                         <img
@@ -103,7 +103,7 @@ const FloatingChatWidget: React.FC<FloatingChatWidgetProps> = ({
                             className="w-8 h-8 rounded-full object-cover"
                         />
                     ) : (
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white text-sm font-semibold">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-blue-600 flex items-center justify-center text-white text-sm font-semibold">
                             {(otherParticipant?.name || 'U').charAt(0).toUpperCase()}
                         </div>
                     )}
@@ -174,7 +174,7 @@ const FloatingChatWidget: React.FC<FloatingChatWidgetProps> = ({
                         onClick={handleSendMessage}
                         disabled={isSending || !input.trim()}
                         size="icon"
-                        className="h-8 w-8 rounded-full text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:brightness-110"
+                        className="h-8 w-8 rounded-full text-white bg-gradient-to-r from-blue-600 to-blue-600 hover:brightness-110"
                     >
                         <Send size={16} />
                     </Button>

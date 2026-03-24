@@ -97,7 +97,7 @@ export default function NotificationBanner() {
   const isWarning = bannerType === 'warning';
   const bgColor = isWarning
     ? 'bg-gradient-to-r from-orange-500 to-red-500 border-orange-600/30'
-    : 'bg-gradient-to-r from-blue-600 to-purple-600 border-blue-700/30';
+    : 'bg-gradient-to-r from-blue-600 to-blue-600 border-blue-700/30';
 
   return (
     <div className={`sticky top-0 z-50 left-0 right-0 w-full bg-opacity-95 px-4 py-2.5 shadow-md border-b ${bgColor}`}>

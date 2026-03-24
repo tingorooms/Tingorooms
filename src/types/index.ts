@@ -78,6 +78,7 @@ export interface ExistingRoommate {
 
 export interface RoomFilters {
     city?: string;
+    roommateCity?: string;
     area?: string;
     listingType?: string;
     roomType?: string;

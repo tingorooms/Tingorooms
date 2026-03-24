@@ -132,7 +132,7 @@ const AdminUserDetailPage: React.FC = () => {
                     <ArrowLeft className="h-4 w-4 mr-2" />Back
                 </Button>
                 <div className="flex-1">
-                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-blue-600 bg-clip-text text-transparent">
                         User Detail
                     </h1>
                     <p className="text-muted-foreground text-sm mt-0.5">{userDetail.unique_id}</p>
@@ -154,7 +154,7 @@ const AdminUserDetailPage: React.FC = () => {
                     <CardContent className="pt-8 pb-6 flex flex-col items-center text-center gap-4">
                         {/* Avatar */}
                         <div className="relative w-24 h-24 rounded-full overflow-hidden ring-4 ring-blue-100">
-                            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-3xl font-bold">
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-3xl font-bold">
                                 {userDetail.name.charAt(0).toUpperCase()}
                             </div>
                             {avatarUrl && (

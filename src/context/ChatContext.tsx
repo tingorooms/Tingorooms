@@ -321,10 +321,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
 };
 
+const NOOP_CHAT: ChatContextType = {
+    openChat: async () => {},
+    openExistingChat: () => {},
+    openChatByRoomId: async () => {},
+    closeChat: () => {},
+    isLoading: false,
+};
+
 export const useChat = () => {
     const context = useContext(ChatContext);
     if (context === undefined) {
-        throw new Error('useChat must be used within a ChatProvider');
+        return NOOP_CHAT;
     }
     return context;
 };

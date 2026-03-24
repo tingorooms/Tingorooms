@@ -27,6 +27,8 @@ const configureVapid = () => {
 };
 
 const ensurePushSubscriptionsTable = async () => {
+    // Note: FOREIGN KEY constraint is intentionally omitted for Planetscale
+    // (Vitess) compatibility. Referential integrity is enforced in app logic.
     await executeQuery(`
         CREATE TABLE IF NOT EXISTS push_subscriptions (
             id INT NOT NULL AUTO_INCREMENT,
@@ -40,8 +42,7 @@ const ensurePushSubscriptionsTable = async () => {
             updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             UNIQUE KEY uk_push_endpoint (endpoint),
-            KEY idx_push_user_id (user_id),
-            CONSTRAINT fk_push_subscriptions_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+            KEY idx_push_user_id (user_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     `);
 };

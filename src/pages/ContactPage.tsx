@@ -159,7 +159,7 @@ const ContactPage: React.FC = () => {
                     <CardContent className="p-6">
                         {isSubmitted ? (
                             <div className="text-center py-12">
-                                <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                                <CheckCircle2 className="w-16 h-16 text-blue-500 mx-auto mb-4" />
                                 <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
                                 <p className="text-muted-foreground">
                                     Thank you for reaching out. We'll get back to you soon.

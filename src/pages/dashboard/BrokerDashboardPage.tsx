@@ -325,8 +325,8 @@ const BrokerDashboardPage: React.FC = () => {
                 <Card className="border shadow-md hover:shadow-lg transition-shadow cursor-pointer hover:border-primary" onClick={() => { setActiveTab('messages'); }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-semibold">Messages</CardTitle>
-                        <div className="p-2 bg-purple-100 rounded-lg">
-                            <MessageSquare className="h-4 w-4 text-purple-600" />
+                        <div className="p-2 bg-blue-100 rounded-lg">
+                            <MessageSquare className="h-4 w-4 text-blue-600" />
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-2">
@@ -497,7 +497,7 @@ const BrokerDashboardPage: React.FC = () => {
                                 <CardHeader className={cn(
                                     "border-b-2",
                                     isSubscriptionActive
-                                        ? "bg-gradient-to-r from-green-50 to-emerald-50"
+                                        ? "bg-gradient-to-r from-blue-50 to-blue-50"
                                         : "bg-gradient-to-r from-red-50 to-rose-50"
                                 )}>
                                     <div className="flex items-center justify-between">
@@ -526,7 +526,7 @@ const BrokerDashboardPage: React.FC = () => {
                                 </CardHeader>
                                 <CardContent className="pt-6 space-y-6">
                                     {/* Plan Overview */}
-                                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-lg border-2 border-blue-200">
+                                    <div className="bg-gradient-to-br from-blue-50 to-blue-50 p-6 rounded-lg border-2 border-blue-200">
                                         <h3 className="text-lg font-bold text-slate-900 mb-4">Plan Overview</h3>
                                         <div className="grid gap-4 md:grid-cols-3">
                                             <div>
@@ -537,7 +537,7 @@ const BrokerDashboardPage: React.FC = () => {
                                             </div>
                                             <div>
                                                 <p className="text-sm text-slate-600 font-medium">Price Paid</p>
-                                                <p className="text-xl font-bold text-green-600 mt-1">
+                                                <p className="text-xl font-bold text-blue-600 mt-1">
                                                     ₹{currentSub.amount_paid}
                                                 </p>
                                             </div>
@@ -551,20 +551,20 @@ const BrokerDashboardPage: React.FC = () => {
                                     </div>
 
                                     {/* Subscription Timeline */}
-                                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-lg border-2 border-purple-200">
+                                    <div className="bg-gradient-to-br from-blue-50 to-pink-50 p-6 rounded-lg border-2 border-blue-200">
                                         <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                            <Calendar className="h-5 w-5 text-purple-600" />
+                                            <Calendar className="h-5 w-5 text-blue-600" />
                                             Subscription Timeline
                                         </h3>
                                         <div className="space-y-3">
-                                            <div className="flex justify-between items-center p-3 bg-white rounded border border-purple-200">
+                                            <div className="flex justify-between items-center p-3 bg-white rounded border border-blue-200">
                                                 <div>
                                                     <p className="text-sm text-slate-600 font-medium">Subscription Start Date</p>
                                                     <p className="text-lg font-bold text-slate-900 mt-1">
                                                         {formatCompactDate(currentSub.starts_at)}
                                                     </p>
                                                 </div>
-                                                <Clock className="h-5 w-5 text-purple-600" />
+                                                <Clock className="h-5 w-5 text-blue-600" />
                                             </div>
                                             <div className="flex justify-between items-center p-3 bg-white rounded border border-red-200">
                                                 <div>
@@ -588,7 +588,7 @@ const BrokerDashboardPage: React.FC = () => {
                                             <div className="grid gap-3 md:grid-cols-2">
                                                 {currentSub.plan.features.map((feature, index) => (
                                                     <div key={index} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                                                        <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                                                         <span className="text-sm font-medium text-slate-900">{feature}</span>
                                                     </div>
                                                 ))}
@@ -627,7 +627,7 @@ const BrokerDashboardPage: React.FC = () => {
                                                     key={`active-plan-${plan.id}-${index}`} 
                                                     className={cn(
                                                         'border-2 hover:border-primary transition-all hover:shadow-lg',
-                                                        currentSub && plan.id === currentSub.plan_id && 'border-green-500 bg-green-50'
+                                                        currentSub && plan.id === currentSub.plan_id && 'border-green-500 bg-blue-50'
                                                     )}
                                                 >
                                                     <CardHeader className="pb-3">
@@ -660,7 +660,7 @@ const BrokerDashboardPage: React.FC = () => {
                                                                 <ul className="space-y-1">
                                                                     {plan.features.slice(0, 3).map((feature, index) => (
                                                                         <li key={index} className="flex items-start gap-2">
-                                                                            <CheckCircle className="h-3 w-3 text-green-600 mt-1 flex-shrink-0" />
+                                                                            <CheckCircle className="h-3 w-3 text-blue-600 mt-1 flex-shrink-0" />
                                                                             <span className="text-xs text-slate-700">{feature}</span>
                                                                         </li>
                                                                     ))}
@@ -813,7 +813,7 @@ const BrokerDashboardPage: React.FC = () => {
                                                             <ul className="space-y-1">
                                                                 {plan.features.slice(0, 3).map((feature, index) => (
                                                                     <li key={index} className="flex items-start gap-2">
-                                                                        <CheckCircle className="h-3 w-3 text-green-600 mt-1 flex-shrink-0" />
+                                                                        <CheckCircle className="h-3 w-3 text-blue-600 mt-1 flex-shrink-0" />
                                                                         <span className="text-xs text-slate-700">{feature}</span>
                                                                     </li>
                                                                 ))}
@@ -852,7 +852,7 @@ const BrokerDashboardPage: React.FC = () => {
                             <CardHeader className={cn(
                                 "border-b-2",
                                 isSubscriptionActive
-                                    ? "bg-gradient-to-r from-green-50 to-emerald-50"
+                                    ? "bg-gradient-to-r from-blue-50 to-blue-50"
                                     : "bg-gradient-to-r from-red-50 to-rose-50"
                             )}>
                                 <div className="flex items-center justify-between">

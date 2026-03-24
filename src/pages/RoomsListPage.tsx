@@ -90,6 +90,7 @@ type RoomsListBootCachePayload = {
 const hasMeaningfulFilters = (filters: RoomFilters): boolean => {
     return Boolean(
         filters.city ||
+            filters.roommateCity ||
             filters.listingType ||
             filters.search ||
             filters.minRent !== undefined ||
@@ -110,6 +111,7 @@ const RoomsListPage: React.FC = () => {
     const [similarRooms, setSimilarRooms] = useState<Room[]>([]);
     const [filters, setFilters] = useState<RoomFilters>({
         city: searchParams.get('city') || '',
+        roommateCity: searchParams.get('roommateCity') || '',
         listingType: searchParams.get('listingType') || '',
         search: searchParams.get('search') || searchParams.get('q') || '',
         minRent: searchParams.get('minRent') ? parseFloat(searchParams.get('minRent')!) : undefined,
@@ -122,6 +124,7 @@ const RoomsListPage: React.FC = () => {
     const [showMobileAdvancedFilters, setShowMobileAdvancedFilters] = useState(false);
     const [expandedSections, setExpandedSections] = useState({
         location: true,
+        roommateCity: true,
         price: true,
         property: true,
         preferences: true
@@ -147,6 +150,8 @@ const RoomsListPage: React.FC = () => {
     // true until first successful fetch completes — prevents false "no results" flash
     const [isFetching, setIsFetching] = useState(true);
     const [hasWarmStartData, setHasWarmStartData] = useState(false);
+    const [roommateCities, setRoommateCities] = useState<Array<{city_name: string; room_count: number}>>([]);
+    const [roommateCitiesLoading, setRoommateCitiesLoading] = useState(false);
 
     useEffect(() => {
         if (hasMeaningfulFilters(filters) || pagination.currentPage !== 1) {
@@ -192,6 +197,29 @@ const RoomsListPage: React.FC = () => {
         }
     }, []);
 
+    // Fetch roommate cities for filter suggestions
+    useEffect(() => {
+        const fetchRoommateCities = async () => {
+            try {
+                setRoommateCitiesLoading(true);
+                const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const response = await fetch(`${apiBaseUrl}/public/roommate-cities`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && Array.isArray(data.data)) {
+                        setRoommateCities(data.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching roommate cities:', error);
+            } finally {
+                setRoommateCitiesLoading(false);
+            }
+        };
+
+        fetchRoommateCities();
+    }, []);
+
     useEffect(() => {
         const timer = window.setTimeout(() => {
             setDebouncedFilters(filters);
@@ -210,6 +238,7 @@ const RoomsListPage: React.FC = () => {
                 // Convert 'all' values back to empty strings for API
                 const apiFilters = { ...debouncedFilters };
                 if (apiFilters.city === 'all') apiFilters.city = '';
+                if (apiFilters.roommateCity === 'all') apiFilters.roommateCity = '';
                 if (apiFilters.listingType === 'all') apiFilters.listingType = '';
 
                 const canRunSilentRefresh =
@@ -528,6 +557,7 @@ const RoomsListPage: React.FC = () => {
     const clearAllFilters = () => {
         const clearedFilters: RoomFilters = {
             city: '',
+            roommateCity: '',
             listingType: '',
             search: '',
             minRent: undefined,
@@ -735,9 +765,9 @@ const RoomsListPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-bg via-white to-slate-100 overflow-x-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 overflow-x-hidden">
             {/* Premium Header Section */}
-            <div className="relative overflow-hidden bg-gradient-to-r from-green-primary via-green-secondary to-green-primary text-white">
+            <div className="relative overflow-hidden bg-gradient-to-r from-blue-500 via-blue-600 to-blue-500 text-white">
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
                     <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
@@ -849,7 +879,7 @@ const RoomsListPage: React.FC = () => {
                                                 variant={viewType === 'grid' ? 'default' : 'ghost'}
                                                 size="sm"
                                                 onClick={() => setViewType('grid')}
-                                                className={`${viewType === 'grid' ? 'bg-blue-600 text-white hover:bg-purple-600' : 'text-slate-600 hover:text-slate-900'}`}
+                                                className={`${viewType === 'grid' ? 'bg-blue-600 text-white hover:bg-blue-600' : 'text-slate-600 hover:text-slate-900'}`}
                                                 title="Grid view"
                                             >
                                                 <Grid3x3 className="w-4 h-4" />
@@ -858,7 +888,7 @@ const RoomsListPage: React.FC = () => {
                                                 variant={viewType === 'list' ? 'default' : 'ghost'}
                                                 size="sm"
                                                 onClick={() => setViewType('list')}
-                                                className={`${viewType === 'list' ? 'bg-blue-600 text-white hover:bg-purple-600' : 'text-slate-600 hover:text-slate-900'}`}
+                                                className={`${viewType === 'list' ? 'bg-blue-600 text-white hover:bg-blue-600' : 'text-slate-600 hover:text-slate-900'}`}
                                                 title="List view"
                                             >
                                                 <List className="w-4 h-4" />
@@ -932,6 +962,12 @@ const RoomsListPage: React.FC = () => {
                                                 <X className="w-3 h-3" />
                                             </Badge>
                                         )}
+                                        {filters.roommateCity && filters.roommateCity !== 'all' && (
+                                            <Badge className="gap-1 cursor-pointer bg-cyan-50 text-cyan-700 hover:bg-cyan-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('roommateCity', '')}>
+                                                👥 Roommate: {filters.roommateCity}
+                                                <X className="w-3 h-3" />
+                                            </Badge>
+                                        )}
                                         {filters.listingType && filters.listingType !== 'all' && (
                                             <Badge className="gap-1 cursor-pointer bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('listingType', '')}>
                                                 {filters.listingType}
@@ -939,25 +975,25 @@ const RoomsListPage: React.FC = () => {
                                             </Badge>
                                         )}
                                         {filters.minRent && (
-                                            <Badge className="gap-1 cursor-pointer bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('minRent', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('minRent', '')}>
                                                 ₹{filters.minRent}+
                                                 <X className="w-3 h-3" />
                                             </Badge>
                                         )}
                                         {filters.maxRent && (
-                                            <Badge className="gap-1 cursor-pointer bg-indigo-100 text-indigo-700 hover:bg-indigo-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('maxRent', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('maxRent', '')}>
                                                 ₹{filters.maxRent} Max
                                                 <X className="w-3 h-3" />
                                             </Badge>
                                         )}
                                         {filters.roomType && filters.roomType !== 'all' && (
-                                            <Badge className="gap-1 cursor-pointer bg-purple-100 text-purple-700 hover:bg-purple-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('roomType', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('roomType', '')}>
                                                 {filters.roomType}
                                                 <X className="w-3 h-3" />
                                             </Badge>
                                         )}
                                         {filters.furnishingType && filters.furnishingType !== 'all' && (
-                                            <Badge className="gap-1 cursor-pointer bg-purple-100 text-purple-700 hover:bg-purple-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('furnishingType', '')}>
+                                            <Badge className="gap-1 cursor-pointer bg-blue-100 text-blue-700 hover:bg-blue-600 hover:text-white transition-colors border-0" onClick={() => handleFilterChange('furnishingType', '')}>
                                                 {filters.furnishingType}
                                                 <X className="w-3 h-3" />
                                             </Badge>
@@ -979,7 +1015,7 @@ const RoomsListPage: React.FC = () => {
                                     <div className="flex items-center justify-between mb-2 sm:mb-3 cursor-pointer hover:opacity-75 transition-opacity" onClick={() => toggleSection('location')}>
                                         <h3 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5 sm:gap-2">
                                             <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
-                                            District
+                                            Room Need In
                                         </h3>
                                         {expandedSections.location ? <ChevronUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" /> : <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" />}
                                     </div>
@@ -987,7 +1023,7 @@ const RoomsListPage: React.FC = () => {
                                         <div className="space-y-3 pl-0 border-l-2 border-blue-200 pl-4">
                                             <Select value={filters.city || 'all'} onValueChange={(value) => handleFilterChange('city', value)}>
                                                 <SelectTrigger className="h-10 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-sm">
-                                                    <SelectValue placeholder="Select district" />
+                                                    <SelectValue placeholder="Select area" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="all">All city</SelectItem>
@@ -996,6 +1032,40 @@ const RoomsListPage: React.FC = () => {
                                                             {district}
                                                         </SelectItem>
                                                     ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Roommate City Section */}
+                                <div className={showMobileAdvancedFilters ? 'block' : 'hidden lg:block'}>
+                                    <div className="flex items-center justify-between mb-2 sm:mb-3 cursor-pointer hover:opacity-75 transition-opacity" onClick={() => toggleSection('roommateCity')}>
+                                        <h3 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-1.5 sm:gap-2">
+                                            <span className="text-lg">👥</span>
+                                            Preferred Roommate from
+                                        </h3>
+                                        {expandedSections.roommateCity ? <ChevronUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" /> : <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600" />}
+                                    </div>
+                                    {expandedSections.roommateCity && (
+                                        <div className="space-y-3 pl-0 border-l-2 border-cyan-200 pl-4">
+                                            <Select value={filters.roommateCity || 'all'} onValueChange={(value) => handleFilterChange('roommateCity', value)}>
+                                                <SelectTrigger className="h-10 border-slate-200 focus:border-cyan-500 focus:ring-cyan-500 rounded-lg text-sm">
+                                                    <SelectValue placeholder="Select preferred city\" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="all">All cities</SelectItem>
+                                                    {roommateCities && roommateCities.length > 0 ? (
+                                                        roommateCities.map((city) => (
+                                                            <SelectItem key={city.city_name} value={city.city_name}>
+                                                                {city.city_name} ({city.room_count})
+                                                            </SelectItem>
+                                                        ))
+                                                    ) : (
+                                                        <SelectItem value="loading" disabled>
+                                                            {roommateCitiesLoading ? 'Loading...' : 'No cities available'}
+                                                        </SelectItem>
+                                                    )}
                                                 </SelectContent>
                                             </Select>
                                         </div>

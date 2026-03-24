@@ -1,3 +1,5 @@
+const { pushLog } = require('../utils/logDrain');
+
 const errorHandler = (err, req, res, next) => {
     console.error('Error:', err);
 
@@ -58,6 +60,20 @@ const errorHandler = (err, req, res, next) => {
         ...(errors && { errors }),
         ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
     };
+
+    if (process.env.NODE_ENV === 'production') {
+        pushLog({
+            event: 'api_error',
+            level: statusCode >= 500 ? 'error' : 'warn',
+            status: statusCode,
+            message,
+            method: req.method,
+            url: req.originalUrl,
+            ip: req.ip || (req.connection && req.connection.remoteAddress) || '-',
+            stack: err && err.stack ? String(err.stack).split('\n').slice(0, 8).join('\n') : undefined,
+            error_code: err && err.code ? err.code : undefined,
+        });
+    }
 
     res.status(statusCode).json(response);
 };

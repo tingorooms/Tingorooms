@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { Button } from '@/components/ui/button';
 import { getMediaAssetUrl } from '@/lib/utils';
+import BusinessNameWordmark from '@/components/ui/BusinessNameWordmark';
 
 const AuthBusinessLayout: React.FC = () => {
     const { settings } = useSiteSettings();
@@ -48,7 +49,7 @@ const AuthBusinessLayout: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(20,184,166,0.14),transparent_40%),linear-gradient(135deg,#f7fdf9,#effbf3,#f5fbff)]">
-            <header className="sticky top-0 z-40 border-b border-emerald-100 bg-white/95 backdrop-blur-xl shadow-sm">
+            <header className="sticky top-0 z-40 border-b border-blue-100 bg-white/95 backdrop-blur-xl shadow-sm">
                 <div className="mx-auto flex h-16 w-full max-w-[1500px] items-center justify-between px-4 sm:px-6">
                     <Link to="/" className="inline-flex items-center gap-2.5">
                         {shouldShowLogo ? (
@@ -59,12 +60,15 @@ const AuthBusinessLayout: React.FC = () => {
                                 onError={() => setLogoLoadFailed(true)}
                             />
                         ) : (
-                                <div className="h-9 w-9 rounded-md bg-gradient-to-br from-green-primary to-green-secondary flex items-center justify-center">
+                                <div className="h-9 w-9 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                                 <Building2 className="h-5 w-5 text-white" />
                             </div>
                         )}
                         <div>
-                            <p className="text-base font-extrabold text-slate-900 leading-tight">{businessName}</p>
+                            <BusinessNameWordmark
+                                name={businessName}
+                                className="text-base font-extrabold leading-tight"
+                            />
                             <p className="text-[10px] text-slate-500 leading-tight">Business Ready Platform</p>
                         </div>
                     </Link>
@@ -74,7 +78,7 @@ const AuthBusinessLayout: React.FC = () => {
                             <Link
                                 key={item.to}
                                 to={item.to}
-                                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${location.pathname === item.to ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}
+                                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${location.pathname === item.to ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}
                             >
                                 {item.label}
                             </Link>
@@ -85,7 +89,7 @@ const AuthBusinessLayout: React.FC = () => {
                         <Button asChild size="sm" variant="ghost" className="hidden sm:inline-flex">
                             <Link to="/login">Login</Link>
                         </Button>
-                        <Button asChild size="sm" className="bg-gradient-to-r from-green-primary to-green-secondary hover:from-green-secondary hover:to-green-primary text-white">
+                        <Button asChild size="sm" className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white">
                             <Link to="/register">Register</Link>
                         </Button>
                     </div>
@@ -93,7 +97,7 @@ const AuthBusinessLayout: React.FC = () => {
             </header>
 
             <div className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-[1500px] grid-cols-1 lg:grid-cols-2">
-                <section className="hidden lg:flex flex-col justify-between border-r border-emerald-100/80 bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 p-10 text-white">
+                <section className="hidden lg:flex flex-col justify-between border-r border-blue-100/80 bg-gradient-to-br from-blue-900 via-emerald-800 to-teal-900 p-10 text-white">
                     <div className="space-y-8">
                         <Link to="/" className="inline-flex items-center gap-3">
                             {shouldShowLogo ? (
@@ -110,7 +114,7 @@ const AuthBusinessLayout: React.FC = () => {
                             )}
                             <div>
                                 <p className="text-2xl font-extrabold leading-tight">{businessName}</p>
-                                <p className="text-xs text-emerald-100/90">Business Ready Rental Platform</p>
+                                <p className="text-xs text-blue-100/90">Business Ready Rental Platform</p>
                             </div>
                         </Link>
 
@@ -122,7 +126,7 @@ const AuthBusinessLayout: React.FC = () => {
                             <h1 className="text-4xl font-extrabold leading-tight">
                                 One platform for rooms, roommates, and smarter rental growth.
                             </h1>
-                            <p className="max-w-xl text-base text-emerald-100/95 leading-relaxed">{tagline}</p>
+                            <p className="max-w-xl text-base text-blue-100/95 leading-relaxed">{tagline}</p>
                         </div>
                     </div>
 
@@ -133,15 +137,15 @@ const AuthBusinessLayout: React.FC = () => {
                                     <item.icon className="h-5 w-5" />
                                 </div>
                                 <p className="text-sm font-semibold">{item.title}</p>
-                                <p className="text-sm text-emerald-100/90">{item.description}</p>
+                                <p className="text-sm text-blue-100/90">{item.description}</p>
                             </div>
                         ))}
                     </div>
                 </section>
 
                 <section className="flex items-center justify-center p-4 sm:p-8 lg:p-10">
-                    <div className="w-full max-w-2xl rounded-3xl border border-emerald-100 bg-white/95 p-4 sm:p-6 shadow-[0_20px_50px_rgba(15,23,42,0.12)] backdrop-blur">
-                        <div className="mb-5 border-b border-emerald-100 pb-4 lg:hidden">
+                    <div className="w-full max-w-2xl rounded-3xl border border-blue-100 bg-white/95 p-4 sm:p-6 shadow-[0_20px_50px_rgba(15,23,42,0.12)] backdrop-blur">
+                        <div className="mb-5 border-b border-blue-100 pb-4 lg:hidden">
                             <Link to="/" className="inline-flex items-center gap-3">
                                 {shouldShowLogo ? (
                                     <img
@@ -151,18 +155,21 @@ const AuthBusinessLayout: React.FC = () => {
                                         onError={() => setLogoLoadFailed(true)}
                                     />
                                 ) : (
-                                    <div className="h-10 w-10 rounded-md bg-gradient-to-br from-green-primary to-green-secondary flex items-center justify-center">
+                                    <div className="h-10 w-10 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
                                         <Building2 className="h-5 w-5 text-white" />
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-lg font-bold text-slate-900">{businessName}</p>
+                                    <BusinessNameWordmark
+                                        name={businessName}
+                                        className="text-lg font-bold"
+                                    />
                                     <p className="text-xs text-slate-500">Secure access portal</p>
                                 </div>
                             </Link>
                         </div>
                         {!isAuthRoute && (
-                            <p className="mb-4 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700">
+                            <p className="mb-4 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700">
                                 Secure access area
                             </p>
                         )}

@@ -386,7 +386,7 @@ const RoommatesPage: React.FC = () => {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-green-primary"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500"></div>
             </div>
         );
     }
@@ -410,7 +410,7 @@ const RoommatesPage: React.FC = () => {
                     <h1 className="text-2xl font-bold sm:text-3xl">Roommate Groups</h1>
                     <p className="text-muted-foreground">Create and manage roommate groups to split expenses</p>
                 </div>
-                <Button onClick={() => setIsCreateDialogOpen(true)} className="w-full sm:w-auto bg-green-primary hover:bg-green-secondary">
+                <Button onClick={() => setIsCreateDialogOpen(true)} className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600">
                     <Plus className="w-4 h-4 mr-2" />
                     Create Group
                 </Button>
@@ -423,7 +423,7 @@ const RoommatesPage: React.FC = () => {
                         <Users className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
                         <h3 className="text-lg font-semibold mb-2">No groups yet</h3>
                         <p className="text-muted-foreground mb-4">Create a group to manage expenses with your roommates</p>
-                        <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-green-primary hover:bg-green-secondary">
+                        <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-blue-500 hover:bg-blue-600">
                             <Plus className="w-4 h-4 mr-2" />
                             Create First Group
                         </Button>
@@ -439,7 +439,7 @@ const RoommatesPage: React.FC = () => {
                                         <CardTitle className="text-lg">{group.group_name || `Group ${group.group_id}`}</CardTitle>
                                         <p className="text-sm text-muted-foreground mt-1">ID: {group.group_id}</p>
                                     </div>
-                                    <Badge className="bg-green-primary/20 text-green-primary">{group.members?.length || 0} members</Badge>
+                                    <Badge className="bg-blue-500/20 text-blue-500">{group.members?.length || 0} members</Badge>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -447,11 +447,11 @@ const RoommatesPage: React.FC = () => {
                                 <div className="space-y-2">
                                     {group.members?.slice(0, 3).map((member) => (
                                         <div key={member.id} className="flex items-center gap-2 text-sm">
-                                            <div className="w-8 h-8 bg-green-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                                                 {member.profile_image ? (
                                                     <img src={getProfileImageUrl(member.profile_image)} alt={member.name} className="w-full h-full rounded-full object-cover" />
                                                 ) : (
-                                                    <Users className="w-4 h-4 text-green-primary" />
+                                                    <Users className="w-4 h-4 text-blue-500" />
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -626,7 +626,7 @@ const RoommatesPage: React.FC = () => {
                         <Button
                             onClick={handleCreateGroup}
                             disabled={isCreatingGroup}
-                            className="bg-green-primary hover:bg-green-secondary"
+                            className="bg-blue-500 hover:bg-blue-600"
                         >
                             {isCreatingGroup ? 'Creating...' : 'Create Group'}
                         </Button>
@@ -693,7 +693,7 @@ const RoommatesPage: React.FC = () => {
                         <Button
                             onClick={handleAddRoommate}
                             disabled={isAddingRoommate}
-                            className="bg-green-primary hover:bg-green-secondary"
+                            className="bg-blue-500 hover:bg-blue-600"
                         >
                             {isAddingRoommate ? 'Adding...' : 'Add Roommate'}
                         </Button>
@@ -711,7 +711,7 @@ const RoommatesPage: React.FC = () => {
 
                     {isLoadingGroupDetails ? (
                         <div className="flex justify-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-primary"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
                         </div>
                     ) : selectedGroup ? (
                         <div className="space-y-4">
@@ -721,11 +721,11 @@ const RoommatesPage: React.FC = () => {
                                     {selectedGroup.members?.map((member) => (
                                         <div key={member.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50">
                                             <div className="flex items-center gap-3 flex-1">
-                                                <div className="w-10 h-10 bg-green-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                                <div className="w-10 h-10 bg-blue-500/10 rounded-full flex items-center justify-center flex-shrink-0">
                                                     {member.profile_image ? (
                                                         <img src={getProfileImageUrl(member.profile_image)} alt={member.name} className="w-full h-full rounded-full object-cover" />
                                                     ) : (
-                                                        <Users className="w-4 h-4 text-green-primary" />
+                                                        <Users className="w-4 h-4 text-blue-500" />
                                                     )}
                                                 </div>
                                                 <div className="flex-1">
