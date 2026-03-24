@@ -10,8 +10,7 @@ Every backend environment variable appears exactly once with:
 
 Primary stack:
 - Frontend: Vercel
-- Backend: Railway
-- Database: Planetscale
+- Backend + Database: Railway (MySQL)
 - Realtime: Supabase
 - CDN + Image: Cloudflare (R2 + CDN)
 - Email: Brevo
@@ -43,10 +42,10 @@ Create these accounts before any deployment:
 	- Click Login with GitHub
 	- Authorize Railway
 
-4. Planetscale (MySQL database)
-	- Link: https://app.planetscale.com
-	- Create account
-	- Verify email
+4. Railway (MySQL database + backend hosting)
+	- Link: https://railway.app
+	- Click Login with GitHub
+	- Authorize Railway
 
 5. Supabase (realtime chat)
 	- Link: https://supabase.com/dashboard/sign-up
@@ -78,21 +77,20 @@ Create these accounts before any deployment:
 	- `git push -u origin main`
 3. Confirm code is visible on GitHub.
 
-### C) Create Planetscale Database
+### C) Create Railway Database
 
-1. Open Planetscale dashboard.
-2. Click Create database.
-3. Database name: `room-rental-db`.
-4. Choose nearest region to users.
-5. Open Connect and create password.
-6. Save credentials:
-	- host
-	- username
-	- password
-	- database name
-	- port
-7. Import schema:
-	- Open SQL console in Planetscale.
+1. Open Railway dashboard (same project as backend).
+2. Click New -> Database -> MySQL.
+3. Wait for database to provision (2-3 minutes).
+4. Open the database service in Railway.
+5. Go to Connect tab and save credentials:
+	- DB_HOST (host)
+	- MYSQL_PASSWORD (password)
+	- MYSQL_USER (username)
+	- MYSQL_DB (database name)
+	- Port (typically 3306)
+6. Import schema:
+	- In Railway, open SQL tab or use MySQL client.
 	- Copy SQL from `backend/database/local.sql` (or your finalized production SQL file).
 	- Run SQL and confirm tables exist.
 
@@ -143,19 +141,26 @@ Create these accounts before any deployment:
 	- `SMTP_SPF_CONFIGURED=true`
 	- `SMTP_DKIM_CONFIGURED=true`
 
-### G) Deploy Backend on Railway
+### G) Deploy Backend & Database on Railway
 
-1. Open Railway dashboard.
-2. Click New Project -> Deploy from GitHub Repo.
-3. Select this repository.
-4. Set root directory to `backend`.
-5. Build command: `npm install`.
-6. Start command: `npm start`.
-7. Health check path: `/api/health`.
-8. Open Railway Variables and add all backend env vars from Section 2 below.
-9. Deploy and wait for success.
-10. Open backend health URL:
-	- `https://YOUR-RAILWAY-DOMAIN/api/health`
+1. Open Railway dashboard (https://railway.app).
+2. Create a new project (or use existing one).
+3. Add services:
+   - **MySQL Database**: Click New -> Database -> MySQL (will auto-provision)
+   - **Backend**: Click New -> Deploy from GitHub Repo
+4. Configure Backend Service:
+   - Select this repository
+   - Set root directory to `backend`
+   - Build command: `npm install`
+   - Start command: `npm start`
+   - Health check path: `/api/health`
+5. Copy MySQL connection credentials from database service
+6. Open Railway Variables on backend service and add all backend env vars from Section 2 below:
+   - DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME (from MySQL service)
+   - All other env vars (JWT, Supabase, SMTP, R2, etc.)
+7. Deploy and wait for success
+8. Open backend health URL to verify:
+   - `https://YOUR-RAILWAY-DOMAIN/api/health`
 
 ### H) Deploy Frontend on Vercel
 
@@ -226,10 +231,11 @@ Now continue to the structured checklist sections below:
 - [ ] Output directory is dist
 - [ ] Production domain is active
 
-### Planetscale
-- [ ] Production database exists
-- [ ] Network access allows Railway egress
+### Railway Database
+- [ ] MySQL database created and provisioned
+- [ ] Connection credentials saved (host, user, password, database name)
 - [ ] Schema imported successfully
+- [ ] Test connection from Railway backend service works
 
 ### Supabase
 - [ ] Project active
@@ -265,17 +271,17 @@ Set all variables below in Railway service Variables.
 | FRONTEND_URL | Yes | Vercel project production domain | Browser API calls pass CORS |
 | TRUST_PROXY | Yes | Manual fixed value: 1 | Correct client IP and rate limit behavior |
 
-### Database (Planetscale)
+### Database (Railway MySQL)
 
 | Env var | Required | Value source (dashboard) | Verify after deploy |
 |---|---|---|---|
-| DB_HOST | Yes | Planetscale -> Connect -> host | /api/startup/self-check database_connected=true |
-| DB_PORT | Yes | Planetscale -> Connect -> port | DB connection succeeds |
-| DB_USER | Yes | Planetscale -> Connect -> username | DB connection succeeds |
-| DB_PASSWORD | Yes | Planetscale -> Connect -> password | DB connection succeeds |
-| DB_NAME | Yes | Planetscale -> database name | DB queries work |
-| DB_SSL | Yes | Manual for Planetscale: true | TLS used to DB |
-| DB_SSL_REJECT_UNAUTHORIZED | Yes | Manual: true | DB TLS validation succeeds |
+| DB_HOST | Yes | Railway -> Database -> Connect -> Host | /api/startup/self-check database_connected=true |
+| DB_PORT | Yes | Railway -> Database -> Connect -> Port (usually 3306) | DB connection succeeds |
+| DB_USER | Yes | Railway -> Database -> Connect -> MYSQL_USER | DB connection succeeds |
+| DB_PASSWORD | Yes | Railway -> Database -> Connect -> MYSQL_PASSWORD | DB connection succeeds |
+| DB_NAME | Yes | Railway -> Database -> Connect -> MYSQL_DB | DB queries work |
+| DB_SSL | Optional | Manual: false (local network) or true (external) | Connection works without errors |
+| DB_SSL_REJECT_UNAUTHORIZED | Optional | Manual: false (for Railway) | Connection succeeds |
 
 ### Authentication
 
