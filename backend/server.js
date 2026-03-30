@@ -6,6 +6,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+const { nodeEnv, isProduction, isRailwayRuntime } = require('./config/env');
 const { testConnection, ensureAutoIncrementOnPrimaryIds } = require('./config/database');
 const { initializeSupabase } = require('./config/supabase');
 const { startKeepAlive } = require('./utils/keepAlive');
@@ -45,7 +46,7 @@ const isTruthy = (value) => String(value || '').toLowerCase() === 'true';
 const buildIntegrationSelfCheck = async () => {
     const dbConnected = await testConnection();
 
-    const nodeEnv = process.env.NODE_ENV || 'development';
+    const appNodeEnv = nodeEnv;
     const imageProvider = String(process.env.IMAGE_STORAGE_PROVIDER || 'imgbb').toLowerCase();
     const dbHost = String(process.env.DB_HOST || '');
     const smtpHost = String(process.env.SMTP_HOST || '').toLowerCase();
@@ -264,7 +265,7 @@ const limiter = rateLimit({
     }
 });
 
-if (process.env.NODE_ENV !== 'development') {
+if (nodeEnv !== 'development') {
     app.use(limiter);
 }
 
@@ -311,7 +312,7 @@ app.use(sanitizeRequestBody);
 app.use(compression());
 
 // Logging middleware
-if (process.env.NODE_ENV !== 'production') {
+if (!isProduction) {
     app.use(morgan('dev'));
 }
 app.use(requestLogger);
@@ -337,7 +338,7 @@ app.get('/api/health', async (req, res) => {
         success: true,
         message: 'Server is running',
         database: dbConnected ? 'connected' : 'disconnected',
-        environment: process.env.NODE_ENV || 'development',
+        environment: nodeEnv,
         uptime_seconds: Math.floor(process.uptime()),
         memory_mb: {
             rss: Math.round(mem.rss / 1024 / 1024),
@@ -429,7 +430,7 @@ const startServer = async () => {
         initializeSupabase();
 
         // Email deliverability guardrails (SPF/DKIM are DNS-side settings)
-        if (process.env.NODE_ENV === 'production') {
+        if (isProduction) {
             const hasSmtpUser = Boolean(process.env.SMTP_USER);
             const hasSmtpPass = Boolean(process.env.SMTP_PASS);
             const spfConfigured = process.env.SMTP_SPF_CONFIGURED === 'true';
@@ -441,14 +442,14 @@ const startServer = async () => {
         }
 
         // Start keep-alive pings to prevent free-tier services from pausing
-        if (process.env.NODE_ENV === 'production') {
+        if (isProduction) {
             startKeepAlive();
         }
 
         // Start server
         const server = app.listen(PORT, () => {
             console.log(`\n🚀 Server running on port ${PORT}`);
-            console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+            console.log(`📍 Environment: ${nodeEnv}`);
             console.log(`🔗 API URL: http://localhost:${PORT}/api`);
             console.log(`🌐 Frontend: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
             console.log('\n📋 Available Endpoints:');

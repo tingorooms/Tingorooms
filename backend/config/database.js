@@ -1,16 +1,17 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
+const { isProduction } = require('./env');
 
 const dbSslEnabled = process.env.DB_SSL === 'true';
 const dbSslRejectUnauthorized = process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false';
 
-const dbHost = process.env.DB_HOST || (process.env.NODE_ENV === 'production' ? undefined : '127.0.0.1');
+const dbHost = process.env.DB_HOST || (isProduction ? undefined : '127.0.0.1');
 const dbPort = Number(process.env.DB_PORT || 3306);
-const dbUser = process.env.DB_USER || (process.env.NODE_ENV === 'production' ? undefined : 'root');
+const dbUser = process.env.DB_USER || (isProduction ? undefined : 'root');
 const dbPassword = process.env.DB_PASSWORD || '';
-const dbName = process.env.DB_NAME || (process.env.NODE_ENV === 'production' ? undefined : 'room_rental_db');
+const dbName = process.env.DB_NAME || (isProduction ? undefined : 'room_rental_db');
 
-if (process.env.NODE_ENV === 'production') {
+if (isProduction) {
     const missing = [];
     if (!dbHost) missing.push('DB_HOST');
     if (!dbUser) missing.push('DB_USER');
