@@ -258,6 +258,108 @@ Now continue to the structured checklist sections below:
 
 ---
 
+## 1.5) Portal Environment Variable Mapping
+
+Use the portal column to know where each backend env var is configured. This is the single reference for which dashboard or service holds the variable.
+
+- Railway (railway.app)
+  - DB_HOST
+  - DB_PORT
+  - DB_USER
+  - DB_PASSWORD
+  - DB_NAME
+  - DB_SSL
+  - DB_SSL_REJECT_UNAUTHORIZED
+  - JWT_SECRET
+  - JWT_EXPIRES_IN
+  - BCRYPT_SALT_ROUNDS
+  - SUPABASE_URL
+  - SUPABASE_ANON_KEY
+  - SUPABASE_SERVICE_KEY
+  - IMAGE_STORAGE_PROVIDER
+  - IMAGE_STORAGE_FALLBACK_TO_IMGBB
+  - R2_ACCOUNT_ID
+  - R2_ACCESS_KEY_ID
+  - R2_SECRET_ACCESS_KEY
+  - R2_BUCKET_NAME
+  - R2_PUBLIC_BASE_URL
+  - IMAGE_STORAGE_API_KEY
+  - IMAGE_STORAGE_URL
+  - SMTP_HOST
+  - SMTP_PORT
+  - SMTP_SECURE
+  - SMTP_USER
+  - SMTP_PASS
+  - SMTP_TLS_REJECT_UNAUTHORIZED
+  - SMTP_SPF_CONFIGURED
+  - SMTP_DKIM_CONFIGURED
+  - ADMIN_EMAIL
+  - SUPPORT_EMAIL
+  - NOTIFICATION_EMAIL
+  - VAPID_PUBLIC_KEY
+  - VAPID_PRIVATE_KEY
+  - VAPID_SUBJECT
+  - SITE_URL
+  - APP_NAME
+  - BUSINESS_TAGLINE
+  - BUSINESS_LOGO_URL
+  - FAVICON_URL
+  - SUPPORT_PHONE
+  - BUSINESS_ADDRESS
+  - DEFAULT_CITY
+  - FACEBOOK_URL
+  - TWITTER_URL
+  - INSTAGRAM_URL
+  - LINKEDIN_URL
+  - YOUTUBE_URL
+  - DEFAULT_AD_BG_SEARCH_URL
+  - DEFAULT_AD_BG_POST_URL
+  - MAX_IMAGE_SIZE_KB
+  - MAX_IMAGES_PER_ROOM
+  - RATE_LIMIT_WINDOW_MS
+  - RATE_LIMIT_MAX_REQUESTS
+  - AUTH_RATE_LIMIT_WINDOW_MS
+  - AUTH_RATE_LIMIT_MAX_REQUESTS
+  - PUBLIC_RATE_LIMIT_WINDOW_MS
+  - PUBLIC_RATE_LIMIT_MAX_REQUESTS
+  - REQUEST_TIMEOUT_MS
+  - REQUEST_BODY_LIMIT
+  - KEEP_ALIVE_CRON
+  - ENABLE_LOG_DRAIN
+  - LOGTAIL_SOURCE_TOKEN
+  - BETTER_STACK_SOURCE_TOKEN
+  - LOGTAIL_INGEST_URL
+  - INTEGRATION_CHECK_TOKEN
+
+- Vercel (vercel.com)
+  - VITE_API_URL
+  - VITE_SUPABASE_URL
+  - VITE_SUPABASE_ANON_KEY
+  - VITE_SITE_URL
+
+- Supabase (supabase.com)
+  - Project URL
+  - anon key
+  - service_role key
+
+- Cloudflare (dash.cloudflare.com)
+  - R2_ACCOUNT_ID
+  - R2_ACCESS_KEY_ID
+  - R2_SECRET_ACCESS_KEY
+  - R2_BUCKET_NAME
+  - R2_PUBLIC_BASE_URL
+
+- Brevo (www.brevo.com)
+  - SMTP_HOST
+  - SMTP_PORT
+  - SMTP_SECURE
+  - SMTP_USER
+  - SMTP_PASS
+  - SMTP_SPF_CONFIGURED
+  - SMTP_DKIM_CONFIGURED
+
+---
+
 ## 2) Backend Environment Variables (Set In Railway Variables)
 
 Set all variables below in Railway service Variables.

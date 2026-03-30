@@ -4,13 +4,34 @@ require('dotenv').config();
 const dbSslEnabled = process.env.DB_SSL === 'true';
 const dbSslRejectUnauthorized = process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false';
 
+const dbHost = process.env.DB_HOST || (process.env.NODE_ENV === 'production' ? undefined : '127.0.0.1');
+const dbPort = Number(process.env.DB_PORT || 3306);
+const dbUser = process.env.DB_USER || (process.env.NODE_ENV === 'production' ? undefined : 'root');
+const dbPassword = process.env.DB_PASSWORD || '';
+const dbName = process.env.DB_NAME || (process.env.NODE_ENV === 'production' ? undefined : 'room_rental_db');
+
+if (process.env.NODE_ENV === 'production') {
+    const missing = [];
+    if (!dbHost) missing.push('DB_HOST');
+    if (!dbUser) missing.push('DB_USER');
+    if (!dbName) missing.push('DB_NAME');
+
+    if (missing.length > 0) {
+        throw new Error(`Missing required production database environment variable(s): ${missing.join(', ')}.`);
+    }
+
+    if (dbHost === 'localhost') {
+        console.warn('⚠️  DB_HOST is set to localhost in production. Please set DB_HOST to your managed MySQL host to avoid connection failures.');
+    }
+}
+
 // Create connection pool
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 3306,
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'room_rental_db',
+    host: dbHost,
+    port: dbPort,
+    user: dbUser,
+    password: dbPassword,
+    database: dbName,
     ssl: dbSslEnabled ? { rejectUnauthorized: dbSslRejectUnauthorized } : undefined,
     waitForConnections: true,
     connectionLimit: 20,
