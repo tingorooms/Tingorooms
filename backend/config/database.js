@@ -5,17 +5,68 @@ const { isProduction } = require('./env');
 const dbSslEnabled = process.env.DB_SSL === 'true';
 const dbSslRejectUnauthorized = process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false';
 
-const dbHost = process.env.DB_HOST || (isProduction ? undefined : '127.0.0.1');
-const dbPort = Number(process.env.DB_PORT || 3306);
-const dbUser = process.env.DB_USER || (isProduction ? undefined : 'root');
-const dbPassword = process.env.DB_PASSWORD || '';
-const dbName = process.env.DB_NAME || (isProduction ? undefined : 'room_rental_db');
+const dbUrlString = process.env.DB_URL || process.env.DATABASE_URL || process.env.RAILWAY_DATABASE_URL || process.env.MYSQL_URL;
+let dbHost = process.env.DB_HOST || process.env.MYSQL_HOST || process.env.MYSQLHOST || undefined;
+let dbPortRaw = process.env.DB_PORT || process.env.MYSQL_PORT || process.env.MYSQLPORT || 3306;
+let dbPort = Number(dbPortRaw);
+let dbUser = process.env.DB_USER || process.env.MYSQL_USER || process.env.MYSQLUSER || undefined;
+let dbPassword = process.env.DB_PASSWORD || process.env.DB_PASS || process.env.MYSQL_PASSWORD || process.env.MYSQLPASSWORD || '';
+let dbName = process.env.DB_NAME || process.env.MYSQL_DB || process.env.MYSQL_DATABASE || process.env.MYSQLDATABASE || undefined;
+
+const mysqlUser = process.env.MYSQL_USER || process.env.MYSQLUSER || '';
+const mysqlPassword = process.env.MYSQL_PASSWORD || process.env.MYSQLPASSWORD || '';
+const mysqlRootPassword = process.env.MYSQL_ROOT_PASSWORD || process.env.MYSQLROOTPASSWORD || '';
+
+if (!Number.isFinite(dbPort) || dbPort <= 0) {
+    console.warn(`⚠️  Invalid DB port value '${dbPortRaw}'. Falling back to 3306.`);
+    dbPort = 3306;
+}
+
+if (
+    dbUser &&
+    mysqlUser &&
+    dbUser === mysqlUser &&
+    dbPassword &&
+    mysqlRootPassword &&
+    dbPassword === mysqlRootPassword &&
+    mysqlPassword
+) {
+    console.warn('⚠️  DB_PASSWORD matches MYSQL_ROOT_PASSWORD while DB_USER matches MYSQL_USER. Using MYSQL_PASSWORD instead to avoid Railway auth mismatch.');
+    dbPassword = mysqlPassword;
+}
+
+if (dbUrlString) {
+    try {
+        const dbUrl = new URL(dbUrlString);
+        dbHost = dbHost || dbUrl.hostname;
+        dbPort = Number(dbUrl.port || dbPort || 3306);
+        dbUser = dbUser || decodeURIComponent(dbUrl.username);
+        dbPassword = dbPassword || decodeURIComponent(dbUrl.password);
+        dbName = dbName || dbUrl.pathname.replace(/^\//, '');
+
+        if (!process.env.DB_HOST || !process.env.DB_PORT || !process.env.DB_USER || !process.env.DB_NAME) {
+            console.log('ℹ️  Database config loaded from URL environment variable.');
+        }
+    } catch (urlError) {
+        console.warn('⚠️  Failed to parse database URL. Falling back to DB_HOST/DB_USER/DB_NAME if configured.');
+    }
+}
+
+if (!dbHost && !dbUrlString && !isProduction) {
+    dbHost = '127.0.0.1';
+}
+if (!dbUser && !dbUrlString && !isProduction) {
+    dbUser = 'root';
+}
+if (!dbName && !dbUrlString && !isProduction) {
+    dbName = 'room_rental_db';
+}
 
 if (isProduction) {
     const missing = [];
-    if (!dbHost) missing.push('DB_HOST');
-    if (!dbUser) missing.push('DB_USER');
-    if (!dbName) missing.push('DB_NAME');
+    if (!dbHost) missing.push('DB_HOST/MYSQL_HOST/MYSQLHOST or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
+    if (!dbUser) missing.push('DB_USER/MYSQL_USER/MYSQLUSER or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
+    if (!dbName) missing.push('DB_NAME/MYSQL_DB/MYSQL_DATABASE/MYSQLDATABASE or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
 
     if (missing.length > 0) {
         throw new Error(`Missing required production database environment variable(s): ${missing.join(', ')}.`);
@@ -33,6 +84,7 @@ const pool = mysql.createPool({
     user: dbUser,
     password: dbPassword,
     database: dbName,
+    connectTimeout: Number(process.env.DB_CONNECT_TIMEOUT_MS || 5000),
     ssl: dbSslEnabled ? { rejectUnauthorized: dbSslRejectUnauthorized } : undefined,
     waitForConnections: true,
     connectionLimit: 20,
@@ -230,10 +282,20 @@ const withTransaction = async (callback) => {
     }
 };
 
+const dbConfigSummary = {
+    host: dbHost,
+    port: dbPort,
+    user: dbUser,
+    database: dbName,
+    usingUrlConfig: Boolean(dbUrlString),
+    configSource: dbUrlString ? 'DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL/MYSQL_URL' : 'DB_HOST/DB_USER/DB_NAME'
+};
+
 module.exports = {
     pool,
     testConnection,
     executeQuery,
     withTransaction,
-    ensureAutoIncrementOnPrimaryIds
+    ensureAutoIncrementOnPrimaryIds,
+    dbConfigSummary
 };

@@ -7,7 +7,7 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const { nodeEnv, isProduction, isRailwayRuntime } = require('./config/env');
-const { testConnection, ensureAutoIncrementOnPrimaryIds } = require('./config/database');
+const { testConnection, ensureAutoIncrementOnPrimaryIds, dbConfigSummary } = require('./config/database');
 const { initializeSupabase } = require('./config/supabase');
 const { startKeepAlive } = require('./utils/keepAlive');
 const { pushLog } = require('./utils/logDrain');
@@ -43,12 +43,23 @@ app.set('trust proxy', Number(process.env.TRUST_PROXY || 1));
 
 const isTruthy = (value) => String(value || '').toLowerCase() === 'true';
 
+const withTimeout = async (promise, timeoutMs, fallbackValue = false) => {
+    let timeoutId;
+    try {
+        const timeoutPromise = new Promise((resolve) => {
+            timeoutId = setTimeout(() => resolve(fallbackValue), timeoutMs);
+        });
+        return await Promise.race([promise, timeoutPromise]);
+    } finally {
+        if (timeoutId) clearTimeout(timeoutId);
+    }
+};
+
 const buildIntegrationSelfCheck = async () => {
     const dbConnected = await testConnection();
 
-    const appNodeEnv = nodeEnv;
     const imageProvider = String(process.env.IMAGE_STORAGE_PROVIDER || 'imgbb').toLowerCase();
-    const dbHost = String(process.env.DB_HOST || '');
+    const dbHost = String(dbConfigSummary.host || process.env.DB_HOST || process.env.MYSQL_HOST || process.env.MYSQLHOST || '');
     const smtpHost = String(process.env.SMTP_HOST || '').toLowerCase();
     const siteUrl = String(process.env.SITE_URL || '');
 
@@ -58,7 +69,7 @@ const buildIntegrationSelfCheck = async () => {
             details: dbConnected ? 'Database connection OK' : 'Database connection failed'
         },
         planetscale_configured: {
-            active: Boolean(process.env.DB_HOST && process.env.DB_USER && process.env.DB_NAME),
+            active: Boolean(dbConfigSummary.host && dbConfigSummary.user && dbConfigSummary.database),
             details: dbHost.includes('psdb.cloud') ? 'Planetscale host detected' : 'Generic MySQL host configured'
         },
         planetscale_auto_backups: {
@@ -191,12 +202,17 @@ const normalizeOrigin = (origin) => {
     }
 };
 
-const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
+const rawFrontendUrls = process.env.FRONTEND_URL || (isProduction ? '' : 'http://localhost:5173');
+const allowedOrigins = rawFrontendUrls
     .split(',')
     .map((origin) => normalizeOrigin(origin))
     .filter(Boolean);
 
-const hasConfiguredVercelOrigin = allowedOrigins.some((origin) => origin.endsWith('.vercel.app'));
+const allowAnyVercel = allowedOrigins.length === 0 || allowedOrigins.some((origin) => origin.endsWith('.vercel.app'));
+
+if (isProduction && !process.env.FRONTEND_URL) {
+    console.warn('⚠️ FRONTEND_URL is not configured in production. Allowing Vercel origins by wildcard until FRONTEND_URL is set.');
+}
 
 const isAllowedOrigin = (origin) => {
     const normalizedOrigin = normalizeOrigin(origin);
@@ -208,12 +224,15 @@ const isAllowedOrigin = (origin) => {
         return true;
     }
 
-    if (hasConfiguredVercelOrigin && normalizedOrigin.endsWith('.vercel.app')) {
+    if (allowAnyVercel && normalizedOrigin.endsWith('.vercel.app')) {
         return true;
     }
 
     return false;
 };
+
+console.log('🎯 CORS allowed origins:', allowedOrigins);
+console.log('🎯 CORS allow any Vercel origin:', allowAnyVercel);
 
 const corsOptions = {
     origin(origin, callback) {
@@ -225,7 +244,7 @@ const corsOptions = {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Integration-Check-Token'],
     optionsSuccessStatus: 204
 };
 
@@ -332,7 +351,11 @@ app.use('/uploads', express.static('uploads', {
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
-    const dbConnected = await testConnection();
+    const dbConnected = await withTimeout(
+        testConnection(),
+        Number(process.env.DB_HEALTHCHECK_TIMEOUT_MS || 3000),
+        false
+    );
     const mem = process.memoryUsage();
     res.json({
         success: true,
@@ -411,40 +434,12 @@ app.use(errorHandler);
 // Initialize services and start server
 const startServer = async () => {
     try {
-        // Test database connection
-        const dbConnected = await testConnection();
-        if (!dbConnected) {
-            console.warn('⚠️  Database not connected. Some features may not work.');
-        } else {
-            try {
-                const result = await ensureAutoIncrementOnPrimaryIds();
-                if (result.updated.length > 0) {
-                    console.log(`🛠️  AUTO_INCREMENT repaired for id columns: ${result.updated.join(', ')}`);
-                }
-            } catch (repairError) {
-                console.warn(`⚠️  AUTO_INCREMENT repair skipped: ${repairError.message}`);
-            }
-        }
-
-        // Initialize Supabase
-        initializeSupabase();
-
-        // Email deliverability guardrails (SPF/DKIM are DNS-side settings)
-        if (isProduction) {
-            const hasSmtpUser = Boolean(process.env.SMTP_USER);
-            const hasSmtpPass = Boolean(process.env.SMTP_PASS);
-            const spfConfigured = process.env.SMTP_SPF_CONFIGURED === 'true';
-            const dkimConfigured = process.env.SMTP_DKIM_CONFIGURED === 'true';
-
-            if (hasSmtpUser && hasSmtpPass && (!spfConfigured || !dkimConfigured)) {
-                console.warn('⚠️  Email DNS records not fully marked as configured. Set SMTP_SPF_CONFIGURED=true and SMTP_DKIM_CONFIGURED=true after adding DNS records.');
-            }
-        }
-
-        // Start keep-alive pings to prevent free-tier services from pausing
-        if (isProduction) {
-            startKeepAlive();
-        }
+        console.log('🚀 Starting backend server...');
+        console.log(`📌 NODE_ENV=${nodeEnv}`);
+        console.log(`📌 PORT=${PORT}`);
+        console.log(`📌 FRONTEND_URL=${process.env.FRONTEND_URL || 'not configured'}`);
+        console.log(`📌 Database config source: ${dbConfigSummary.configSource}`);
+        console.log(`📌 DB_HOST=${dbConfigSummary.host || 'not configured'}, DB_NAME=${dbConfigSummary.database || 'not configured'}`);
 
         // Start server
         const server = app.listen(PORT, () => {
@@ -462,6 +457,47 @@ const startServer = async () => {
             console.log('   • Admin:      /api/admin');
             console.log('   • Public:     /api/public');
             console.log('   • Health:     /api/health\n');
+        });
+
+        // Run integrations after server is already listening to avoid startup timeouts.
+        setImmediate(async () => {
+            try {
+                const dbConnected = await withTimeout(
+                    testConnection(),
+                    Number(process.env.DB_STARTUP_TIMEOUT_MS || 7000),
+                    false
+                );
+
+                if (!dbConnected) {
+                    console.warn('⚠️  Database not connected on startup check. App is running, but DB-backed features may fail until connection works.');
+                } else {
+                    try {
+                        const result = await ensureAutoIncrementOnPrimaryIds();
+                        if (result.updated.length > 0) {
+                            console.log(`🛠️  AUTO_INCREMENT repaired for id columns: ${result.updated.join(', ')}`);
+                        }
+                    } catch (repairError) {
+                        console.warn(`⚠️  AUTO_INCREMENT repair skipped: ${repairError.message}`);
+                    }
+                }
+
+                initializeSupabase();
+
+                if (isProduction) {
+                    const hasSmtpUser = Boolean(process.env.SMTP_USER);
+                    const hasSmtpPass = Boolean(process.env.SMTP_PASS);
+                    const spfConfigured = process.env.SMTP_SPF_CONFIGURED === 'true';
+                    const dkimConfigured = process.env.SMTP_DKIM_CONFIGURED === 'true';
+
+                    if (hasSmtpUser && hasSmtpPass && (!spfConfigured || !dkimConfigured)) {
+                        console.warn('⚠️  Email DNS records not fully marked as configured. Set SMTP_SPF_CONFIGURED=true and SMTP_DKIM_CONFIGURED=true after adding DNS records.');
+                    }
+
+                    startKeepAlive();
+                }
+            } catch (startupError) {
+                console.error('⚠️  Post-start initialization failed:', startupError.message);
+            }
         });
 
         // Graceful shutdown — Railway sends SIGTERM on deploy/restart

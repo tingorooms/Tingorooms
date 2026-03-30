@@ -377,13 +377,15 @@ Set all variables below in Railway service Variables.
 
 | Env var | Required | Value source (dashboard) | Verify after deploy |
 |---|---|---|---|
-| DB_HOST | Yes | Railway -> Database -> Connect -> Host | /api/startup/self-check database_connected=true |
-| DB_PORT | Yes | Railway -> Database -> Connect -> Port (usually 3306) | DB connection succeeds |
-| DB_USER | Yes | Railway -> Database -> Connect -> MYSQL_USER | DB connection succeeds |
-| DB_PASSWORD | Yes | Railway -> Database -> Connect -> MYSQL_PASSWORD | DB connection succeeds |
-| DB_NAME | Yes | Railway -> Database -> Connect -> MYSQL_DB | DB queries work |
+| DB_HOST / MYSQL_HOST | Yes | Railway -> Database -> Connect -> Host | /api/startup/self-check database_connected=true |
+| DB_PORT / MYSQL_PORT | Yes | Railway -> Database -> Connect -> Port (usually 3306) | DB connection succeeds |
+| DB_USER / MYSQL_USER | Yes | Railway -> Database -> Connect -> MYSQL_USER | DB connection succeeds |
+| DB_PASSWORD / MYSQL_PASSWORD | Yes | Railway -> Database -> Connect -> MYSQL_PASSWORD | DB connection succeeds |
+| DB_NAME / MYSQL_DB | Yes | Railway -> Database -> Connect -> MYSQL_DB | DB queries work |
 | DB_SSL | Optional | Manual: false (local network) or true (external) | Connection works without errors |
 | DB_SSL_REJECT_UNAUTHORIZED | Optional | Manual: false (for Railway) | Connection succeeds |
+
+> Note: The backend also supports full connection strings via `DB_URL`, `DATABASE_URL`, `RAILWAY_DATABASE_URL`, or `MYSQL_URL` if Railway provides them instead of separate DB_* values.
 
 ### Authentication
 
