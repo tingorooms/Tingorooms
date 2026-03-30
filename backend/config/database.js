@@ -62,39 +62,47 @@ if (!dbName && !dbUrlString && !isProduction) {
     dbName = 'room_rental_db';
 }
 
-if (isProduction) {
-    const missing = [];
-    if (!dbHost) missing.push('DB_HOST/MYSQL_HOST/MYSQLHOST or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
-    if (!dbUser) missing.push('DB_USER/MYSQL_USER/MYSQLUSER or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
-    if (!dbName) missing.push('DB_NAME/MYSQL_DB/MYSQL_DATABASE/MYSQLDATABASE or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
+const missingDbConfig = [];
+if (!dbHost) missingDbConfig.push('DB_HOST/MYSQL_HOST/MYSQLHOST or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
+if (!dbUser) missingDbConfig.push('DB_USER/MYSQL_USER/MYSQLUSER or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
+if (!dbName) missingDbConfig.push('DB_NAME/MYSQL_DB/MYSQL_DATABASE/MYSQLDATABASE or DB_URL/DATABASE_URL/RAILWAY_DATABASE_URL');
 
-    if (missing.length > 0) {
-        throw new Error(`Missing required production database environment variable(s): ${missing.join(', ')}.`);
-    }
-
-    if (dbHost === 'localhost') {
-        console.warn('⚠️  DB_HOST is set to localhost in production. Please set DB_HOST to your managed MySQL host to avoid connection failures.');
-    }
+if (isProduction && missingDbConfig.length > 0) {
+    console.error(`❌ Missing production database environment variable(s): ${missingDbConfig.join(', ')}.`);
+    console.error('⚠️  Continuing startup in degraded mode so health endpoints can respond.');
 }
 
-// Create connection pool
-const pool = mysql.createPool({
-    host: dbHost,
-    port: dbPort,
-    user: dbUser,
-    password: dbPassword,
-    database: dbName,
-    connectTimeout: Number(process.env.DB_CONNECT_TIMEOUT_MS || 5000),
-    ssl: dbSslEnabled ? { rejectUnauthorized: dbSslRejectUnauthorized } : undefined,
-    waitForConnections: true,
-    connectionLimit: 20,
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 10000
-});
+if (isProduction && dbHost === 'localhost') {
+    console.warn('⚠️  DB_HOST is set to localhost in production. Please set DB_HOST to your managed MySQL host to avoid connection failures.');
+}
+
+const hasUsableDbConfig = missingDbConfig.length === 0;
+
+// Create connection pool only when DB config is available
+const pool = hasUsableDbConfig
+    ? mysql.createPool({
+        host: dbHost,
+        port: dbPort,
+        user: dbUser,
+        password: dbPassword,
+        database: dbName,
+        connectTimeout: Number(process.env.DB_CONNECT_TIMEOUT_MS || 5000),
+        ssl: dbSslEnabled ? { rejectUnauthorized: dbSslRejectUnauthorized } : undefined,
+        waitForConnections: true,
+        connectionLimit: 20,
+        queueLimit: 0,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 10000
+    })
+    : null;
 
 // Test connection
 const testConnection = async () => {
+    if (!pool) {
+        console.error('❌ Database connection skipped: database config is incomplete.');
+        return false;
+    }
+
     try {
         const connection = await pool.getConnection();
         console.log('✅ MySQL Database connected successfully');
@@ -208,6 +216,10 @@ const ensureAutoIncrementOnPrimaryIds = async () => {
 
 // Execute query helper
 const executeQuery = async (sql, params = []) => {
+    if (!pool) {
+        throw new Error('Database is not configured. Set DB_HOST/DB_USER/DB_NAME (or MYSQL_* / DATABASE_URL) in Railway variables.');
+    }
+
     try {
         const [results] = await pool.execute(sql, params);
         return results;
@@ -267,6 +279,10 @@ const wrapConnectionWithInsertFallback = (connection) => {
 
 // Transaction helper
 const withTransaction = async (callback) => {
+    if (!pool) {
+        throw new Error('Database is not configured. Cannot open transaction.');
+    }
+
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
