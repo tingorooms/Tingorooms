@@ -9,6 +9,7 @@ bun.lock
 .env.*.local
 backend/.env
 backend/.env.local
+vercel_env_vars.txt
 
 # Build outputs
 dist/
