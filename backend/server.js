@@ -251,6 +251,19 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
+// Ensure CORS headers are preserved on all responses (including errors)
+app.use((req, res, next) => {
+    const origin = req.get('origin');
+    if (origin && isAllowedOrigin(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    } else if (allowAnyVercel && origin && origin.endsWith('.vercel.app')) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    next();
+});
+
 app.use((req, res, next) => {
     const requestPath = req.originalUrl || '';
 

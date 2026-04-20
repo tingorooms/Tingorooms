@@ -314,6 +314,7 @@ router.get('/rooms', async (req, res, next) => {
         });
 
     } catch (error) {
+        console.error('Error in /api/public/rooms:', error.message, error.stack);
         next(error);
     }
 });
@@ -373,6 +374,7 @@ router.get('/ads/active', async (req, res, next) => {
             data: ads.map(mapAdRow)
         });
     } catch (error) {
+        console.error('Error in /api/public/ads/active:', error.message, error.stack);
         next(error);
     }
 });
@@ -653,6 +655,7 @@ router.get('/site-settings', async (req, res, next) => {
             data: settings
         });
     } catch (error) {
+        console.error('Error in /api/public/site-settings:', error.message, error.stack);
         next(error);
     }
 });
