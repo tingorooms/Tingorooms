@@ -63,6 +63,7 @@ export const initializeRealtimeChat = async (config: RealtimeChatConfig) => {
 
     return true;
   } catch (error) {
+    console.warn('Failed to initialize realtime chat:', error);
     return false;
   }
 };
@@ -84,5 +85,6 @@ export const cleanupRealtimeChat = async () => {
     messageNotificationService.clearAllNotifications();
     isInitialized = false;
   } catch (error) {
+    console.warn('Failed to cleanup realtime chat:', error);
   }
 };

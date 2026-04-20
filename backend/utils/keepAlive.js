@@ -80,4 +80,4 @@ const startKeepAlive = () => {
     console.log(`✅ Keep-alive scheduler started (DB + Supabase ping via cron: ${cronPattern})`);
 };
 
-module.exports = { startKeepAlive };
+module.exports = { startKeepAlive, runPings };

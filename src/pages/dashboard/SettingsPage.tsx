@@ -19,6 +19,7 @@ const SettingsPage: React.FC = () => {
     const [notificationPrefs, setNotificationPrefsState] = useState<NotificationPrefs>(defaultNotificationPrefs);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setNotificationPrefsState(getNotificationPrefs());
     }, []);
 

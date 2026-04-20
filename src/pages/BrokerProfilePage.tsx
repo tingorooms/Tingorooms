@@ -51,7 +51,7 @@ const BrokerProfilePage: React.FC = () => {
                 if (window.location.pathname !== canonicalPath) {
                     navigate(canonicalPath, { replace: true });
                 }
-            } catch (err) {
+            } catch (_err) {
                 setError('Broker not found or unavailable');
             } finally {
                 setLoading(false);
@@ -75,6 +75,7 @@ const BrokerProfilePage: React.FC = () => {
                 
                 setRooms(roomsResponse.data);
             } catch (err) {
+                console.warn('Failed to fetch broker rooms:', err);
             } finally {
                 setRoomsLoading(false);
             }

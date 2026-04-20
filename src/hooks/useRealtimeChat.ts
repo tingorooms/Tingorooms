@@ -123,6 +123,7 @@ export const useRealtimeChat = ({
                 detail: { chatRoomId }
               }));
             } catch (err) {
+              console.warn('Failed to send read receipt:', err);
             }
           }
         }
@@ -236,6 +237,7 @@ export const useRealtimeChat = ({
       try {
         await realtimeChatService.sendTypingIndicator(chatRoomId, isTyping);
       } catch (err) {
+        console.warn('Failed to send typing indicator:', err);
       }
     },
     [chatRoomId, hasValidChatContext]
@@ -247,6 +249,7 @@ export const useRealtimeChat = ({
       try {
         await realtimeChatService.sendReadReceipt(chatRoomId, messageIds);
       } catch (err) {
+        console.warn('Failed to send read receipt:', err);
       }
     },
     [chatRoomId, hasValidChatContext]
@@ -260,6 +263,7 @@ export const useRealtimeChat = ({
         setMessages(prev => [...moreMessages, ...prev]);
         setMessageOffset(offset + limit);
       } catch (err) {
+        console.warn('Failed to load more messages:', err);
       }
     },
     [chatRoomId, messageOffset, hasValidChatContext]

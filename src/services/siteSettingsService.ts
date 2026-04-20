@@ -117,7 +117,7 @@ export const getCachedSiteSettings = (): SiteSettings | null => {
             ...defaultSiteSettings,
             ...parsed
         });
-    } catch (error) {
+    } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
         return null;
     }
 };
@@ -135,7 +135,7 @@ export const cacheSiteSettings = (settings: SiteSettings): void => {
         if (!storage) return;
 
         storage.setItem(SITE_SETTINGS_CACHE_KEY, JSON.stringify(normalized));
-    } catch (error) {
+    } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
         // Silently fail if storage is unavailable
     }
 };

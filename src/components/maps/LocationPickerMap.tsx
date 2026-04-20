@@ -96,7 +96,7 @@ const LocationPickerMap: React.FC<LocationPickerMapProps> = ({
 
             // Extract area - Priority: Most specific localities first
             // Avoid using broad administrative divisions like city_district, state_district, county
-            let area = 
+            const area = 
                 address.hamlet ||           // Very small locality
                 address.locality ||         // Generic locality
                 address.suburb ||           // Suburb/neighborhood

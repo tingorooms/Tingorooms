@@ -1,5 +1,5 @@
 import { get, post, put, del } from './api';
-import type { ApiResponse, RoommateGroup, Roommate } from '@/types';
+import type { ApiResponse, RoommateGroup, Roommate, Expense } from '@/types';
 
 export const getGroups = async (filters?: { includeDeleted?: boolean }): Promise<RoommateGroup[]> => {
     const params = new URLSearchParams();
@@ -25,9 +25,17 @@ export const getGroupDetails = async (groupId: string): Promise<{
         closed_at?: string;
     };
     members: Roommate[];
-    recentExpenses: any[];
+    recentExpenses: Expense[];
 }> => {
-    const response = await get<ApiResponse<any>>(`/roommates/group/${groupId}`);
+    const response = await get<ApiResponse<{
+        id: number;
+        group_name: string;
+        created_at: string;
+        updated_at: string;
+        closed_at?: string;
+        members: Roommate[];
+        recentExpenses: Expense[];
+    }>>(`/roommates/group/${groupId}`);
     return response.data;
 };
 
@@ -115,7 +123,11 @@ export const acceptInvitation = async (token: string): Promise<{
     email: string;
     groupId: string;
 }> => {
-    const response = await post<ApiResponse<any>>('/roommates/accept-invite', { token });
+    const response = await post<ApiResponse<{
+        requiresRegistration: boolean;
+        email: string;
+        groupId: string;
+    }>>('/roommates/accept-invite', { token });
     return response.data;
 };
 
@@ -123,6 +135,9 @@ export const acceptInvitationAfterRegistration = async (token: string, email: st
     email: string;
     groupId: string;
 }> => {
-    const response = await post<ApiResponse<any>>('/roommates/accept-invite-after-registration', { token, email });
+    const response = await post<ApiResponse<{
+        email: string;
+        groupId: string;
+    }>>('/roommates/accept-invite-after-registration', { token, email });
     return response.data;
 };

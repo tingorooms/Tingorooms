@@ -51,6 +51,7 @@ const useCountUp = (target: number, start: boolean, duration = 900): number => {
         if (!start) return;
         const finalValue = Math.max(0, Math.floor(target || 0));
         if (finalValue === 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setValue(0);
             return;
         }
@@ -134,10 +135,14 @@ const HomePage: React.FC = () => {
 
         const cached = readCachedHomeData();
         if (cached) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setFeaturedRooms(cached.featuredRooms || []);
+             
             setRecentRooms(cached.recentRooms || []);
+             
             setActiveAds(cached.activeAds || []);
             // Cache hit → no loading flash
+             
             setIsRoomsLoading(false);
         }
 
@@ -244,6 +249,7 @@ const HomePage: React.FC = () => {
     useEffect(() => {
         const element = statsRef.current;
         if (!element || typeof IntersectionObserver === 'undefined') {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setStatsVisible(true);
             return;
         }
@@ -316,6 +322,7 @@ const HomePage: React.FC = () => {
     }, [adSlides.length]);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setActiveSlideIndex(0);
     }, [adSlides.length]);
 

@@ -82,7 +82,13 @@ export const getDashboardStats = async (): Promise<{
     pendingBrokers: Broker[];
     pendingRooms: Room[];
 }> => {
-    const response = await get<ApiResponse<any>>('/admin/dashboard');
+    const response = await get<ApiResponse<{
+        stats: DashboardStats;
+        todayRegistrations: User[];
+        todayRooms: Room[];
+        pendingBrokers: Broker[];
+        pendingRooms: Room[];
+    }>>('/admin/dashboard');
     return response.data;
 };
 
@@ -105,7 +111,7 @@ export const getAllUsers = async (filters?: { role?: string; status?: string; se
 };
 
 export const getUserStats = async (): Promise<{ all: number; active: number; inactive: number; suspended: number }> => {
-    const response = await get<ApiResponse<any>>('/admin/users/stats');
+    const response = await get<ApiResponse<{ all: number; active: number; inactive: number; suspended: number }>>('/admin/users/stats');
     return response.data;
 };
 
@@ -139,7 +145,7 @@ export const getAllBrokers = async (filters?: { status?: string; search?: string
 };
 
 export const getBrokerStats = async (): Promise<{ all: number; approved: number; pending: number; hold: number; rejected: number }> => {
-    const response = await get<ApiResponse<any>>('/admin/brokers/stats');
+    const response = await get<ApiResponse<{ all: number; approved: number; pending: number; hold: number; rejected: number }>>('/admin/brokers/stats');
     return response.data;
 };
 

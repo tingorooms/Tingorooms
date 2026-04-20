@@ -36,7 +36,7 @@ export const SiteSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ 
             };
             setSettings(nextSettings);
             cacheSiteSettings(nextSettings);
-        } catch (error) {
+        } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
 
             const localFallback = await getProjectSiteSettingsFallback();
             if (localFallback) {

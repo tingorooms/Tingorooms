@@ -86,7 +86,7 @@ const VerifyOTPPage: React.FC = () => {
             } else {
                 // For members, log in and redirect to dashboard (or chat context if present)
                 // Try to get password from location.state if present (for chat/quick flows)
-                let password = (location.state as any)?.password || '';
+                const password = (location.state as any)?.password || '';
                 if (!password) {
                     // fallback: try tempPassword or ask user to login manually
                     navigate('/login', {

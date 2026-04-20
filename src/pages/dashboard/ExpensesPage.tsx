@@ -1785,7 +1785,7 @@ const ExpensesPage: React.FC = () => {
                                     variant="outline"
                                     onClick={() => handleToggleHistoryEdit(
                                         selectedGroupSummary.group.group_id,
-                                        !Boolean(selectedGroupSummary.group.allow_member_edit_history)
+                                        !selectedGroupSummary.group.allow_member_edit_history
                                     )}
                                     disabled={actionLoading[`history-${selectedGroupSummary.group.group_id}`]}
                                 >

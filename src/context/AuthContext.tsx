@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                         isAuthenticated: true,
                         isLoading: false
                     });
-                } catch (error) {
+                } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
                     localStorage.removeItem('token');
                     setState({
                         user: null,
