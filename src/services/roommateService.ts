@@ -36,7 +36,29 @@ export const getGroupDetails = async (groupId: string): Promise<{
         members: Roommate[];
         recentExpenses: Expense[];
     }>>(`/roommates/group/${groupId}`);
-    return response.data;
+    
+    // Transform the response to match the expected structure
+    const data = response.data;
+    return {
+        group: {
+            group_id: data.id.toString(),
+            group_name: data.group_name,
+            created_at: data.created_at,
+            updated_at: data.updated_at,
+            closed_at: data.closed_at,
+            // Add default values for missing properties if needed
+            created_by: 0, // This might need to be fetched separately or adjusted
+            expense_category: undefined,
+            expense_status: data.closed_at ? 'Closed' : 'Ongoing',
+            allow_member_edit_history: undefined,
+            admin_upi_id: undefined,
+            admin_scanner_url: undefined,
+            admin_drive_link: undefined,
+            expense_label: undefined
+        },
+        members: data.members,
+        recentExpenses: data.recentExpenses
+    };
 };
 
 export const createGroup = async (data: { 
