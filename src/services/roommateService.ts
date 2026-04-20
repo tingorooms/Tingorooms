@@ -43,8 +43,6 @@ export const getGroupDetails = async (groupId: string): Promise<{
         group: {
             group_id: data.id.toString(),
             group_name: data.group_name,
-            created_at: data.created_at,
-            updated_at: data.updated_at,
             closed_at: data.closed_at,
             // Add default values for missing properties if needed
             created_by: 0, // This might need to be fetched separately or adjusted
